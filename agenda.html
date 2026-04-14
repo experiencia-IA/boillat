@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Agenda · Calendario semanal (domingo a sábado)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, 'Roboto', sans-serif;
+        }
+
+        /* Ocupar toda la pantalla sin scroll externo */
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: #eef2f7;
+        }
+
+        .agenda-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+            background: white;
+            overflow: hidden;
+        }
+
+        .app-header {
+            background: #0b2b3f;
+            padding: 0.9rem 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .app-header h1 {
+            color: white;
+            font-weight: 600;
+            font-size: 1.6rem;
+            letter-spacing: -0.3px;
+            margin: 0;
+        }
+
+        .toolbar {
+            background: white;
+            padding: 0.7rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e9edf2;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .search-wrapper {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid #cbd5e1;
+            background: white;
+            width: 220px;
+            font-size: 0.85rem;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: #0b3b5f;
+            box-shadow: 0 0 0 2px rgba(11, 59, 95, 0.2);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #0b3b5f;
+            color: #0b3b5f;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .btn-outline:hover {
+            background: #eef2ff;
+        }
+
+        .btn-today {
+            background: #0b3b5f;
+            border: none;
+            color: white;
+            padding: 0.4rem 1.2rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .btn-today:hover {
+            background: #0f4d73;
+        }
+
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0.5rem 1.5rem 0.5rem 1.5rem;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .month-year {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #0b2b3f;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-btn {
+            background: #f1f5f9;
+            border: none;
+            font-size: 1.1rem;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-weight: bold;
+            color: #0b3b5f;
+            transition: 0.2s;
+        }
+
+        .calendar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 1rem 1rem 1rem;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        .weekdays-row {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            border-radius: 1rem 1rem 0 0;
+            flex-shrink: 0;
+        }
+
+        .weekday {
+            text-align: center;
+            padding: 0.7rem 0.2rem;
+            font-weight: 600;
+            color: #0b2b3f;
+            font-size: 0.8rem;
+            letter-spacing: 0.3px;
+        }
+        /* destacar fines de semana en cabecera */
+        .weekday.weekend-header {
+            background: #eef2fa;
+            color: #1e4a6e;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            flex: 1;
+            background: white;
+            border: 1px solid #e9edf2;
+            border-top: none;
+            border-radius: 0 0 1rem 1rem;
+            overflow: hidden;
+        }
+
+        .cal-day {
+            background: white;
+            border-right: 1px solid #eff3f8;
+            border-bottom: 1px solid #eff3f8;
+            padding: 6px 4px;
+            position: relative;
+            transition: background 0.1s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-y: auto;
+        }
+
+        /* Fines de semana (sábado y domingo) - fondo suave diferenciado */
+        .cal-day.weekend {
+            background-color: #f9fbfe;
+        }
+        /* Si además tiene prioridad, se combina con opacidad o degradado para no perder la legibilidad */
+        .cal-day.priority-low.weekend {
+            background-color: #e8f5e9; /* mantiene verde pero con matiz */
+        }
+        .cal-day.priority-medium.weekend {
+            background-color: #fff3e0;
+        }
+        .cal-day.priority-high.weekend {
+            background-color: #ffe9e9;
+        }
+        /* para que se note el borde de fin de semana, agregamos un pequeño borde izquierdo o sombra */
+        .cal-day.weekend {
+            box-shadow: inset 0 0 0 1px rgba(11, 59, 95, 0.05);
+        }
+
+        .cal-day:nth-child(7n) {
+            border-right: none;
+        }
+        .days-grid .cal-day:last-child {
+            border-bottom: none;
+        }
+        .days-grid .cal-day:nth-child(n+36) {
+            border-bottom: none;
+        }
+
+        .cal-day.empty {
+            background: #fefefe;
+            cursor: default;
+            opacity: 0.5;
+        }
+
+        .cal-day.priority-low {
+            background-color: #e8f5e9;
+        }
+        .cal-day.priority-medium {
+            background-color: #fff3e0;
+        }
+        .cal-day.priority-high {
+            background-color: #ffe9e9;
+        }
+
+        .cal-day:not(.empty):hover {
+            filter: brightness(0.97);
+        }
+
+        .day-number {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1e2f3c;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.8);
+        }
+
+        .task-badge {
+            font-size: 0.7rem;
+            margin-top: 4px;
+            font-weight: 500;
+            background: rgba(11, 59, 95, 0.15);
+            padding: 2px 6px;
+            border-radius: 20px;
+            color: #0b3b5f;
+        }
+
+        .fab {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background: #0b3b5f;
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 14px rgba(0, 32, 64, 0.3);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            z-index: 200;
+            font-size: 1.8rem;
+        }
+
+        .fab:hover {
+            background: #0f4d73;
+            transform: scale(1.02);
+        }
+
+        /* MODAL - mediano y fondo dinámico por prioridad */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 20, 30, 0.75);
+            backdrop-filter: blur(3px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s;
+        }
+
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-card {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 1.8rem;
+            box-shadow: 0 30px 40px rgba(0,0,0,0.25);
+            overflow: hidden;
+            transform: scale(0.96);
+            transition: transform 0.2s, background-color 0.2s ease;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-card.priority-low-bg {
+            background-color: #e8f5e9;
+        }
+        .modal-card.priority-medium-bg {
+            background-color: #fff3e0;
+        }
+        .modal-card.priority-high-bg {
+            background-color: #ffe9e9;
+        }
+
+        .modal-header {
+            background: #0b2b3f;
+            padding: 1rem 1.5rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        .modal-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .modal-body input, .modal-body textarea, .modal-body select {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+            outline: none;
+            background: rgba(255,255,255,0.9);
+        }
+        .priority-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .priority-label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .modal-footer {
+            padding: 0.8rem 1.5rem 1.5rem 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.8rem;
+        }
+        .btn-secondary {
+            background: #eef2f6;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .btn-save {
+            background: #0b3b5f;
+            border: none;
+            color: white;
+            padding: 0.5rem 1.4rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        @media (max-width: 650px) {
+            .app-header h1 { font-size: 1.3rem; }
+            .month-year { font-size: 1.1rem; }
+            .cal-day { padding: 4px 2px; }
+            .day-number { width: 26px; height: 26px; font-size: 0.75rem; }
+            .task-badge { font-size: 0.6rem; padding: 1px 4px; }
+            .toolbar { padding: 0.5rem 1rem; }
+            .search-input { width: 160px; font-size: 0.75rem; }
+            .fab { width: 48px; height: 48px; bottom: 1rem; right: 1rem; font-size: 1.5rem; }
+            .weekday { font-size: 0.7rem; padding: 0.4rem 0; }
+            .modal-card { max-width: 95%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="agenda-container">
+    <div class="app-header">
+        <h1>📅 Agenda</h1>
+    </div>
+
+    <div class="toolbar">
+        <button id="todayBtn" class="btn-today">📅 Hoy</button>
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar actividad">
+            <button id="clearSearchBtn" class="btn-outline">Limpiar</button>
+        </div>
+    </div>
+
+    <div class="calendar-nav">
+        <div class="month-year" id="monthYearDisplay">Marzo 2025</div>
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prevMonthBtn">←</button>
+            <button class="nav-btn" id="nextMonthBtn">→</button>
+        </div>
+    </div>
+
+    <div class="calendar-wrapper">
+        <div class="weekdays-row" id="weekdaysRow"></div>
+        <div class="days-grid" id="daysGrid"></div>
+    </div>
+</div>
+
+<button class="fab" id="fabOpenModal">+</button>
+
+<!-- MODAL REGISTRO -->
+<div id="modalOverlay" class="modal-overlay">
+    <div class="modal-card" id="modalCard">
+        <div class="modal-header">📌 Nueva actividad</div>
+        <div class="modal-body">
+            <input type="text" id="taskTitle" placeholder="Título *" autocomplete="off">
+            <input type="date" id="taskDate">
+            <textarea id="taskDesc" rows="2" placeholder="Descripción (opcional)"></textarea>
+            <div class="priority-group">
+                <span style="font-size:0.85rem; color:#2c3e4e;">Prioridad:</span>
+                <label class="priority-label">
+                    <input type="radio" name="priority" value="low" checked> 🟢 Baja
+                </label>
+                <label class="priority-label">
+                    <input type="radio" name="priority" value="medium"> 🟠 Media
+                </label>
+                <label class="priority-label">
+                    <input type="radio" name="priority" value="high"> 🔴 Alta
+                </label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" id="closeModalBtn">Cancelar</button>
+            <button class="btn-save" id="saveTaskBtn">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- ESTADO ----------
+    let tasks = [];
+    let currentYear = 2025;
+    let currentMonth = 2;
+    let filterText = "";
+
+    // DOM elements
+    const weekdaysRow = document.getElementById("weekdaysRow");
+    const daysGrid = document.getElementById("daysGrid");
+    const monthYearDisplay = document.getElementById("monthYearDisplay");
+    const searchInput = document.getElementById("searchInput");
+    const clearSearchBtn = document.getElementById("clearSearchBtn");
+    const fabOpenModal = document.getElementById("fabOpenModal");
+    const modalOverlay = document.getElementById("modalOverlay");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const saveTaskBtn = document.getElementById("saveTaskBtn");
+    const taskTitleInput = document.getElementById("taskTitle");
+    const taskDateInput = document.getElementById("taskDate");
+    const taskDescInput = document.getElementById("taskDesc");
+    const priorityRadios = document.querySelectorAll('input[name="priority"]');
+    const modalCard = document.getElementById("modalCard");
+    const todayBtn = document.getElementById("todayBtn");
+
+    // Persistencia
+    function saveToLocalStorage() {
+        localStorage.setItem("agenda_tasks_v5", JSON.stringify(tasks));
+    }
+
+    function loadTasksFromStorage() {
+        const stored = localStorage.getItem("agenda_tasks_v5");
+        if (stored) {
+            tasks = JSON.parse(stored);
+        } else {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2,'0');
+            const dd = String(today.getDate()).padStart(2,'0');
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            const yyyyT = tomorrow.getFullYear();
+            const mmT = String(tomorrow.getMonth() + 1).padStart(2,'0');
+            const ddT = String(tomorrow.getDate()).padStart(2,'0');
+            const nextWeek = new Date(today);
+            nextWeek.setDate(today.getDate() + 4);
+            const yyyyN = nextWeek.getFullYear();
+            const mmN = String(nextWeek.getMonth() + 1).padStart(2,'0');
+            const ddN = String(nextWeek.getDate()).padStart(2,'0');
+            tasks = [
+                { id: Date.now() + 1, title: "Entrega informe", date: `${yyyy}-${mm}-${dd}`, description: "Enviar a gerencia", priority: "high" },
+                { id: Date.now() + 2, title: "Compras oficina", date: `${yyyyT}-${mmT}-${ddT}`, description: "Material papelería", priority: "medium" },
+                { id: Date.now() + 3, title: "Revisión diseño", date: `${yyyyN}-${mmN}-${ddN}`, description: "Prototipos finales", priority: "low" },
+                { id: Date.now() + 4, title: "Llamada cliente", date: `${yyyy}-${mm}-${String(today.getDate() + 2).padStart(2,'0')}`, description: "Negociar contrato", priority: "high" }
+            ];
+            saveToLocalStorage();
+        }
+    }
+
+    function getFilteredTasks() {
+        if (!filterText.trim()) return [...tasks];
+        const lowerFilter = filterText.toLowerCase();
+        return tasks.filter(t => 
+            t.title.toLowerCase().includes(lowerFilter) || 
+            (t.description && t.description.toLowerCase().includes(lowerFilter))
+        );
+    }
+
+    function getMaxPriorityForDate(dateStr, filteredTasks) {
+        const tasksOnDay = filteredTasks.filter(t => t.date === dateStr);
+        if (tasksOnDay.length === 0) return null;
+        if (tasksOnDay.some(t => t.priority === "high")) return "high";
+        if (tasksOnDay.some(t => t.priority === "medium")) return "medium";
+        return "low";
+    }
+
+    function getTaskCountForDate(dateStr, filteredTasks) {
+        return filteredTasks.filter(t => t.date === dateStr).length;
+    }
+
+    // Cabeceras: DOMINGO primero
+    function renderWeekdays() {
+        const weekdays = ["DOM", "LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB"];
+        weekdaysRow.innerHTML = weekdays.map((day, idx) => {
+            const isWeekendHeader = (idx === 0 || idx === 6); // domingo o sábado
+            return `<div class="weekday ${isWeekendHeader ? 'weekend-header' : ''}">${day}</div>`;
+        }).join('');
+    }
+
+    // Calendario con inicio en domingo (getDay(): 0 domingo, 1 lunes...)
+    function renderCalendar() {
+        const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+        let startWeekday = firstDayOfMonth.getDay(); // 0 domingo -> 0 offset directo
+        // No necesitamos ajuste porque queremos que el primer día del mes se ubique en la columna correspondiente (0: domingo)
+        const offset = startWeekday; // cuántas celdas vacías al inicio (0 a 6)
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        monthYearDisplay.innerText = `${monthNames[currentMonth]} ${currentYear}`;
+        
+        const filteredTasks = getFilteredTasks();
+        const totalCells = 42; // 6 filas completas
+        let cellsHtml = "";
+        for (let i = 0; i < totalCells; i++) {
+            const dayNumber = i - offset + 1;
+            const isValid = (dayNumber >= 1 && dayNumber <= daysInMonth);
+            if (!isValid) {
+                cellsHtml += `<div class="cal-day empty"><div class="day-content"><span class="day-number"></span></div></div>`;
+                continue;
+            }
+            const yearStr = currentYear;
+            const monthStr = String(currentMonth + 1).padStart(2, '0');
+            const dayStr = String(dayNumber).padStart(2, '0');
+            const fullDate = `${yearStr}-${monthStr}-${dayStr}`;
+            const maxPriority = getMaxPriorityForDate(fullDate, filteredTasks);
+            const taskCount = getTaskCountForDate(fullDate, filteredTasks);
+            
+            let priorityClass = "";
+            if (maxPriority === "low") priorityClass = "priority-low";
+            else if (maxPriority === "medium") priorityClass = "priority-medium";
+            else if (maxPriority === "high") priorityClass = "priority-high";
+            
+            // Determinar si es fin de semana según la columna (i % 7) -> 0 domingo, 6 sábado
+            const colIndex = i % 7;
+            const isWeekend = (colIndex === 0 || colIndex === 6);
+            const weekendClass = isWeekend ? "weekend" : "";
+            
+            cellsHtml += `
+                <div class="cal-day ${priorityClass} ${weekendClass}" data-date="${fullDate}">
+                    <div class="day-content">
+                        <span class="day-number">${dayNumber}</span>
+                        ${taskCount > 0 ? `<div class="task-badge">📋 ${taskCount}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+        daysGrid.innerHTML = cellsHtml;
+        attachDayEvents();
+    }
+    
+    function attachDayEvents() {
+        document.querySelectorAll('.cal-day:not(.empty)').forEach(dayCell => {
+            const newCell = dayCell.cloneNode(true);
+            dayCell.parentNode.replaceChild(newCell, dayCell);
+            const dateAttr = newCell.getAttribute('data-date');
+            if (dateAttr) {
+                newCell.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const filteredNow = getFilteredTasks();
+                    const hasTasks = filteredNow.some(t => t.date === dateAttr);
+                    if (hasTasks) {
+                        showDayDetails(dateAttr);
+                    } else {
+                        openModalWithDate(dateAttr);
+                    }
+                });
+            }
+        });
+    }
+    
+    function showDayDetails(dateStr) {
+        const filtered = getFilteredTasks();
+        const tasksOfDay = filtered.filter(t => t.date === dateStr);
+        if (tasksOfDay.length === 0) return;
+        const detailOverlay = document.createElement('div');
+        detailOverlay.className = 'modal-overlay';
+        detailOverlay.style.visibility = 'visible';
+        detailOverlay.style.opacity = '1';
+        detailOverlay.style.zIndex = '1100';
+        const modalCardDetail = document.createElement('div');
+        modalCardDetail.className = 'modal-card';
+        modalCardDetail.style.maxWidth = '400px';
+        const formattedDate = new Date(dateStr + 'T00:00:00').toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+        modalCardDetail.innerHTML = `
+            <div class="modal-header" style="background:#0b2b3f;">📋 Actividades del ${formattedDate}</div>
+            <div class="modal-body" style="max-height: 60vh; overflow-y: auto; gap:0.8rem;">
+                ${tasksOfDay.map(task => `
+                    <div style="border-left: 4px solid ${task.priority === 'high' ? '#e53e3e' : task.priority === 'medium' ? '#ed8936' : '#48bb78'}; background:#f9fbfd; border-radius: 1rem; padding: 0.7rem; margin-bottom: 0.5rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong style="color:#0b2b3f;">${escapeHtml(task.title)}</strong>
+                            <button class="delete-task-detail" data-id="${task.id}" style="background:transparent; border:none; font-size:1.2rem; cursor:pointer; color:#b91c1c;">🗑️</button>
+                        </div>
+                        ${task.description ? `<div style="font-size:0.75rem; color:#4a6a82; margin-top:5px;">📝 ${escapeHtml(task.description)}</div>` : ''}
+                        <div style="font-size:0.7rem; margin-top:5px;">⚡ Prioridad: ${task.priority === 'high' ? 'Alta 🔴' : task.priority === 'medium' ? 'Media 🟠' : 'Baja 🟢'}</div>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="closeDetailBtn">Cerrar</button>
+            </div>
+        `;
+        detailOverlay.appendChild(modalCardDetail);
+        document.body.appendChild(detailOverlay);
+        const deleteBtns = modalCardDetail.querySelectorAll('.delete-task-detail');
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = parseInt(btn.getAttribute('data-id'));
+                if (confirm('¿Eliminar esta actividad?')) {
+                    tasks = tasks.filter(t => t.id !== id);
+                    saveToLocalStorage();
+                    refreshAll();
+                    detailOverlay.remove();
+                    const remaining = tasks.filter(t => t.date === dateStr).length;
+                    if (remaining > 0) showDayDetails(dateStr);
+                }
+            });
+        });
+        const closeBtn = modalCardDetail.querySelector('#closeDetailBtn');
+        closeBtn.addEventListener('click', () => detailOverlay.remove());
+        detailOverlay.addEventListener('click', (e) => { if (e.target === detailOverlay) detailOverlay.remove(); });
+    }
+    
+    function updateModalBackgroundByPriority() {
+        let selected = "low";
+        for (let radio of priorityRadios) {
+            if (radio.checked) { selected = radio.value; break; }
+        }
+        modalCard.classList.remove("priority-low-bg", "priority-medium-bg", "priority-high-bg");
+        if (selected === "low") modalCard.classList.add("priority-low-bg");
+        else if (selected === "medium") modalCard.classList.add("priority-medium-bg");
+        else if (selected === "high") modalCard.classList.add("priority-high-bg");
+    }
+    
+    function openModalWithDate(prefilledDate = null) {
+        taskTitleInput.value = "";
+        taskDescInput.value = "";
+        document.querySelector('input[value="low"]').checked = true;
+        updateModalBackgroundByPriority();
+        if (prefilledDate) {
+            taskDateInput.value = prefilledDate;
+        } else {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            taskDateInput.value = `${yyyy}-${mm}-${dd}`;
+        }
+        modalOverlay.classList.add("active");
+    }
+    
+    function closeModal() {
+        modalOverlay.classList.remove("active");
+    }
+    
+    function addTaskFromModal() {
+        const title = taskTitleInput.value.trim();
+        const date = taskDateInput.value;
+        const description = taskDescInput.value.trim();
+        let selectedPriority = "low";
+        for (let radio of priorityRadios) {
+            if (radio.checked) { selectedPriority = radio.value; break; }
+        }
+        if (!title) { alert("El título es obligatorio."); return; }
+        if (!date) { alert("Selecciona una fecha."); return; }
+        if (isNaN(new Date(date).getTime())) { alert("Fecha no válida."); return; }
+        const newTask = {
+            id: Date.now(),
+            title: title,
+            date: date,
+            description: description,
+            priority: selectedPriority
+        };
+        tasks.push(newTask);
+        saveToLocalStorage();
+        refreshAll();
+        closeModal();
+    }
+    
+    function goToToday() {
+        const today = new Date();
+        currentYear = today.getFullYear();
+        currentMonth = today.getMonth();
+        refreshAll();
+    }
+    
+    function refreshAll() {
+        renderCalendar();
+        renderWeekdays(); // las cabeceras también se actualizan (no cambian, pero por consistencia)
+        attachDayEvents();
+    }
+    
+    function prevMonth() {
+        let newMonth = currentMonth - 1;
+        let newYear = currentYear;
+        if (newMonth < 0) { newMonth = 11; newYear--; }
+        currentMonth = newMonth;
+        currentYear = newYear;
+        refreshAll();
+    }
+    
+    function nextMonth() {
+        let newMonth = currentMonth + 1;
+        let newYear = currentYear;
+        if (newMonth > 11) { newMonth = 0; newYear++; }
+        currentMonth = newMonth;
+        currentYear = newYear;
+        refreshAll();
+    }
+    
+    function updateFilter() {
+        filterText = searchInput.value;
+        refreshAll();
+    }
+    
+    function clearFilter() {
+        searchInput.value = "";
+        filterText = "";
+        refreshAll();
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    function init() {
+        loadTasksFromStorage();
+        const todayDate = new Date();
+        currentYear = todayDate.getFullYear();
+        currentMonth = todayDate.getMonth();
+        filterText = "";
+        if (searchInput) searchInput.value = "";
+        renderWeekdays();
+        renderCalendar();
+        attachDayEvents();
+        
+        fabOpenModal.addEventListener('click', () => openModalWithDate(null));
+        closeModalBtn.addEventListener('click', closeModal);
+        saveTaskBtn.addEventListener('click', addTaskFromModal);
+        searchInput.addEventListener('input', updateFilter);
+        clearSearchBtn.addEventListener('click', clearFilter);
+        document.getElementById("prevMonthBtn").addEventListener('click', prevMonth);
+        document.getElementById("nextMonthBtn").addEventListener('click', nextMonth);
+        todayBtn.addEventListener('click', goToToday);
+        modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+        
+        priorityRadios.forEach(radio => {
+            radio.addEventListener('change', updateModalBackgroundByPriority);
+        });
+        
+        const modalInputs = [taskTitleInput, taskDateInput, taskDescInput];
+        modalInputs.forEach(inp => {
+            inp.addEventListener('keypress', (e) => { if (e.key === 'Enter') addTaskFromModal(); });
+        });
+    }
+    
+    init();
+</script>
+</body>
+</html>
