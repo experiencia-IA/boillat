@@ -53,11 +53,12 @@
             margin: 0 auto;
         }
 
-        /* Estilos específicos para las vistas con iframe (Tabla, Red Pastoral, Red Discipuladores y ahora Agenda) */
+        /* Estilos específicos para las vistas con iframe (Tabla, Red Pastoral, Red Discipuladores, Agenda y ahora Reporte Visual) */
         #view-tabla,
         #view-pastoral,
         #view-discipuladores,
-        #view-agenda {
+        #view-agenda,
+        #view-reporte {
             padding: 0 !important;
             height: 100%;
             max-width: 100%;
@@ -67,7 +68,8 @@
         #view-tabla iframe,
         #view-pastoral iframe,
         #view-discipuladores iframe,
-        #view-agenda iframe {
+        #view-agenda iframe,
+        #view-reporte iframe {
             width: 100%;
             flex: 1;
             border: none;
@@ -519,7 +521,8 @@
             #view-tabla iframe,
             #view-pastoral iframe,
             #view-discipuladores iframe,
-            #view-agenda iframe {
+            #view-agenda iframe,
+            #view-reporte iframe {
                 border-radius: 12px;
             }
         }
@@ -548,7 +551,8 @@
             #view-tabla iframe,
             #view-pastoral iframe,
             #view-discipuladores iframe,
-            #view-agenda iframe {
+            #view-agenda iframe,
+            #view-reporte iframe {
                 border-radius: 8px;
             }
         }
@@ -597,8 +601,10 @@
             <iframe src="https://experiencia-ia.github.io/boillat/agenda.html" title="Agenda - Sistema de Red" loading="lazy"></iframe>
         </div>
         
-        <!-- Vista Reporte Visual: estática (sin cambios) -->
-        <div id="view-reporte" class="view-section hidden"><h1>Reporte Visual</h1><p>Estadísticas y métricas del ministerio en red.</p></div>
+        <!-- Vista Reporte Visual: ahora con iframe que carga la URL solicitada -->
+        <div id="view-reporte" class="view-section hidden">
+            <iframe src="https://experiencia-ia.github.io/boillat/reporte.html" title="Reporte Visual - Sistema de Red" loading="lazy"></iframe>
+        </div>
     </main>
 
     <div id="menu-overlay">
