@@ -53,10 +53,11 @@
             margin: 0 auto;
         }
 
-        /* Estilos específicos para las vistas con iframe (Tabla, Red Pastoral y Red Discipuladores) */
+        /* Estilos específicos para las vistas con iframe (Tabla, Red Pastoral, Red Discipuladores y ahora Agenda) */
         #view-tabla,
         #view-pastoral,
-        #view-discipuladores {
+        #view-discipuladores,
+        #view-agenda {
             padding: 0 !important;
             height: 100%;
             max-width: 100%;
@@ -65,7 +66,8 @@
         }
         #view-tabla iframe,
         #view-pastoral iframe,
-        #view-discipuladores iframe {
+        #view-discipuladores iframe,
+        #view-agenda iframe {
             width: 100%;
             flex: 1;
             border: none;
@@ -516,7 +518,8 @@
             }
             #view-tabla iframe,
             #view-pastoral iframe,
-            #view-discipuladores iframe {
+            #view-discipuladores iframe,
+            #view-agenda iframe {
                 border-radius: 12px;
             }
         }
@@ -544,7 +547,8 @@
             }
             #view-tabla iframe,
             #view-pastoral iframe,
-            #view-discipuladores iframe {
+            #view-discipuladores iframe,
+            #view-agenda iframe {
                 border-radius: 8px;
             }
         }
@@ -580,14 +584,20 @@
             <iframe src="https://experiencia-ia.github.io/boillat/redpastoral.html" title="Red Pastoral - Sistema de Red" loading="lazy"></iframe>
         </div>
         
-        <!-- Vista Red Discipuladores: ahora con iframe que carga la URL proporcionada -->
+        <!-- Vista Red Discipuladores: iframe con la URL proporcionada -->
         <div id="view-discipuladores" class="view-section hidden">
             <iframe src="https://experiencia-ia.github.io/boillat/reddiscipuladores.html" title="Red Discipuladores - Sistema de Red" loading="lazy"></iframe>
         </div>
         
-        <!-- Resto de vistas estáticas (sin cambios funcionales) -->
+        <!-- Vista Material de Red: estática (sin cambios) -->
         <div id="view-material" class="view-section hidden"><h1>Material de Red</h1><p>Recursos, manuales y guías para el crecimiento.</p></div>
-        <div id="view-agenda" class="view-section hidden"><h1>Agenda</h1><p>Próximos eventos, reuniones y fechas clave.</p></div>
+        
+        <!-- Vista Agenda: ahora con iframe que carga la URL solicitada -->
+        <div id="view-agenda" class="view-section hidden">
+            <iframe src="https://experiencia-ia.github.io/boillat/agenda.html" title="Agenda - Sistema de Red" loading="lazy"></iframe>
+        </div>
+        
+        <!-- Vista Reporte Visual: estática (sin cambios) -->
         <div id="view-reporte" class="view-section hidden"><h1>Reporte Visual</h1><p>Estadísticas y métricas del ministerio en red.</p></div>
     </main>
 
