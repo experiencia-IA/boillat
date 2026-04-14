@@ -51,15 +51,17 @@
             margin: 0 auto;
         }
 
-        /* Estilos específicos para la vista de Tabla (iframe) */
-        #view-tabla {
+        /* Estilos específicos para las vistas con iframe (Tabla y Red Pastoral) */
+        #view-tabla,
+        #view-pastoral {
             padding: 0 !important;
             height: 100%;
             max-width: 100%;
             display: flex;
             flex-direction: column;
         }
-        #view-tabla iframe {
+        #view-tabla iframe,
+        #view-pastoral iframe {
             width: 100%;
             flex: 1;
             border: none;
@@ -445,7 +447,8 @@
             .info-tooltip::after {
                 right: 18px;
             }
-            #view-tabla iframe {
+            #view-tabla iframe,
+            #view-pastoral iframe {
                 border-radius: 12px;
             }
         }
@@ -474,7 +477,8 @@
                 font-size: 0.7rem;
                 right: -5px;
             }
-            #view-tabla iframe {
+            #view-tabla iframe,
+            #view-pastoral iframe {
                 border-radius: 8px;
             }
         }
@@ -494,13 +498,17 @@
             </div>
         </div>
         
-        <!-- Vista Tabla de Registros: ahora con iframe que carga la URL externa -->
+        <!-- Vista Tabla de Registros: iframe con URL externa -->
         <div id="view-tabla" class="view-section hidden">
             <iframe src="https://experiencia-ia.github.io/boillat/tabladatos.html" title="Tabla de Registros - Sistema de Red" loading="lazy"></iframe>
         </div>
         
+        <!-- Vista Red Pastoral: ahora con iframe que carga la URL solicitada -->
+        <div id="view-pastoral" class="view-section hidden">
+            <iframe src="https://experiencia-ia.github.io/boillat/redpastoral.html" title="Red Pastoral - Sistema de Red" loading="lazy"></iframe>
+        </div>
+        
         <!-- Resto de vistas estáticas (sin cambios funcionales) -->
-        <div id="view-pastoral" class="view-section hidden"><h1>Red Pastoral</h1><p>Contenido en desarrollo para la gestión pastoral.</p></div>
         <div id="view-discipuladores" class="view-section hidden"><h1>Red Discipuladores</h1><p>Estructura y seguimiento de discipuladores activos.</p></div>
         <div id="view-material" class="view-section hidden"><h1>Material de Red</h1><p>Recursos, manuales y guías para el crecimiento.</p></div>
         <div id="view-agenda" class="view-section hidden"><h1>Agenda</h1><p>Próximos eventos, reuniones y fechas clave.</p></div>
@@ -623,9 +631,6 @@
             if (menu.classList.contains('active')) {
                 menu.classList.remove('active');
             }
-            
-            // Pequeño ajuste: si la vista es 'tabla', aseguramos que el iframe tenga el espacio adecuado
-            // (No requiere acción adicional, el CSS ya lo maneja)
         }
 
         function goToHome() {
@@ -635,7 +640,7 @@
             if (menu.classList.contains('active')) {
                 menu.classList.remove('active');
             }
-            removeTooltip(); // también cierra tooltip si estaba abierto
+            removeTooltip();
         }
 
         function openModal() {
