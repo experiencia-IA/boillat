@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Reporte Visual de Crecimiento · Discipulado | Iglesia Evangélica</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Font Awesome 6 (solo se usará para iconos decorativos de títulos y botones, no en KPIs) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f4f8;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #0a2f44;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header con nuevo título */
+        .header {
+            margin-bottom: 2rem;
+            text-align: center;
+            border-bottom: 2px solid #0a2f4420;
+            padding-bottom: 1rem;
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0a2f44;
+            letter-spacing: -0.5px;
+        }
+        .header h1 i {
+            margin-right: 12px;
+            color: #1e6f5c;
+        }
+        .header p {
+            color: #1e4a6b;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+
+        /* KPI cards SIN iconos */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .kpi-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.2rem 1rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+            border-left: 5px solid #0a2f44;
+            text-align: center;
+        }
+        .kpi-card:hover {
+            transform: translateY(-3px);
+        }
+        /* Ya no hay .kpi-icon */
+        .kpi-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #2c5a7a;
+            margin-bottom: 6px;
+        }
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0a2f44;
+            margin: 8px 0 4px;
+            line-height: 1.2;
+        }
+        .kpi-trend {
+            font-size: 0.75rem;
+            color: #2c7a5e;
+        }
+
+        /* Contenedor para los 3 gráficos en una misma línea */
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        /* Tarjeta base para gráficos */
+        .chart-card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.2rem 1rem 1rem 1rem;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.2s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .chart-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #0a2f44;
+            margin-bottom: 1rem;
+            padding-left: 6px;
+            border-left: 4px solid #0a2f44;
+        }
+        .chart-card h3 i {
+            margin-right: 8px;
+            color: #1e6f5c;
+        }
+        canvas {
+            max-height: 280px;
+            width: 100%;
+            flex-shrink: 0;
+        }
+        /* Contenedor del cuarto gráfico (ancho completo) */
+        .full-width-chart {
+            margin-bottom: 2rem;
+        }
+
+        /* Botones */
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.2rem;
+            margin: 1rem 0 2rem;
+        }
+        .btn {
+            background-color: #0a2f44;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn i {
+            font-size: 1rem;
+        }
+        .btn:hover {
+            background-color: #0e4b6e;
+            transform: scale(0.97);
+            box-shadow: 0 4px 12px rgba(10, 47, 68, 0.3);
+        }
+        .btn-secondary {
+            background-color: #1e4a6b;
+            border: 1px solid #ffffff30;
+        }
+        .btn-secondary:hover {
+            background-color: #0a2f44;
+        }
+
+        /* Tabla */
+        .data-table-section {
+            background: white;
+            border-radius: 28px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+        }
+        .data-table-section h3 {
+            color: #0a2f44;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        th {
+            background-color: #eef2f7;
+            color: #0a2f44;
+            padding: 12px 8px;
+            font-weight: 700;
+        }
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #1e3a5f;
+            text-align: center;
+        }
+        tr:hover {
+            background-color: #f8fafc;
+        }
+        .month-name {
+            font-weight: 700;
+            color: #0a2f44;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2.5rem;
+            font-size: 0.75rem;
+            color: #4a6f8f;
+            border-top: 1px solid #cbdbe2;
+            padding-top: 1.5rem;
+        }
+        @media (max-width: 980px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            body {
+                padding: 1rem;
+            }
+            .btn {
+                padding: 8px 18px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="header">
+        <h1><i class="fas fa-church"></i> Reporte Visual de Crecimiento</h1>
+        <p>Discipulado · aprendizaje · nuevos creyentes · multiplicación de discipuladores</p>
+    </div>
+
+    <!-- Tarjetas resumen (KPIs SIN iconos) -->
+    <div class="kpi-grid" id="kpiContainer">
+        <div class="kpi-card">
+            <div class="kpi-label">NUEVOS CREYENTES (AÑO)</div>
+            <div class="kpi-value" id="totalNewBelievers">0</div>
+            <div class="kpi-trend">+ crecimiento anual</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">NUEVOS DISCIPULADORES</div>
+            <div class="kpi-value" id="totalNewDisciplers">0</div>
+            <div class="kpi-trend">multiplicadores formados</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">NIVEL APRENDIZAJE PROM.</div>
+            <div class="kpi-value" id="avgLearning">0<span style="font-size:1rem;">%</span></div>
+            <div class="kpi-trend">comprensión bíblica</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">MIEMBROS ACTIVOS (DIC)</div>
+            <div class="kpi-value" id="totalMembersDec">0</div>
+            <div class="kpi-trend">crecimiento acumulado</div>
+        </div>
+    </div>
+
+    <!-- FILA: 3 gráficos principales en una misma línea -->
+    <div class="charts-row">
+        <div class="chart-card">
+            <h3><i class="fas fa-people-arrows"></i> Nuevos Creyentes & Discipuladores</h3>
+            <canvas id="chartCreyentesDiscipuladores" width="400" height="280" style="max-height: 280px;"></canvas>
+            <p style="font-size: 0.7rem; color: #3c6e8f; text-align:center; margin-top: 8px;">📈 Evolución mensual comparada</p>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-graduation-cap"></i> Nivel de Aprendizaje (%)</h3>
+            <canvas id="chartAprendizaje" width="400" height="280" style="max-height: 280px;"></canvas>
+            <p style="font-size: 0.7rem; color: #3c6e8f; text-align:center; margin-top: 8px;">📊 Dominio de principios del discipulado</p>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-tree"></i> Crecimiento Total de Miembros</h3>
+            <canvas id="chartCrecimiento" width="400" height="280" style="max-height: 280px;"></canvas>
+            <p style="font-size: 0.7rem; color: #3c6e8f; text-align:center; margin-top: 8px;">🌱 Iglesia local · acumulado mes a mes</p>
+        </div>
+    </div>
+
+    <!-- CUARTO GRÁFICO: exclusivo de Nuevos Creyentes (ancho completo) -->
+    <div class="full-width-chart">
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-simple"></i> Evolución Lineal de Nuevos Creyentes (mensual)</h3>
+            <canvas id="chartNuevosCreyentesOnly" width="400" height="280" style="max-height: 300px;"></canvas>
+            <p style="font-size: 0.7rem; color: #3c6e8f; text-align:center; margin-top: 8px;">📊 Crecimiento específico de almas alcanzadas mes a mes</p>
+        </div>
+    </div>
+
+    <!-- Botones de control -->
+    <div class="action-bar">
+        <button class="btn" id="resetDataBtn"><i class="fas fa-database"></i> Datos base (2024)</button>
+        <button class="btn btn-secondary" id="randomGrowthBtn"><i class="fas fa-chart-simple"></i> Simular crecimiento 2025</button>
+        <button class="btn btn-secondary" id="refreshViewBtn"><i class="fas fa-sync-alt"></i> Refrescar gráficos</button>
+    </div>
+
+    <!-- Tabla detallada mensual -->
+    <div class="data-table-section">
+        <h3><i class="fas fa-table-list"></i> Seguimiento mensual detallado</h3>
+        <div style="overflow-x: auto;">
+            <table id="monthlyTable">
+                <thead>
+                    <tr><th>Mes</th><th>Nuevos Creyentes</th><th>Nuevos Discipuladores</th><th>Nivel Aprendizaje (%)</th><th>Total Miembros (fin de mes)</th></tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- JS llena dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <footer>
+        <i class="fas fa-chart-line"></i> Reporte de discipulado · visualización de crecimiento y aprendizaje · cada dato refleja el avance del Reino
+    </footer>
+</div>
+
+<script>
+    // --------------------- DATOS INICIALES (BASE 2024) -------------------------
+    const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    
+    // Datos base con crecimiento claro y aprendizaje ascendente
+    let defaultData = {
+        nuevosCreyentes: [5, 8, 12, 15, 20, 25, 30, 28, 35, 40, 45, 50],
+        nuevosDiscipuladores: [1, 2, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12],
+        nivelAprendizaje: [45, 50, 55, 60, 65, 70, 75, 78, 80, 85, 88, 92],
+    };
+    
+    // Calcular total miembros acumulados (base inicial 100 en enero)
+    function calcularTotalMiembros(nuevosCreyentesArr) {
+        let acumulado = 100;
+        let totals = [];
+        for (let i = 0; i < nuevosCreyentesArr.length; i++) {
+            acumulado += nuevosCreyentesArr[i];
+            totals.push(acumulado);
+        }
+        return totals;
+    }
+    
+    // Estado actual
+    let currentData = {
+        nuevosCreyentes: [...defaultData.nuevosCreyentes],
+        nuevosDiscipuladores: [...defaultData.nuevosDiscipuladores],
+        nivelAprendizaje: [...defaultData.nivelAprendizaje],
+        totalMiembros: calcularTotalMiembros(defaultData.nuevosCreyentes)
+    };
+    
+    // Referencias a gráficos
+    let chartCreyDisc = null;
+    let chartAprend = null;
+    let chartGrowth = null;
+    let chartNuevosCreyentesOnly = null;
+    
+    function updateAllDashboard() {
+        // recalcular total miembros
+        currentData.totalMiembros = calcularTotalMiembros(currentData.nuevosCreyentes);
+        
+        // KPIs
+        const totalCreyentesAnual = currentData.nuevosCreyentes.reduce((a,b) => a+b, 0);
+        const totalDiscipuladoresAnual = currentData.nuevosDiscipuladores.reduce((a,b) => a+b, 0);
+        const promedioAprendizaje = (currentData.nivelAprendizaje.reduce((a,b) => a+b,0) / 12).toFixed(1);
+        const miembrosFinDic = currentData.totalMiembros[11];
+        
+        document.getElementById('totalNewBelievers').innerText = totalCreyentesAnual;
+        document.getElementById('totalNewDisciplers').innerText = totalDiscipuladoresAnual;
+        document.getElementById('avgLearning').innerHTML = promedioAprendizaje + '<span style="font-size:1rem;">%</span>';
+        document.getElementById('totalMembersDec').innerText = miembrosFinDic;
+        
+        // Tabla mensual
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+        for (let i = 0; i < meses.length; i++) {
+            const row = tbody.insertRow();
+            row.insertCell(0).innerHTML = `<span class="month-name">${meses[i]}</span>`;
+            row.insertCell(1).innerText = currentData.nuevosCreyentes[i];
+            row.insertCell(2).innerText = currentData.nuevosDiscipuladores[i];
+            row.insertCell(3).innerText = currentData.nivelAprendizaje[i] + '%';
+            row.insertCell(4).innerText = currentData.totalMiembros[i];
+        }
+        
+        // Destruir gráficos viejos
+        if (chartCreyDisc) chartCreyDisc.destroy();
+        if (chartAprend) chartAprend.destroy();
+        if (chartGrowth) chartGrowth.destroy();
+        if (chartNuevosCreyentesOnly) chartNuevosCreyentesOnly.destroy();
+        
+        renderCharts();
+    }
+    
+    function renderCharts() {
+        const ctx1 = document.getElementById('chartCreyentesDiscipuladores').getContext('2d');
+        const ctx2 = document.getElementById('chartAprendizaje').getContext('2d');
+        const ctx3 = document.getElementById('chartCrecimiento').getContext('2d');
+        const ctx4 = document.getElementById('chartNuevosCreyentesOnly').getContext('2d');
+        
+        // Gráfico 1: Nuevos Creyentes y Discipuladores
+        chartCreyDisc = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: meses,
+                datasets: [
+                    {
+                        label: '👥 Nuevos Creyentes',
+                        data: currentData.nuevosCreyentes,
+                        borderColor: '#0a2f44',
+                        backgroundColor: 'rgba(10, 47, 68, 0.05)',
+                        borderWidth: 3,
+                        tension: 0.2,
+                        fill: false,
+                        pointBackgroundColor: '#0a2f44',
+                        pointBorderColor: '#ffffff',
+                        pointRadius: 4,
+                        pointHoverRadius: 7,
+                    },
+                    {
+                        label: '🕊️ Nuevos Discipuladores',
+                        data: currentData.nuevosDiscipuladores,
+                        borderColor: '#2c7a5e',
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        tension: 0.2,
+                        fill: false,
+                        pointBackgroundColor: '#2c7a5e',
+                        pointBorderColor: '#ffffff',
+                        pointRadius: 4,
+                        pointHoverRadius: 7,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    tooltip: { mode: 'index', intersect: false },
+                    legend: { position: 'top', labels: { color: '#0a2f44', font: { weight: 'bold' } } }
+                },
+                scales: {
+                    y: { 
+                        title: { display: true, text: 'Cantidad de personas', color: '#0a2f44' },
+                        grid: { color: '#e2e8f0' },
+                        ticks: { color: '#1e4a6b' }
+                    },
+                    x: { ticks: { color: '#0a2f44', font: { weight: '500' } }, grid: { display: false } }
+                }
+            }
+        });
+        
+        // Gráfico 2: Nivel de Aprendizaje
+        chartAprend = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: meses,
+                datasets: [
+                    {
+                        label: '📖 Nivel de Aprendizaje (%)',
+                        data: currentData.nivelAprendizaje,
+                        borderColor: '#1e6f5c',
+                        backgroundColor: 'rgba(30, 111, 92, 0.08)',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: '#1e6f5c',
+                        pointBorderColor: '#f0f4f8',
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: { callbacks: { label: (ctx) => `${ctx.raw}% de dominio` } },
+                    legend: { labels: { color: '#0a2f44' } }
+                },
+                scales: {
+                    y: { 
+                        min: 30, max: 100,
+                        title: { display: true, text: 'Porcentaje de aprendizaje', color: '#0a2f44' },
+                        ticks: { callback: (val) => val + '%', color: '#1e4a6b' }
+                    },
+                    x: { ticks: { color: '#0a2f44' } }
+                }
+            }
+        });
+        
+        // Gráfico 3: Crecimiento total de miembros
+        chartGrowth = new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: meses,
+                datasets: [
+                    {
+                        label: '🏛️ Total de Miembros Activos',
+                        data: currentData.totalMiembros,
+                        borderColor: '#0f4c5f',
+                        backgroundColor: 'rgba(15, 76, 95, 0.05)',
+                        borderWidth: 3,
+                        tension: 0.2,
+                        fill: true,
+                        pointBackgroundColor: '#0f4c5f',
+                        pointBorderColor: '#ffffff',
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: { callbacks: { label: (ctx) => `${ctx.raw} miembros` } },
+                    legend: { labels: { color: '#0a2f44' } }
+                },
+                scales: {
+                    y: { 
+                        title: { display: true, text: 'Número de miembros', color: '#0a2f44' },
+                        grid: { color: '#e0e7ef' },
+                        ticks: { color: '#1e4a6b' }
+                    },
+                    x: { ticks: { color: '#0a2f44' } }
+                }
+            }
+        });
+        
+        // Gráfico 4: Solo Nuevos Creyentes (línea única)
+        chartNuevosCreyentesOnly = new Chart(ctx4, {
+            type: 'line',
+            data: {
+                labels: meses,
+                datasets: [
+                    {
+                        label: '✝️ Nuevos Creyentes por Mes',
+                        data: currentData.nuevosCreyentes,
+                        borderColor: '#0a2f44',
+                        backgroundColor: 'rgba(10, 47, 68, 0.1)',
+                        borderWidth: 4,
+                        tension: 0.25,
+                        fill: true,
+                        pointBackgroundColor: '#0a2f44',
+                        pointBorderColor: '#ffffff',
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    tooltip: { callbacks: { label: (ctx) => `${ctx.raw} nuevos creyentes` } },
+                    legend: { position: 'top', labels: { color: '#0a2f44', font: { weight: 'bold' } } }
+                },
+                scales: {
+                    y: { 
+                        title: { display: true, text: 'Cantidad de nuevos creyentes', color: '#0a2f44' },
+                        grid: { color: '#e2e8f0' },
+                        ticks: { color: '#1e4a6b', stepSize: 5, beginAtZero: true }
+                    },
+                    x: { ticks: { color: '#0a2f44', font: { weight: '500' } }, grid: { display: false } }
+                }
+            }
+        });
+    }
+    
+    // Restaurar datos base
+    function resetToBaseData() {
+        currentData.nuevosCreyentes = [...defaultData.nuevosCreyentes];
+        currentData.nuevosDiscipuladores = [...defaultData.nuevosDiscipuladores];
+        currentData.nivelAprendizaje = [...defaultData.nivelAprendizaje];
+        currentData.totalMiembros = calcularTotalMiembros(currentData.nuevosCreyentes);
+        updateAllDashboard();
+    }
+    
+    // Simular crecimiento para un nuevo año
+    function generateRandomGrowthData() {
+        let newBelievers = [];
+        let base = 4;
+        for (let i = 0; i < 12; i++) {
+            let incremento = Math.floor(Math.random() * 7) + 2;
+            if (i >= 3 && i <= 7) incremento += Math.floor(Math.random() * 4);
+            if (i > 8) incremento += 1;
+            base = Math.min(base + incremento, 68);
+            let val = Math.floor(base + (Math.random() * 4 - 2));
+            val = Math.max(3, val);
+            newBelievers.push(val);
+        }
+        for (let i = 1; i < newBelievers.length; i++) {
+            if (newBelievers[i] < newBelievers[i-1] && (newBelievers[i-1] - newBelievers[i]) > 4) {
+                newBelievers[i] = newBelievers[i-1] - 2;
+            }
+        }
+        
+        let newDisciplers = [];
+        for (let i = 0; i < 12; i++) {
+            let ratio = 0.2 + (Math.random() * 0.18);
+            let raw = Math.floor(newBelievers[i] * ratio);
+            raw = Math.max(1, Math.min(raw, 14));
+            if (i > 0 && raw < newDisciplers[i-1] && (newDisciplers[i-1] - raw) > 3) raw = newDisciplers[i-1] - 1;
+            newDisciplers.push(raw);
+        }
+        
+        let learning = [];
+        let startLearn = 42 + Math.floor(Math.random() * 7);
+        for (let i = 0; i < 12; i++) {
+            let step = (i * 3.8) + (Math.random() * 4.5);
+            let val = Math.min(96, Math.floor(startLearn + step));
+            if (val < 38) val = 38 + i;
+            if (val > 97) val = 96;
+            learning.push(val);
+        }
+        for (let i = 1; i < learning.length; i++) {
+            if (learning[i] < learning[i-1] && (learning[i-1] - learning[i]) > 5) learning[i] = learning[i-1] - 1;
+        }
+        
+        currentData.nuevosCreyentes = newBelievers;
+        currentData.nuevosDiscipuladores = newDisciplers;
+        currentData.nivelAprendizaje = learning;
+        currentData.totalMiembros = calcularTotalMiembros(currentData.nuevosCreyentes);
+        updateAllDashboard();
+    }
+    
+    function refreshChartsOnly() {
+        updateAllDashboard();
+    }
+    
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', () => {
+        currentData.totalMiembros = calcularTotalMiembros(currentData.nuevosCreyentes);
+        updateAllDashboard();
+        
+        document.getElementById('resetDataBtn').addEventListener('click', resetToBaseData);
+        document.getElementById('randomGrowthBtn').addEventListener('click', generateRandomGrowthData);
+        document.getElementById('refreshViewBtn').addEventListener('click', refreshChartsOnly);
+    });
+</script>
+</body>
+</html>
