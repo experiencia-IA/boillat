@@ -483,77 +483,132 @@
         .hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- RESPONSIVE: MÓVIL --- */
+        /* --- RESPONSIVE: MÓVIL SIN DESPLAZAMIENTO (TODO VISIBLE) --- */
         @media (max-width: 768px) {
+            body {
+                height: 100dvh;
+                overflow: hidden;
+            }
+            #content-area {
+                overflow: hidden;
+                padding: 8px 16px;
+                min-height: 0;
+            }
+            /* Vista de inicio: centrada y sin desborde */
+            #view-home {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                height: calc(100dvh - 70px);
+                max-height: calc(100dvh - 70px);
+                overflow: hidden;
+            }
+            /* Ajustes de tamaño para que todo quepa */
+            .image-glass-frame {
+                margin-bottom: 6px;
+                padding: 5px;
+            }
+            .welcome-image {
+                max-width: 180px;
+                max-height: 90px;
+            }
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 6px;
+            }
+            #view-home p {
+                font-size: 0.85rem;
+                margin-bottom: 4px;
+            }
+            .glass-container {
+                margin-top: 8px;
+                padding: 12px 10px;
+            }
+            .verse-text {
+                font-size: 0.75rem;
+                line-height: 1.35;
+            }
+            .verse-reference {
+                margin-top: 8px;
+                padding-top: 6px;
+                font-size: 0.7rem;
+            }
+            /* Vistas con iframe: ocupan el espacio restante sin scroll externo */
+            #view-tabla, #view-pastoral, #view-discipuladores, #view-agenda, #view-reporte {
+                height: calc(100dvh - 70px);
+                max-height: calc(100dvh - 70px);
+            }
+            #view-tabla iframe,
+            #view-pastoral iframe,
+            #view-discipuladores iframe,
+            #view-agenda iframe,
+            #view-reporte iframe {
+                flex: 1;
+                height: 100%;
+                border-radius: 12px;
+            }
+            /* Ajustes de textos del footer en móvil */
             .brand-text, .slogan-text {
                 display: none;
             }
             .mobile-brand {
                 display: inline-block;
+                font-size: 0.7rem;
             }
             .info-text {
-                margin-left: 10px;
+                margin-left: 8px;
                 white-space: nowrap;
             }
-            .verse-text {
-                font-size: 0.9rem;
-            }
-            .verse-reference {
-                font-size: 0.85rem;
-                margin-top: 18px;
-                padding-top: 14px;
-            }
             .version-link {
-                font-size: 0.75rem;
+                font-size: 0.7rem;
                 padding: 4px 8px;
             }
             .right-group {
-                gap: 8px;
+                gap: 6px;
             }
             .info-tooltip {
-                width: 160px;
-                padding: 8px 10px;
-                right: -10px;
+                width: 150px;
+                padding: 6px 8px;
+                right: -5px;
+                font-size: 0.7rem;
             }
             .info-tooltip::after {
-                right: 18px;
+                right: 15px;
             }
-            #view-tabla iframe,
-            #view-pastoral iframe,
-            #view-discipuladores iframe,
-            #view-agenda iframe,
-            #view-reporte iframe {
-                border-radius: 12px;
+            .bottom-panel {
+                padding: 0 12px;
+                height: 70px;
+            }
+            .btn-globo {
+                width: 44px;
+                height: 44px;
+            }
+            .icon-door {
+                width: 24px;
+                height: 24px;
             }
         }
 
         @media (max-width: 480px) {
             .mobile-brand {
-                font-size: 0.75rem;
+                font-size: 0.65rem;
             }
-            .bottom-panel {
-                padding: 0 12px;
+            .welcome-image {
+                max-width: 150px;
+                max-height: 75px;
             }
-            .info-text {
-                margin-left: 8px;
+            h1 {
+                font-size: 1.6rem;
             }
-            .glass-container {
-                padding: 16px 12px;
+            .verse-text {
+                font-size: 0.7rem;
             }
             .version-link {
-                font-size: 0.7rem;
+                font-size: 0.65rem;
             }
             .info-tooltip {
-                width: 145px;
-                font-size: 0.7rem;
-                right: -5px;
-            }
-            #view-tabla iframe,
-            #view-pastoral iframe,
-            #view-discipuladores iframe,
-            #view-agenda iframe,
-            #view-reporte iframe {
-                border-radius: 8px;
+                width: 135px;
+                font-size: 0.65rem;
             }
         }
     </style>
