@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AppSistemaRed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AppSistemaRed - Gestión Integral</title>
     <style>
         :root {
             --azul-oscuro: #0a192f;
@@ -49,6 +49,23 @@
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
+        }
+
+        /* Estilos específicos para la vista de Tabla (iframe) */
+        #view-tabla {
+            padding: 0 !important;
+            height: 100%;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        #view-tabla iframe {
+            width: 100%;
+            flex: 1;
+            border: none;
+            border-radius: 16px;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
         h1 {
@@ -428,6 +445,9 @@
             .info-tooltip::after {
                 right: 18px;
             }
+            #view-tabla iframe {
+                border-radius: 12px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -454,6 +474,9 @@
                 font-size: 0.7rem;
                 right: -5px;
             }
+            #view-tabla iframe {
+                border-radius: 8px;
+            }
         }
     </style>
 </head>
@@ -470,12 +493,18 @@
                 <div class="verse-reference">Mateo 28:19-20</div>
             </div>
         </div>
-        <div id="view-tabla" class="view-section hidden"><h1>Tabla de Registros</h1></div>
-        <div id="view-pastoral" class="view-section hidden"><h1>Red Pastoral</h1></div>
-        <div id="view-discipuladores" class="view-section hidden"><h1>Red Discipuladores</h1></div>
-        <div id="view-material" class="view-section hidden"><h1>Material de Red</h1></div>
-        <div id="view-agenda" class="view-section hidden"><h1>Agenda</h1></div>
-        <div id="view-reporte" class="view-section hidden"><h1>Reporte Visual</h1></div>
+        
+        <!-- Vista Tabla de Registros: ahora con iframe que carga la URL externa -->
+        <div id="view-tabla" class="view-section hidden">
+            <iframe src="https://experiencia-ia.github.io/boillat/tabladatos.html" title="Tabla de Registros - Sistema de Red" loading="lazy"></iframe>
+        </div>
+        
+        <!-- Resto de vistas estáticas (sin cambios funcionales) -->
+        <div id="view-pastoral" class="view-section hidden"><h1>Red Pastoral</h1><p>Contenido en desarrollo para la gestión pastoral.</p></div>
+        <div id="view-discipuladores" class="view-section hidden"><h1>Red Discipuladores</h1><p>Estructura y seguimiento de discipuladores activos.</p></div>
+        <div id="view-material" class="view-section hidden"><h1>Material de Red</h1><p>Recursos, manuales y guías para el crecimiento.</p></div>
+        <div id="view-agenda" class="view-section hidden"><h1>Agenda</h1><p>Próximos eventos, reuniones y fechas clave.</p></div>
+        <div id="view-reporte" class="view-section hidden"><h1>Reporte Visual</h1><p>Estadísticas y métricas del ministerio en red.</p></div>
     </main>
 
     <div id="menu-overlay">
@@ -525,7 +554,7 @@
     </div>
 
     <script>
-        // Elementos
+        // Elementos y lógica de tooltip (sin cambios)
         const versionLink = document.getElementById('versionLink');
         let tooltipElement = null;
         let timeoutId = null;
@@ -542,10 +571,7 @@
         }
 
         function showInfoTooltip(event) {
-            // Eliminar tooltip existente si lo hay
             removeTooltip();
-
-            // Crear nuevo tooltip
             tooltipElement = document.createElement('div');
             tooltipElement.className = 'info-tooltip';
             tooltipElement.innerHTML = `
@@ -553,51 +579,53 @@
                 <p><span class="bold">V.1.0.2026</span></p>
             `;
             
-            // Posicionar relativo al .right-group que contiene el enlace
             const rightGroup = document.querySelector('.right-group');
             if (rightGroup) {
-                // Asegurar que el contenedor tenga position relative (ya lo tiene por .right-group)
                 rightGroup.style.position = 'relative';
                 rightGroup.appendChild(tooltipElement);
             } else {
-                // Fallback: adjuntar al body y posicionar absoluto
                 document.body.appendChild(tooltipElement);
                 const rect = versionLink.getBoundingClientRect();
                 tooltipElement.style.position = 'fixed';
                 tooltipElement.style.bottom = (window.innerHeight - rect.top + 8) + 'px';
                 tooltipElement.style.right = (window.innerWidth - rect.right + 5) + 'px';
             }
-
-            // Auto-cerrar después de 5 segundos
             timeoutId = setTimeout(() => {
                 removeTooltip();
             }, 5000);
         }
 
-        // Evento click en "Versión Digital"
         versionLink.addEventListener('click', (e) => {
-            e.stopPropagation(); // Evitar que el clic se propague al panel inferior
+            e.stopPropagation();
             showInfoTooltip(e);
         });
 
-        // Cerrar tooltip si se hace clic fuera (opcional, pero no interfiere)
         document.addEventListener('click', function(e) {
             if (tooltipElement && !versionLink.contains(e.target) && !tooltipElement.contains(e.target)) {
                 removeTooltip();
             }
         });
 
-        // Funciones existentes
+        // Funciones de navegación y menú (se mantiene exacta la lógica original)
         function toggleMenu() {
             const menu = document.getElementById('menu-overlay');
             menu.classList.toggle('active');
         }
 
         function navigate(viewId) {
+            // Ocultar todas las secciones
             document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
             const target = document.getElementById('view-' + viewId);
             if(target) target.classList.remove('hidden');
-            toggleMenu();
+            
+            // Cerrar el menú lateral después de la navegación
+            const menu = document.getElementById('menu-overlay');
+            if (menu.classList.contains('active')) {
+                menu.classList.remove('active');
+            }
+            
+            // Pequeño ajuste: si la vista es 'tabla', aseguramos que el iframe tenga el espacio adecuado
+            // (No requiere acción adicional, el CSS ya lo maneja)
         }
 
         function goToHome() {
@@ -607,6 +635,7 @@
             if (menu.classList.contains('active')) {
                 menu.classList.remove('active');
             }
+            removeTooltip(); // también cierra tooltip si estaba abierto
         }
 
         function openModal() {
@@ -621,7 +650,7 @@
             window.location.href = 'index.html'; 
         }
 
-        // Clic en panel inferior (zona libre) regresa a home
+        // Clic en panel inferior (zona libre) regresa a home, excepto si se hizo clic en elementos interactivos
         const bottomPanel = document.querySelector('.bottom-panel');
         bottomPanel.addEventListener('click', (event) => {
             const btnGlobo = document.querySelector('.btn-globo');
@@ -637,12 +666,16 @@
             goToHome();
         });
 
+        // Clic en el área principal cierra el menú y tooltips
         document.getElementById('content-area').addEventListener('click', () => {
-            document.getElementById('menu-overlay').classList.remove('active');
-            removeTooltip(); // También cerrar tooltip si está abierto
+            const menu = document.getElementById('menu-overlay');
+            if (menu.classList.contains('active')) {
+                menu.classList.remove('active');
+            }
+            removeTooltip();
         });
 
-        // Cerrar modales al hacer clic fuera
+        // Cerrar modal de salida al hacer clic fuera
         window.onclick = function(event) {
             const exitModal = document.getElementById('exit-modal');
             if (event.target === exitModal) {
