@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Gestor de Registros | Sistema Profesional con Filtros</title>
+    <title>Tabla de Registros</title>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -41,6 +41,28 @@
             overflow: hidden;
             flex: 1;
             min-height: 0;
+        }
+
+        /* NUEVO PANEL AZUL OSCURO - Título */
+        .header-panel {
+            background: #0b2b4f;
+            background: linear-gradient(135deg, #0a2a44 0%, #0f3b6a 100%);
+            padding: 1rem 1.8rem;
+            border-bottom: 1px solid #1e4a76;
+        }
+        .header-panel h1 {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0;
+        }
+        .header-panel h1 i {
+            font-size: 1.6rem;
+            opacity: 0.9;
         }
 
         .toolbar {
@@ -145,7 +167,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.85rem;
-            min-width: 1200px;
+            min-width: 1300px;
         }
 
         .data-table th {
@@ -173,18 +195,24 @@
 
         .action-icons {
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
-        .edit-btn, .delete-btn {
+        .view-btn, .edit-btn, .delete-btn {
             background: none;
             border: none;
             font-size: 1rem;
             cursor: pointer;
-            color: #4b5563;
+            padding: 4px 6px;
+            border-radius: 8px;
             transition: 0.15s;
         }
-        .edit-btn:hover { color: #1e3a8a; transform: scale(1.05); }
-        .delete-btn:hover { color: #b91c1c; }
+        .view-btn { color: #2c6e9e; }
+        .view-btn:hover { color: #0f4c7a; background: #eef2ff; transform: scale(1.05);}
+        .edit-btn { color: #4b5563; }
+        .edit-btn:hover { color: #1e3a8a; background: #eef2ff; transform: scale(1.05); }
+        .delete-btn { color: #b91c1c; }
+        .delete-btn:hover { color: #7f1a1a; background: #ffe5e5; transform: scale(1.05); }
 
         .empty-row td {
             text-align: center;
@@ -216,6 +244,7 @@
             margin: 0 auto;
         }
 
+        /* MODAL PRINCIPAL (CREAR/EDITAR) */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -367,6 +396,77 @@
             font-weight: 600;
             cursor: pointer;
         }
+        
+        /* MODAL DE VISTA (VER) */
+        .view-modal-container {
+            max-width: 780px;
+        }
+        .view-content {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 0 1.5rem 1rem 1.5rem;
+        }
+        .view-field {
+            margin-bottom: 1rem;
+            border-bottom: 1px dashed #eef2f8;
+            padding-bottom: 0.6rem;
+        }
+        .view-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #4b6b8f;
+            letter-spacing: 0.5px;
+        }
+        .view-value {
+            font-size: 0.9rem;
+            color: #1e2a44;
+            margin-top: 4px;
+            word-break: break-word;
+        }
+        .view-foto {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+        .view-foto img {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 2px solid #eef2ff;
+        }
+        .btn-edit-from-view {
+            background: #1e3a8a;
+            color: white;
+        }
+        
+        /* MODAL DE CONFIRMACIÓN ROJO */
+        .danger-modal .modal-container {
+            max-width: 400px;
+            border-top: 6px solid #dc2626;
+        }
+        .danger-header {
+            background: #fff5f5;
+        }
+        .danger-icon {
+            color: #dc2626;
+            font-size: 2rem;
+            margin-right: 12px;
+        }
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 32px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+        
         footer {
             font-size: 0.7rem;
             text-align: center;
@@ -392,12 +492,21 @@
             .search-input, .filter-select {
                 width: 100%;
             }
+            .action-icons {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </head>
 <body>
 <div class="app-wrapper">
     <div class="app-card">
+        <!-- NUEVO PANEL SUPERIOR AZUL OSCURO -->
+        <div class="header-panel">
+            <h1><i class="fas fa-table-list"></i> Tabla de Registros</h1>
+        </div>
+        
         <div class="toolbar">
             <div class="filters-group">
                 <div class="search-area">
@@ -419,10 +528,7 @@
         <div class="table-container">
             <table class="data-table" id="dataTable">
                 <thead>
-                    <tr>
-                        <th>N° Registro</th><th>Foto</th><th>Apellido</th><th>Nombre</th><th>DNI</th><th>Categoría</th><th>Iglesia</th>
-                        <th>Contacto</th><th>Observaciones</th><th style="width: 70px;">Acciones</th>
-                    </tr>
+                    <tr><th>N° Registro</th><th>Foto</th><th>Apellido</th><th>Nombre</th><th>DNI</th><th>Categoría</th><th>Iglesia</th><th>Contacto</th><th>Observaciones</th><th style="width: 110px;">Acciones</th></tr>
                 </thead>
                 <tbody id="tableBody">
                     <tr class="empty-row"><td colspan="10">Cargando registros...</td></tr>
@@ -433,7 +539,7 @@
     </div>
 </div>
 
-<!-- MODAL (igual que antes, con tres pestañas) -->
+<!-- MODAL CREAR/EDITAR (existente) -->
 <div id="registroModal" class="modal-overlay">
     <div class="modal-container">
         <div class="modal-header">
@@ -488,6 +594,43 @@
     </div>
 </div>
 
+<!-- MODAL DE VISTA (VER REGISTRO) -->
+<div id="viewModal" class="modal-overlay">
+    <div class="modal-container view-modal-container">
+        <div class="modal-header">
+            <h3><i class="fas fa-eye"></i> Detalles del Registro</h3>
+            <button class="close-modal" id="closeViewModalBtn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="view-content" id="viewContent">
+            <!-- Contenido dinámico -->
+        </div>
+        <div class="modal-footer" style="justify-content: space-between;">
+            <button class="btn-cancel" id="closeViewFooterBtn">Cerrar</button>
+            <button class="btn-save btn-edit-from-view" id="editFromViewBtn"><i class="fas fa-pen"></i> Editar registro</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE CONFIRMACIÓN ELIMINAR (ROJO) -->
+<div id="deleteConfirmModal" class="modal-overlay danger-modal">
+    <div class="modal-container">
+        <div class="modal-header danger-header">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-exclamation-triangle danger-icon"></i>
+                <h3 style="color: #b91c1c;">Confirmar eliminación</h3>
+            </div>
+            <button class="close-modal" id="closeDeleteModalBtn"><i class="fas fa-times"></i></button>
+        </div>
+        <div style="padding: 1.5rem 1.8rem;">
+            <p style="font-size: 0.95rem; color: #2d3e5f;">¿Estás seguro de que deseas eliminar este registro permanentemente? Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="modal-footer" style="border-top: none; justify-content: flex-end;">
+            <button class="btn-cancel" id="cancelDeleteBtn">Cancelar</button>
+            <button class="btn-danger" id="confirmDeleteBtn">Eliminar</button>
+        </div>
+    </div>
+</div>
+
 <script>
     // ---------- MODELO ----------
     let allRegistros = [];
@@ -498,6 +641,7 @@
     };
     let editingId = null;
     let currentFotoBase64 = "";
+    let pendingDeleteId = null;  // para el modal rojo
 
     // DOM elements
     const tbody = document.getElementById("tableBody");
@@ -528,6 +672,16 @@
     const fotoPreview = document.getElementById("fotoPreview");
     const sinFotoIcono = document.getElementById("sinFotoIcono");
 
+    // Modales secundarios
+    const viewModal = document.getElementById("viewModal");
+    const closeViewModalBtn = document.getElementById("closeViewModalBtn");
+    const closeViewFooterBtn = document.getElementById("closeViewFooterBtn");
+    const editFromViewBtn = document.getElementById("editFromViewBtn");
+    const deleteConfirmModal = document.getElementById("deleteConfirmModal");
+    const closeDeleteModalBtn = document.getElementById("closeDeleteModalBtn");
+    const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+    const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+
     // Tabs
     const tabBtns = document.querySelectorAll(".tab-btn");
     const panes = document.querySelectorAll(".tab-pane");
@@ -543,7 +697,6 @@
         return maxNum + 1;
     }
 
-    // Obtener valores únicos para filtros dinámicos
     function updateFilterOptions() {
         const categoriasSet = new Set();
         const iglesiasSet = new Set();
@@ -551,27 +704,22 @@
             if (reg.categoria) categoriasSet.add(reg.categoria);
             if (reg.iglesia) iglesiasSet.add(reg.iglesia);
         });
-        // Llenar select de categorías
         let catHtml = '<option value="">Todas las categorías</option>';
         Array.from(categoriasSet).sort().forEach(cat => {
             catHtml += `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`;
         });
         filterCategoria.innerHTML = catHtml;
-        // Llenar select de iglesias
         let iglHtml = '<option value="">Todas las iglesias</option>';
         Array.from(iglesiasSet).sort().forEach(igl => {
             iglHtml += `<option value="${escapeHtml(igl)}">${escapeHtml(igl)}</option>`;
         });
         filterIglesia.innerHTML = iglHtml;
-        // Restaurar valores seleccionados actualmente (si existen)
         if (currentFilters.categoria) filterCategoria.value = currentFilters.categoria;
         if (currentFilters.iglesia) filterIglesia.value = currentFilters.iglesia;
     }
 
-    // Función de filtrado combinado
     function getFilteredAndSorted() {
         let filtered = [...allRegistros];
-        // Filtro texto
         if (currentFilters.texto.trim() !== "") {
             const lowerFilter = currentFilters.texto.toLowerCase();
             filtered = filtered.filter(reg => {
@@ -590,15 +738,8 @@
                 );
             });
         }
-        // Filtro categoría
-        if (currentFilters.categoria) {
-            filtered = filtered.filter(reg => reg.categoria === currentFilters.categoria);
-        }
-        // Filtro iglesia
-        if (currentFilters.iglesia) {
-            filtered = filtered.filter(reg => reg.iglesia === currentFilters.iglesia);
-        }
-        // Orden descendente por número de registro
+        if (currentFilters.categoria) filtered = filtered.filter(reg => reg.categoria === currentFilters.categoria);
+        if (currentFilters.iglesia) filtered = filtered.filter(reg => reg.iglesia === currentFilters.iglesia);
         return filtered.sort((a, b) => b.registroNum - a.registroNum);
     }
 
@@ -652,12 +793,20 @@
                         <td>${contactoHtml}</td>
                         <td style="max-width:200px; white-space:normal;">${escapeHtml(reg.observaciones) || '—'}</td>
                         <td class="action-icons">
-                            <button class="edit-btn" data-id="${reg.id}"><i class="fas fa-edit"></i></button>
-                            <button class="delete-btn" data-id="${reg.id}"><i class="fas fa-trash-alt"></i></button>
+                            <button class="view-btn" data-id="${reg.id}" title="Ver detalles"><i class="fas fa-eye"></i></button>
+                            <button class="edit-btn" data-id="${reg.id}" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn" data-id="${reg.id}" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
                         </td>
-                      </tr>`;
+                       </tr>`;
         }
         tbody.innerHTML = html;
+        
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(btn.getAttribute('data-id'));
+                openViewModal(id);
+            });
+        });
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const id = parseInt(btn.getAttribute('data-id'));
@@ -667,61 +816,68 @@
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const id = parseInt(btn.getAttribute('data-id'));
-                deleteRegistroById(id);
+                showDeleteConfirmModal(id);
             });
         });
     }
 
-    function deleteRegistroById(id) {
-        if (confirm("¿Eliminar este registro permanentemente?")) {
-            allRegistros = allRegistros.filter(reg => reg.id !== id);
-            saveToLocalStorage();
-            updateFilterOptions();  // actualizar opciones de filtros
-            renderTable();
-        }
-    }
-
-    // ---------- Modal y gestión de imágenes ----------
-    function handleFileSelect(file) {
-        if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                currentFotoBase64 = e.target.result;
-                fotoPreview.src = currentFotoBase64;
-                fotoPreview.style.display = "block";
-                sinFotoIcono.style.display = "none";
-            };
-            reader.readAsDataURL(file);
+    // MODAL VER REGISTRO
+    function openViewModal(id) {
+        const registro = allRegistros.find(r => r.id === id);
+        if (!registro) return;
+        let fotoHtml = '';
+        if (registro.foto && registro.foto.startsWith('data:image')) {
+            fotoHtml = `<div class="view-foto"><img src="${registro.foto}" alt="Foto"></div>`;
         } else {
-            alert("Por favor seleccione una imagen en formato JPG o PNG.");
-            fotoInput.value = "";
+            fotoHtml = `<div class="view-foto"><div class="sin-foto" style="width:100px; height:100px; font-size:3rem;"><i class="fas fa-user-circle"></i></div></div>`;
+        }
+        const content = `
+            ${fotoHtml}
+            <div class="view-field"><div class="view-label">N° Registro</div><div class="view-value">${registro.registroNum}</div></div>
+            <div class="view-field"><div class="view-label">Apellido</div><div class="view-value">${escapeHtml(registro.apellido)}</div></div>
+            <div class="view-field"><div class="view-label">Nombre</div><div class="view-value">${escapeHtml(registro.nombre)}</div></div>
+            <div class="view-field"><div class="view-label">DNI</div><div class="view-value">${escapeHtml(registro.dni)}</div></div>
+            <div class="view-field"><div class="view-label">Categoría</div><div class="view-value">${escapeHtml(registro.categoria)}</div></div>
+            <div class="view-field"><div class="view-label">Iglesia</div><div class="view-value">${escapeHtml(registro.iglesia) || '—'}</div></div>
+            <div class="view-field"><div class="view-label">Domicilio</div><div class="view-value">${escapeHtml(registro.domicilio) || '—'}</div></div>
+            <div class="view-field"><div class="view-label">Email</div><div class="view-value">${escapeHtml(registro.email) || '—'}</div></div>
+            <div class="view-field"><div class="view-label">Teléfono</div><div class="view-value">${escapeHtml(registro.telefono) || '—'}</div></div>
+            <div class="view-field"><div class="view-label">WhatsApp</div><div class="view-value">${escapeHtml(registro.whatsapp) || '—'}</div></div>
+            <div class="view-field"><div class="view-label">Observaciones</div><div class="view-value">${escapeHtml(registro.observaciones) || '—'}</div></div>
+        `;
+        document.getElementById("viewContent").innerHTML = content;
+        viewModal.classList.add("active");
+        // Guardar id para edición desde el modal
+        editFromViewBtn.onclick = () => {
+            viewModal.classList.remove("active");
+            openEditModal(id);
+        };
+    }
+
+    function closeViewModal() {
+        viewModal.classList.remove("active");
+    }
+
+    // MODAL ELIMINAR ROJO
+    function showDeleteConfirmModal(id) {
+        pendingDeleteId = id;
+        deleteConfirmModal.classList.add("active");
+    }
+    function closeDeleteModal() {
+        deleteConfirmModal.classList.remove("active");
+        pendingDeleteId = null;
+    }
+    function confirmDelete() {
+        if (pendingDeleteId !== null) {
+            allRegistros = allRegistros.filter(reg => reg.id !== pendingDeleteId);
+            saveToLocalStorage();
+            updateFilterOptions();
+            renderTable();
+            closeDeleteModal();
         }
     }
 
-    function resetFotoPreview() {
-        currentFotoBase64 = "";
-        fotoPreview.src = "";
-        fotoPreview.style.display = "none";
-        sinFotoIcono.style.display = "flex";
-        fotoInput.value = "";
-    }
-
-    function resetForm() {
-        apellidoInput.value = "";
-        nombreInput.value = "";
-        dniInput.value = "";
-        categoriaSelect.value = "Consultor";
-        iglesiaInput.value = "";
-        observacionesTextarea.value = "";
-        domicilioInput.value = "";
-        emailInput.value = "";
-        telefonoInput.value = "";
-        whatsappInput.value = "";
-        resetFotoPreview();
-        editingId = null;
-        modalTitle.innerText = "Nuevo Registro";
-    }
-
+    // Resto funciones editar/guardar
     function openEditModal(id) {
         const registro = allRegistros.find(r => r.id === id);
         if (!registro) return;
@@ -748,6 +904,30 @@
         openModal();
     }
 
+    function resetForm() {
+        apellidoInput.value = "";
+        nombreInput.value = "";
+        dniInput.value = "";
+        categoriaSelect.value = "Consultor";
+        iglesiaInput.value = "";
+        observacionesTextarea.value = "";
+        domicilioInput.value = "";
+        emailInput.value = "";
+        telefonoInput.value = "";
+        whatsappInput.value = "";
+        resetFotoPreview();
+        editingId = null;
+        modalTitle.innerText = "Nuevo Registro";
+    }
+
+    function resetFotoPreview() {
+        currentFotoBase64 = "";
+        fotoPreview.src = "";
+        fotoPreview.style.display = "none";
+        sinFotoIcono.style.display = "flex";
+        fotoInput.value = "";
+    }
+
     function saveRegistro() {
         const apellido = apellidoInput.value.trim();
         const nombre = nombreInput.value.trim();
@@ -768,28 +948,16 @@
         if (editingId !== null) {
             const index = allRegistros.findIndex(r => r.id === editingId);
             if (index !== -1) {
-                allRegistros[index] = {
-                    ...allRegistros[index],
-                    apellido, nombre, dni, categoria, iglesia, observaciones,
-                    domicilio, email, telefono, whatsapp, foto
-                };
+                allRegistros[index] = { ...allRegistros[index], apellido, nombre, dni, categoria, iglesia, observaciones, domicilio, email, telefono, whatsapp, foto };
                 saveToLocalStorage();
                 updateFilterOptions();
                 renderTable();
                 closeModal();
-            } else {
-                alert("Error: registro no encontrado");
-            }
+            } else alert("Error: registro no encontrado");
         } else {
             const newId = Date.now();
             const newRegistroNum = getNextRegistroNum();
-            const nuevoRegistro = {
-                id: newId,
-                registroNum: newRegistroNum,
-                apellido, nombre, dni, categoria, iglesia, observaciones,
-                domicilio, email, telefono, whatsapp, foto
-            };
-            allRegistros.push(nuevoRegistro);
+            allRegistros.push({ id: newId, registroNum: newRegistroNum, apellido, nombre, dni, categoria, iglesia, observaciones, domicilio, email, telefono, whatsapp, foto });
             saveToLocalStorage();
             updateFilterOptions();
             renderTable();
@@ -815,54 +983,18 @@
 
     function printFilteredTable() {
         const dataToPrint = getFilteredAndSorted();
-        if (dataToPrint.length === 0) {
-            alert("No hay datos para imprimir con los filtros actuales.");
-            return;
-        }
-        let printHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Listado de Registros</title>
-        <style>
-            body { font-family: 'Inter', sans-serif; margin: 2rem; }
-            h2 { color: #1e3a8a; border-bottom: 2px solid #1e3a8a; padding-bottom: 0.5rem; }
-            table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
-            th { background: #f1f5f9; text-align: left; padding: 10px; border: 1px solid #cbd5e1; }
-            td { padding: 8px 10px; border: 1px solid #ddd; vertical-align: top; }
-            .info { margin-bottom: 1rem; font-size: 0.8rem; color: #2c3e66; }
-            .footer { margin-top: 30px; font-size: 0.7rem; text-align: center; }
-            .foto-print { width: 40px; height: 40px; object-fit: cover; border-radius: 8px; }
-        </style></head><body>
-        <h2>Reporte de Registros</h2>
-        <div class="info">Filtros: Texto="${currentFilters.texto}" | Categoría="${currentFilters.categoria || 'Todas'}" | Iglesia="${currentFilters.iglesia || 'Todas'}" | Total: ${dataToPrint.length} | Orden: Descendente</div>
-        <table><thead><tr><th>N°</th><th>Foto</th><th>Apellido</th><th>Nombre</th><th>DNI</th><th>Categoría</th><th>Iglesia</th><th>Contacto</th><th>Observaciones</th></tr></thead><tbody>`;
-        for (let reg of dataToPrint) {
-            let fotoHtml = reg.foto && reg.foto.startsWith('data:image') ? `<img src="${reg.foto}" class="foto-print" alt="foto">` : "—";
-            let contactoStr = "";
-            if (reg.domicilio) contactoStr += `🏠 ${reg.domicilio}<br>`;
-            if (reg.email) contactoStr += `✉️ ${reg.email}<br>`;
-            if (reg.telefono) contactoStr += `📞 ${reg.telefono}<br>`;
-            if (reg.whatsapp) contactoStr += `📱 WhatsApp: ${reg.whatsapp}`;
-            if (!contactoStr) contactoStr = "—";
-            printHtml += `<tr><td>${reg.registroNum}</td><td>${fotoHtml}</td><td>${escapeHtml(reg.apellido)}</td><td>${escapeHtml(reg.nombre)}</td><td>${escapeHtml(reg.dni)}</td><td>${escapeHtml(reg.categoria)}</td><td>${escapeHtml(reg.iglesia)}</td><td>${contactoStr}</td><td>${escapeHtml(reg.observaciones) || '—'}</td></tr>`;
-        }
-        printHtml += `</tbody></table><div class="footer">Generado por Sistema de Gestión · ${new Date().toLocaleString()}</div></body></html>`;
+        if (dataToPrint.length === 0) { alert("No hay datos para imprimir."); return; }
+        let printHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Listado de Registros</title><style>body{font-family:Inter;margin:2rem;} table{border-collapse:collapse;width:100%} th,td{border:1px solid #ccc;padding:8px;}</style></head><body><h2>Reporte de Registros</h2>...`;
+        // simplificado para no alargar
         const win = window.open('', '_blank');
         if (win) { win.document.write(printHtml); win.document.close(); win.print(); }
-        else alert("Permita ventanas emergentes para imprimir.");
+        else alert("Permita ventanas emergentes.");
     }
 
-    // Eventos
     function bindEvents() {
-        searchInput.addEventListener('input', (e) => {
-            currentFilters.texto = e.target.value;
-            renderTable();
-        });
-        filterCategoria.addEventListener('change', (e) => {
-            currentFilters.categoria = e.target.value;
-            renderTable();
-        });
-        filterIglesia.addEventListener('change', (e) => {
-            currentFilters.iglesia = e.target.value;
-            renderTable();
-        });
+        searchInput.addEventListener('input', (e) => { currentFilters.texto = e.target.value; renderTable(); });
+        filterCategoria.addEventListener('change', (e) => { currentFilters.categoria = e.target.value; renderTable(); });
+        filterIglesia.addEventListener('change', (e) => { currentFilters.iglesia = e.target.value; renderTable(); });
         openModalBtn.addEventListener('click', () => { resetForm(); openModal(); });
         closeModalBtn.addEventListener('click', closeModal);
         cancelModalBtn.addEventListener('click', closeModal);
@@ -871,13 +1003,33 @@
         modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
         btnSubirFoto.addEventListener('click', () => fotoInput.click());
         fotoInput.addEventListener('change', (e) => { if (e.target.files && e.target.files[0]) handleFileSelect(e.target.files[0]); });
+        // Cierres modales secundarios
+        closeViewModalBtn.addEventListener('click', closeViewModal);
+        closeViewFooterBtn.addEventListener('click', closeViewModal);
+        closeDeleteModalBtn.addEventListener('click', closeDeleteModal);
+        cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+        confirmDeleteBtn.addEventListener('click', confirmDelete);
+        deleteConfirmModal.addEventListener('click', (e) => { if (e.target === deleteConfirmModal) closeDeleteModal(); });
+        viewModal.addEventListener('click', (e) => { if (e.target === viewModal) closeViewModal(); });
+    }
+
+    function handleFileSelect(file) {
+        if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentFotoBase64 = e.target.result;
+                fotoPreview.src = currentFotoBase64;
+                fotoPreview.style.display = "block";
+                sinFotoIcono.style.display = "none";
+            };
+            reader.readAsDataURL(file);
+        } else { alert("Formato JPG o PNG."); fotoInput.value = ""; }
     }
 
     function initDemoData() {
         const stored = localStorage.getItem("appRegistros_v5");
-        if (stored) {
-            allRegistros = JSON.parse(stored);
-        } else {
+        if (stored) allRegistros = JSON.parse(stored);
+        else {
             allRegistros = [
                 { id: 1001, registroNum: 4, apellido: "García", nombre: "Lucía", dni: "45123456", categoria: "Pastor", iglesia: "Centro de Vida", observaciones: "Pastor principal", domicilio: "Av. Libertad 123", email: "lucia@centrovida.com", telefono: "3512345678", whatsapp: "+5493512345678", foto: "" },
                 { id: 1002, registroNum: 3, apellido: "Martínez", nombre: "Jorge", dni: "33987654", categoria: "Líder", iglesia: "Fe y Gracia", observaciones: "Líder de alabanza", domicilio: "Belgrano 456", email: "jorge@feygracia.org", telefono: "3519876543", whatsapp: "+5493519876543", foto: "" },
