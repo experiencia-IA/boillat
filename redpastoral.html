@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Red Pastores de Argentina</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+      background: #f4f7fc;
+      color: #0a2a3b;
+      line-height: 1.4;
+    }
+
+    .app-header {
+      background: white;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #e2edf2;
+      text-align: center;
+    }
+
+    .app-header h1 {
+      font-weight: 600;
+      font-size: 1.8rem;
+      letter-spacing: -0.3px;
+      color: #0a2a3b;
+    }
+
+    .app-header p {
+      color: #2c5a6e;
+      margin-top: 0.4rem;
+      font-size: 0.95rem;
+    }
+
+    .provincias-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .prov-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.05);
+      padding: 1.2rem 1rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      border: 1px solid #e4edf0;
+      text-align: center;
+    }
+
+    .prov-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 28px -12px rgba(10, 42, 59, 0.15);
+      border-color: #cbdde4;
+    }
+
+    .prov-card.glass-card {
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(31, 99, 128, 0.3);
+      box-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.1);
+    }
+
+    .prov-card.glass-card:hover {
+      background: rgba(255, 255, 255, 0.65);
+      border-color: #1f6380;
+    }
+
+    .prov-card h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #0a2a3b;
+      margin-bottom: 0.3rem;
+    }
+
+    .prov-card i {
+      font-size: 2rem;
+      color: #1f6380;
+      margin-bottom: 0.6rem;
+      opacity: 0.7;
+    }
+
+    .badge-min {
+      background: #eef3f7;
+      display: inline-block;
+      border-radius: 40px;
+      padding: 0.2rem 0.8rem;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #1a556e;
+      margin-top: 0.6rem;
+    }
+
+    /* MODAL PRINCIPAL */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(10, 42, 59, 0.7);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.2s ease, visibility 0s 0.25s;
+    }
+
+    .modal-overlay.active {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-container {
+      background: #ffffff;
+      width: 90%;
+      max-width: 900px;
+      max-height: 85vh;
+      border-radius: 28px;
+      box-shadow: 0 30px 40px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: fadeUp 0.25s ease-out;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 1.8rem;
+      border-bottom: 1px solid #e6edf0;
+      background: white;
+    }
+
+    .modal-header h2 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #0a2a3b;
+    }
+
+    .close-modal, .back-button {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #0a2a3b;
+      transition: 0.1s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .close-modal:hover, .back-button:hover {
+      color: #c4432f;
+    }
+
+    .modal-body {
+      overflow-y: auto;
+      padding: 1.5rem 1.8rem;
+      scrollbar-width: thin;
+    }
+
+    .info-group {
+      margin-bottom: 1.8rem;
+      border-left: 4px solid #1f6380;
+      padding-left: 1rem;
+      background: #fafefc;
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+    }
+
+    .info-group h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #0f4b64;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: space-between;
+    }
+
+    .info-group h3 button {
+      background: #0a2a3b;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 5px;
+    }
+
+    .contact-item i {
+      width: 22px;
+      color: #136b8a;
+    }
+
+    a.contact-link {
+      color: #0a2a3b;
+      text-decoration: none;
+      border-bottom: 1px dotted #8fb1c0;
+    }
+
+    .departamentos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .depto-card {
+      background: #f9fdfe;
+      border-radius: 18px;
+      padding: 0.8rem 1rem;
+      border: 1px solid #dbe9ef;
+      transition: all 0.1s ease;
+      cursor: pointer;
+    }
+
+    .depto-card:hover {
+      background: #e9f3f7;
+      transform: translateY(-2px);
+    }
+
+    .depto-card strong {
+      display: block;
+      font-size: 1rem;
+      color: #0f4b64;
+      margin-bottom: 0.4rem;
+      font-weight: 700;
+    }
+
+    .ciudades-list {
+      font-size: 0.8rem;
+      color: #2e6a82;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .ciudades-list span {
+      background: #e6f0f4;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .registro-modal {
+      max-width: 550px;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: #0a2a3b;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid #cbdde4;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: #0a2a3b;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .btn-secondary {
+      background: #e2edf2;
+      color: #0a2a3b;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #577e92;
+      padding: 1.5rem;
+      border-top: 1px solid #e2edf2;
+    }
+  </style>
+</head>
+<body>
+<div class="app-header">
+  <h1><i class="fas fa-church" style="margin-right: 8px;"></i> Red Pastores de Argentina</h1>
+  <p>Consejos de Pastores · Líderes · Discipuladores · Contacto</p>
+</div>
+<div class="provincias-grid" id="provinciasContainer"></div>
+<footer>Haga clic en una provincia. En Misiones, explore sus departamentos y registre nuevos líderes.</footer>
+
+<!-- Modal principal -->
+<div id="modalOverlay" class="modal-overlay">
+  <div class="modal-container">
+    <div class="modal-header">
+      <button id="backButton" class="back-button" style="display: none;"><i class="fas fa-arrow-left"></i> Volver</button>
+      <h2 id="modalTitle">Provincia</h2>
+      <button class="close-modal" id="closeModalBtn"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="modalBodyContent"></div>
+  </div>
+</div>
+
+<!-- Modal de registro (oculto) -->
+<div id="registroOverlay" class="modal-overlay">
+  <div class="modal-container registro-modal">
+    <div class="modal-header">
+      <h2>Registrar / Editar</h2>
+      <button class="close-modal" id="closeRegistroBtn"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="registroForm">
+        <div class="form-group">
+          <label>Tipo *</label>
+          <select id="tipoRegistro" required>
+            <option value="consejo">Consejo de Pastores</option>
+            <option value="pastor">Pastor</option>
+            <option value="lider">Líder</option>
+            <option value="discipulador">Discipulador</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nombre / Razón Social *</label>
+          <input type="text" id="nombreRegistro" required placeholder="Ej: Consejo Pastoral de Apóstoles, Pastor Juan Pérez">
+        </div>
+        <div class="form-group">
+          <label>Domicilio</label>
+          <input type="text" id="domicilioRegistro" placeholder="Calle, número, localidad">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="emailRegistro" placeholder="contacto@ejemplo.com">
+        </div>
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input type="text" id="telefonoRegistro" placeholder="+54 11 1234-5678">
+        </div>
+        <div class="form-group">
+          <label>WhatsApp</label>
+          <input type="text" id="whatsappRegistro" placeholder="+54 9 11 1234-5678">
+        </div>
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+          <button type="button" class="btn-secondary" id="cancelRegistroBtn">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- DATOS BASE DE PROVINCIAS (sin cambios, pero Misiones especial) ----------
+  function generarDatosProvincia(nombre) {
+    const baseNombre = nombre.replace(/[^a-zA-ZÀ-ÿ\s]/g, '').trim();
+    return {
+      consejo: { nombre: `Consejo de Pastores Evangélicos de ${baseNombre}`, direccion: `Av. Central ${Math.floor(Math.random() * 800 + 100)}, ${baseNombre}`, email: `consejo${baseNombre.toLowerCase().replace(/ /g, '')}@pastores.org.ar`, telefono: `+54 11 ${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`, whatsapp: `+54 9 11 ${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}` },
+      pastores: [{ nombre: `Pastor Daniel Gómez`, domicilio: `Calle Libertad 450, ${baseNombre}`, email: `daniel.gomez@${baseNombre.toLowerCase()}.fe`, telefono: `+54 11 1234-5678`, whatsapp: `+54 9 11 1234-5678` }],
+      lideres: [{ nombre: `Líder de Jóvenes: Marcos Ruiz`, domicilio: `Rivadavia 321, ${baseNombre}`, email: `marcos.ruiz@lideres.org`, telefono: `+54 261 500-1234`, whatsapp: `+54 9 261 500-1234` }],
+      discipuladores: [{ nombre: `Discipulador: Pablo Sosa`, domicilio: `Mitre 234, ${baseNombre}`, email: `pablo.sosa@discipulado.com`, telefono: `+54 342 600-7890`, whatsapp: `+54 9 342 600-7890` }]
+    };
+  }
+
+  const misionesDepartamentosBase = [
+    { nombre: "Apóstoles", ciudades: ["Apóstoles", "Pindapoy", "San José"] },
+    { nombre: "Cainguás", ciudades: ["Aristóbulo del Valle", "Dos de Mayo", "Campo Grande"] },
+    { nombre: "Candelaria", ciudades: ["Santa Ana", "Candelaria", "Cerro Corá"] },
+    { nombre: "Capital (Posadas)", ciudades: ["Posadas", "Garupá", "Villa Lanús"] },
+    { nombre: "Concepción", ciudades: ["Concepción de la Sierra", "Santa María", "Itacaruaré"] },
+    { nombre: "Eldorado", ciudades: ["Eldorado", "Puerto Piray", "Colonia Delicia"] },
+    { nombre: "General Manuel Belgrano", ciudades: ["Bernardo de Irigoyen", "San Antonio", "Comandante Andresito"] },
+    { nombre: "Guaraní", ciudades: ["El Soberbio", "San Vicente", "Dos Arroyos"] },
+    { nombre: "Iguazú", ciudades: ["Puerto Iguazú", "Wanda", "Puerto Esperanza"] },
+    { nombre: "Leandro N. Alem", ciudades: ["Leandro N. Alem", "Oberá", "Campo Viera"] },
+    { nombre: "Libertador General San Martín", ciudades: ["Puerto Rico", "Garuhapé", "Ruiz de Montoya"] },
+    { nombre: "Montecarlo", ciudades: ["Montecarlo", "Caraguatay", "Puerto Piray"] },
+    { nombre: "Oberá", ciudades: ["Oberá", "Campo Ramón", "Los Helechos"] },
+    { nombre: "San Ignacio", ciudades: ["San Ignacio", "Jardín América", "Corpus"] },
+    { nombre: "San Javier", ciudades: ["San Javier", "Itá Ibaté", "Florentino Ameghino"] },
+    { nombre: "San Pedro", ciudades: ["San Pedro", "Puerto Leoni", "Yerbal Viejo"] },
+    { nombre: "Veinticinco de Mayo", ciudades: ["Alba Posse", "Veinticinco de Mayo", "Colonia Aurora"] }
+  ];
+
+  // Almacenamiento dinámico para datos de cada departamento (inicializar con datos de ejemplo)
+  let departamentosData = {};
+  function initDepartamentosData() {
+    misionesDepartamentosBase.forEach(depto => {
+      departamentosData[depto.nombre] = {
+        consejo: { nombre: `Consejo Pastoral de ${depto.nombre}`, direccion: `Calle Principal 123, ${depto.nombre}`, email: `consejo${depto.nombre.toLowerCase().replace(/ /g, '')}@misiones.org`, telefono: `+54 3755 ${Math.floor(100000)}`, whatsapp: `+54 9 3755 ${Math.floor(100000)}` },
+        pastores: [{ nombre: `Pastor Local de ${depto.nombre}`, domicilio: `Belgrano 456, ${depto.nombre}`, email: `pastor@${depto.nombre.toLowerCase()}.com`, telefono: `+54 3755 123456`, whatsapp: `+54 9 3755 123456` }],
+        lideres: [{ nombre: `Líder de jóvenes ${depto.nombre}`, domicilio: `San Martín 789, ${depto.nombre}`, email: `lider@${depto.nombre.toLowerCase()}.org`, telefono: `+54 3755 789012`, whatsapp: `+54 9 3755 789012` }],
+        discipuladores: [{ nombre: `Discipulador base ${depto.nombre}`, domicilio: `Mitre 321, ${depto.nombre}`, email: `discipulo@${depto.nombre.toLowerCase()}.net`, telefono: `+54 3755 456789`, whatsapp: `+54 9 3755 456789` }]
+      };
+    });
+  }
+  initDepartamentosData();
+
+  // Helper para agregar/actualizar registros en un departamento
+  function agregarRegistroDepto(deptoNombre, tipo, datos) {
+    if (!departamentosData[deptoNombre]) departamentosData[deptoNombre] = { consejo: null, pastores: [], lideres: [], discipuladores: [] };
+    if (tipo === 'consejo') {
+      departamentosData[deptoNombre].consejo = datos;
+    } else {
+      const key = tipo + 's'; // pastores, lideres, discipuladores
+      if (!departamentosData[deptoNombre][key]) departamentosData[deptoNombre][key] = [];
+      departamentosData[deptoNombre][key].push(datos);
+    }
+  }
+
+  // Lista de provincias (Misiones primero)
+  const provinciasList = [
+    "Misiones", "Buenos Aires", "Catamarca", "Chaco", "Chubut", "Córdoba", "Corrientes", "Entre Ríos", "Formosa",
+    "Jujuy", "La Pampa", "La Rioja", "Mendoza", "Neuquén", "Río Negro", "Salta", "San Juan", "San Luis",
+    "Santa Cruz", "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucumán", "CABA", "AMBA"
+  ];
+  const provinciasDataMap = new Map();
+  provinciasList.forEach(prov => {
+    if (prov !== "Misiones") provinciasDataMap.set(prov, generarDatosProvincia(prov));
+    else provinciasDataMap.set(prov, { esMisiones: true, departamentos: misionesDepartamentosBase });
+  });
+  // Ajustes CABA/AMBA
+  if (provinciasDataMap.get("CABA")) provinciasDataMap.get("CABA").consejo.nombre = "Consejo de Pastores de CABA";
+  if (provinciasDataMap.get("AMBA")) provinciasDataMap.get("AMBA").consejo.nombre = "Consejo Pastoral del AMBA";
+
+  // ---------- RENDER TARJETAS PROVINCIAS ----------
+  const container = document.getElementById("provinciasContainer");
+  function renderProvincias() {
+    container.innerHTML = "";
+    provinciasList.forEach(prov => {
+      const card = document.createElement("div");
+      card.className = "prov-card";
+      if (prov === "Misiones") card.classList.add("glass-card");
+      card.innerHTML = `<i class="fas ${prov === 'Misiones' ? 'fa-tree' : 'fa-map-marker-alt'}"></i><h3>${prov}</h3><div class="badge-min">${prov === "Misiones" ? "📌 17 departamentos + registro" : "Información pastoral"}</div>`;
+      card.addEventListener("click", () => abrirModalProvincia(prov));
+      container.appendChild(card);
+    });
+  }
+
+  // Variables de estado del modal principal
+  let currentProvince = null;
+  let currentDeptoView = null; // null = lista deptos, string = nombre depto activo
+  let currentMisionesDeptos = misionesDepartamentosBase;
+
+  const modalOverlay = document.getElementById("modalOverlay");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalBody = document.getElementById("modalBodyContent");
+  const closeModalBtn = document.getElementById("closeModalBtn");
+  const backButton = document.getElementById("backButton");
+
+  function cerrarModal() {
+    modalOverlay.classList.remove("active");
+    currentDeptoView = null;
+    backButton.style.display = "none";
+  }
+
+  function mostrarVistaDepartamentos() {
+    currentDeptoView = null;
+    backButton.style.display = "none";
+    modalTitle.innerHTML = `<i class="fas fa-tree"></i> Misiones - Departamentos`;
+    let html = `<div class="departamentos-grid">`;
+    misionesDepartamentosBase.forEach(depto => {
+      html += `
+        <div class="depto-card" data-depto="${depto.nombre}">
+          <strong><i class="fas fa-location-dot"></i> ${depto.nombre}</strong>
+          <div class="ciudades-list">${depto.ciudades.map(c => `<span>${c}</span>`).join(' ')}</div>
+          <div style="margin-top:6px; font-size:0.7rem;">👆 Haz clic para ver detalles y registro</div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+    modalBody.innerHTML = html;
+    // Eventos a cada tarjeta
+    document.querySelectorAll('.depto-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        const deptoNombre = card.getAttribute('data-depto');
+        mostrarVistaDepartamentoDetalle(deptoNombre);
+      });
+    });
+  }
+
+  function mostrarVistaDepartamentoDetalle(deptoNombre) {
+    currentDeptoView = deptoNombre;
+    backButton.style.display = "flex";
+    modalTitle.innerHTML = `<i class="fas fa-church"></i> ${deptoNombre}`;
+    const data = departamentosData[deptoNombre];
+    if (!data) return;
+    const consejo = data.consejo || { nombre: "No registrado", direccion: "", email: "", telefono: "", whatsapp: "" };
+    const pastores = data.pastores || [];
+    const lideres = data.lideres || [];
+    const discipuladores = data.discipuladores || [];
+
+    let html = `
+      <div class="info-group"><h3><i class="fas fa-users"></i> Consejo de Pastores <button class="btn-registrar" data-tipo="consejo">+ Registrar/Editar</button></h3>
+        <p><strong>${consejo.nombre}</strong></p>
+        <div class="contact-item"><i class="fas fa-map-pin"></i> ${consejo.direccion || "Sin domicilio"}</div>
+        <div class="contact-item"><i class="fas fa-envelope"></i> <a href="mailto:${consejo.email}" class="contact-link">${consejo.email || "-"}</a></div>
+        <div class="contact-item"><i class="fas fa-phone-alt"></i> ${consejo.telefono || "-"}</div>
+        <div class="contact-item"><i class="fab fa-whatsapp"></i> ${consejo.whatsapp || "-"}</div>
+      </div>
+      <div class="info-group"><h3><i class="fas fa-pastor"></i> Pastores <button class="btn-registrar" data-tipo="pastor">+ Agregar Pastor</button></h3>`;
+    pastores.forEach(p => {
+      html += `<div style="margin-bottom:12px;"><strong>${p.nombre}</strong><br>📍 ${p.domicilio}<br>📧 ${p.email}<br>📞 ${p.telefono}<br><i class="fab fa-whatsapp"></i> ${p.whatsapp}</div>`;
+    });
+    html += `</div><div class="info-group"><h3><i class="fas fa-chalkboard-user"></i> Líderes <button class="btn-registrar" data-tipo="lider">+ Agregar Líder</button></h3>`;
+    lideres.forEach(l => {
+      html += `<div><strong>${l.nombre}</strong><br>📍 ${l.domicilio}<br>📧 ${l.email}<br>📞 ${l.telefono}<br><i class="fab fa-whatsapp"></i> ${l.whatsapp}</div><hr>`;
+    });
+    html += `</div><div class="info-group"><h3><i class="fas fa-hands-helping"></i> Discipuladores <button class="btn-registrar" data-tipo="discipulador">+ Agregar Discipulador</button></h3>`;
+    discipuladores.forEach(d => {
+      html += `<div><strong>${d.nombre}</strong><br>📍 ${d.domicilio}<br>📧 ${d.email}<br>📞 ${d.telefono}<br><i class="fab fa-whatsapp"></i> ${d.whatsapp}</div><hr>`;
+    });
+    html += `</div>`;
+    modalBody.innerHTML = html;
+
+    // Agregar eventos a botones de registro
+    document.querySelectorAll('.btn-registrar').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const tipo = btn.getAttribute('data-tipo');
+        abrirModalRegistro(deptoNombre, tipo);
+      });
+    });
+  }
+
+  function abrirModalProvincia(prov) {
+    currentProvince = prov;
+    if (prov === "Misiones") {
+      mostrarVistaDepartamentos();
+    } else {
+      backButton.style.display = "none";
+      currentDeptoView = null;
+      const data = provinciasDataMap.get(prov);
+      modalTitle.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${prov}`;
+      let html = `<div class="info-group"><h3>Consejo de Pastores</h3><p>${data.consejo.nombre}</p><div class="contact-item">${data.consejo.direccion}</div><div class="contact-item">${data.consejo.email}</div><div class="contact-item">${data.consejo.telefono}</div><div class="contact-item">${data.consejo.whatsapp}</div></div>`;
+      html += `<div class="info-group"><h3>Pastores</h3>${data.pastores.map(p => `<div><strong>${p.nombre}</strong><br>${p.domicilio}<br>${p.email}<br>${p.telefono}</div>`).join('')}</div>`;
+      html += `<div class="info-group"><h3>Líderes</h3>${data.lideres.map(l => `<div>${l.nombre}<br>${l.domicilio}</div>`).join('')}</div>`;
+      html += `<div class="info-group"><h3>Discipuladores</h3>${data.discipuladores.map(d => `<div>${d.nombre}<br>${d.domicilio}</div>`).join('')}</div>`;
+      modalBody.innerHTML = html;
+    }
+    modalOverlay.classList.add("active");
+  }
+
+  // ---------- MODAL DE REGISTRO ----------
+  const registroOverlay = document.getElementById("registroOverlay");
+  const closeRegistroBtn = document.getElementById("closeRegistroBtn");
+  const cancelRegistroBtn = document.getElementById("cancelRegistroBtn");
+  const registroForm = document.getElementById("registroForm");
+  let activeDeptoForRegister = null;
+  let activeTipoForRegister = null;
+
+  function abrirModalRegistro(deptoNombre, tipo) {
+    activeDeptoForRegister = deptoNombre;
+    activeTipoForRegister = tipo;
+    document.getElementById("tipoRegistro").value = tipo;
+    // Limpiar campos
+    document.getElementById("nombreRegistro").value = "";
+    document.getElementById("domicilioRegistro").value = "";
+    document.getElementById("emailRegistro").value = "";
+    document.getElementById("telefonoRegistro").value = "";
+    document.getElementById("whatsappRegistro").value = "";
+    registroOverlay.classList.add("active");
+  }
+
+  function cerrarRegistro() {
+    registroOverlay.classList.remove("active");
+    activeDeptoForRegister = null;
+  }
+
+  registroForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!activeDeptoForRegister) return;
+    const tipo = document.getElementById("tipoRegistro").value;
+    const nombre = document.getElementById("nombreRegistro").value;
+    const domicilio = document.getElementById("domicilioRegistro").value;
+    const email = document.getElementById("emailRegistro").value;
+    const telefono = document.getElementById("telefonoRegistro").value;
+    const whatsapp = document.getElementById("whatsappRegistro").value;
+    if (!nombre) return;
+
+    const nuevoRegistro = { nombre, domicilio, email, telefono, whatsapp };
+    if (tipo === 'consejo') {
+      departamentosData[activeDeptoForRegister].consejo = nuevoRegistro;
+    } else {
+      const key = tipo + 's';
+      if (!departamentosData[activeDeptoForRegister][key]) departamentosData[activeDeptoForRegister][key] = [];
+      departamentosData[activeDeptoForRegister][key].push(nuevoRegistro);
+    }
+    cerrarRegistro();
+    // Refrescar vista detalle
+    if (currentDeptoView === activeDeptoForRegister) {
+      mostrarVistaDepartamentoDetalle(activeDeptoForRegister);
+    }
+  });
+
+  closeRegistroBtn.addEventListener("click", cerrarRegistro);
+  cancelRegistroBtn.addEventListener("click", cerrarRegistro);
+  registroOverlay.addEventListener("click", (e) => { if (e.target === registroOverlay) cerrarRegistro(); });
+
+  // Navegación con botón volver
+  backButton.addEventListener("click", () => {
+    if (currentProvince === "Misiones") {
+      mostrarVistaDepartamentos();
+    }
+  });
+
+  closeModalBtn.addEventListener("click", cerrarModal);
+  modalOverlay.addEventListener("click", (e) => { if (e.target === modalOverlay) cerrarModal(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && modalOverlay.classList.contains("active")) cerrarModal(); if (e.key === "Escape" && registroOverlay.classList.contains("active")) cerrarRegistro(); });
+
+  renderProvincias();
+</script>
+</body>
+</html>
