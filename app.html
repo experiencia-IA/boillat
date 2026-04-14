@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AppSistemaRed</title>
+    <style>
+        :root {
+            --azul-oscuro: #0a192f;
+            --blanco-fondo: #ffffff;
+            --texto-principal: #0a192f;
+            --rojo-alerta: #d63031;
+            --naranja-resalte: #ff9f43;
+            --gris-claro: #f1f2f6;
+            --celeste-resalte: #00b4d8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--blanco-fondo);
+            color: var(--texto-principal);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- PANTALLA CENTRAL --- */
+        #content-area {
+            flex: 1;
+            padding: 40px 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 1;
+            overflow-y: auto;
+        }
+
+        .view-section {
+            animation: fadeIn 0.4s ease-out;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--azul-oscuro);
+        }
+
+        /* --- CONTENEDOR GLASSMORFISMO --- */
+        .glass-container {
+            margin-top: 30px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 24px 20px;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .glass-container {
+                padding: 20px 16px;
+                border-radius: 16px;
+            }
+        }
+
+        .verse-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #1e2a3a;
+            max-width: 100%;
+            margin: 0 auto;
+            font-style: normal;
+            font-weight: 500;
+        }
+
+        .verse-reference {
+            font-weight: 700;
+            color: var(--azul-oscuro);
+            margin-top: 20px;
+            display: inline-block;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            border-top: 1px solid rgba(10, 25, 47, 0.2);
+            padding-top: 16px;
+        }
+
+        /* --- PANEL INFERIOR AZUL --- */
+        .bottom-panel {
+            background-color: var(--azul-oscuro);
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            position: relative;
+            z-index: 110;
+            cursor: pointer;
+        }
+
+        /* --- BOTÓN GLOBO --- */
+        .btn-globo {
+            width: 50px;
+            height: 50px;
+            background-color: var(--azul-oscuro);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .btn-globo:hover {
+            border-color: var(--celeste-resalte);
+            box-shadow: 0 0 8px rgba(0, 180, 216, 0.6);
+            transform: scale(1.02);
+        }
+
+        .btn-globo:active {
+            transform: scale(0.9);
+        }
+
+        .icon-dots {
+            width: 20px;
+            height: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+        .icon-dots span {
+            width: 100%;
+            height: 2px;
+            background-color: white;
+            border-radius: 2px;
+            transition: background 0.2s;
+        }
+
+        .btn-globo:hover .icon-dots span {
+            background-color: var(--celeste-resalte);
+        }
+
+        /* --- TEXTOS JUNTO AL BOTÓN --- */
+        .info-text {
+            margin-left: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 8px;
+            white-space: nowrap;
+            cursor: default;
+        }
+
+        .brand-text {
+            color: white;
+            font-weight: 800;
+            font-size: clamp(0.85rem, 4vw, 1.1rem);
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            color: white;
+            text-shadow: 0 0 4px rgba(0,180,216,0.3);
+        }
+
+        .slogan-text {
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: rgba(255, 159, 67, 0.25);
+            padding: 4px 12px;
+            border-radius: 30px;
+            border: 1px solid var(--naranja-resalte);
+            box-shadow: 0 0 6px rgba(255, 159, 67, 0.4);
+            backdrop-filter: blur(2px);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-brand {
+            display: none;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 700;
+            white-space: nowrap;
+            text-shadow: 0 0 2px rgba(0,0,0,0.3);
+        }
+
+        /* --- Grupo derecho (Versión Digital + botón salir) --- */
+        .right-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        .version-link {
+            font-weight: 700;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            transition: all 0.2s ease;
+            user-select: none;
+            letter-spacing: 0.3px;
+        }
+
+        .version-link:hover {
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.02);
+        }
+
+        /* Tooltip (modal pequeño) que aparece arriba del texto */
+        .info-tooltip {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            margin-bottom: 10px;
+            background: white;
+            color: var(--texto-principal);
+            border-radius: 12px;
+            padding: 10px 14px;
+            width: 180px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            font-size: 0.75rem;
+            z-index: 120;
+            animation: fadeInUp 0.2s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Flecha hacia abajo (apuntando al enlace) */
+        .info-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            right: 20px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: white transparent transparent transparent;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .info-tooltip p {
+            margin: 6px 0;
+            line-height: 1.4;
+        }
+
+        .info-tooltip .bold {
+            font-weight: 700;
+            color: var(--azul-oscuro);
+        }
+
+        /* --- BOTÓN SALIR --- */
+        .btn-logout-panel {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.2s, transform 0.2s;
+            flex-shrink: 0;
+        }
+
+        .btn-logout-panel:hover {
+            opacity: 0.8;
+            transform: scale(1.1);
+        }
+
+        .icon-door {
+            width: 28px;
+            height: 28px;
+            fill: var(--naranja-resalte);
+        }
+
+        /* --- MENÚ LATERAL --- */
+        #menu-overlay {
+            position: fixed;
+            bottom: 85px; 
+            left: 25px;
+            width: 260px;
+            background-color: var(--azul-oscuro);
+            border-radius: 15px;
+            padding: 10px 0;
+            transform: translateY(20px) scale(0.9);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        #menu-overlay.active {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #menu-overlay:hover .menu-item {
+            opacity: 0.5;
+            transition: opacity 0.2s ease;
+        }
+
+        #menu-overlay .menu-item:hover {
+            opacity: 1;
+            background-color: rgba(0, 180, 216, 0.2);
+            color: white;
+            transform: translateX(4px);
+            transition: all 0.2s ease;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            display: block;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            text-align: left;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            border-left-color: var(--celeste-resalte);
+        }
+
+        /* --- MODAL DE CERRAR SESIÓN --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .modal-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            width: 85%;
+            max-width: 320px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .btn-modal {
+            padding: 14px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 700;
+        }
+
+        .btn-exit { background: var(--rojo-alerta); color: white; }
+        .btn-cancel { background: var(--gris-claro); color: var(--texto-principal); }
+
+        .hidden { display: none !important; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- RESPONSIVE: MÓVIL --- */
+        @media (max-width: 768px) {
+            .brand-text, .slogan-text {
+                display: none;
+            }
+            .mobile-brand {
+                display: inline-block;
+            }
+            .info-text {
+                margin-left: 10px;
+                white-space: nowrap;
+            }
+            .verse-text {
+                font-size: 0.9rem;
+            }
+            .verse-reference {
+                font-size: 0.85rem;
+                margin-top: 18px;
+                padding-top: 14px;
+            }
+            .version-link {
+                font-size: 0.75rem;
+                padding: 4px 8px;
+            }
+            .right-group {
+                gap: 8px;
+            }
+            .info-tooltip {
+                width: 160px;
+                padding: 8px 10px;
+                right: -10px;
+            }
+            .info-tooltip::after {
+                right: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .mobile-brand {
+                font-size: 0.75rem;
+            }
+            .bottom-panel {
+                padding: 0 12px;
+            }
+            .info-text {
+                margin-left: 8px;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .glass-container {
+                padding: 16px 12px;
+            }
+            .version-link {
+                font-size: 0.7rem;
+            }
+            .info-tooltip {
+                width: 145px;
+                font-size: 0.7rem;
+                right: -5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main id="content-area">
+        <div id="view-home" class="view-section">
+            <h1>Bienvenido</h1>
+            <p>Utiliza el menú inferior para gestionar la red.</p>
+            <div class="glass-container">
+                <div class="verse-text">
+                    «Por tanto, id, y haced discípulos a todas las naciones, bautizándolos en el nombre del Padre, y del Hijo, y del Espíritu Santo; enseñándoles que guarden todas las cosas que os he mandado; y he aquí yo estoy con vosotros todos los días, hasta el fin del mundo. Amén».
+                </div>
+                <div class="verse-reference">Mateo 28:19-20</div>
+            </div>
+        </div>
+        <div id="view-tabla" class="view-section hidden"><h1>Tabla de Registros</h1></div>
+        <div id="view-pastoral" class="view-section hidden"><h1>Red Pastoral</h1></div>
+        <div id="view-discipuladores" class="view-section hidden"><h1>Red Discipuladores</h1></div>
+        <div id="view-material" class="view-section hidden"><h1>Material de Red</h1></div>
+        <div id="view-agenda" class="view-section hidden"><h1>Agenda</h1></div>
+        <div id="view-reporte" class="view-section hidden"><h1>Reporte Visual</h1></div>
+    </main>
+
+    <div id="menu-overlay">
+        <a href="#" class="menu-item" onclick="navigate('tabla')">Tabla de Registros</a>
+        <a href="#" class="menu-item" onclick="navigate('pastoral')">Red Pastoral</a>
+        <a href="#" class="menu-item" onclick="navigate('discipuladores')">Red Discipuladores</a>
+        <a href="#" class="menu-item" onclick="navigate('material')">Material de Red</a>
+        <a href="#" class="menu-item" onclick="navigate('agenda')">Agenda</a>
+        <a href="#" class="menu-item" onclick="navigate('reporte')">Reporte Visual</a>
+    </div>
+
+    <footer class="bottom-panel">
+        <div style="display: flex; align-items: center;">
+            <button class="btn-globo" onclick="toggleMenu()">
+                <div class="icon-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
+            <div class="info-text">
+                <span class="brand-text">Red de Multiplicación - Aplicación Gestión y Seguimiento</span>
+                <span class="mobile-brand">Red Multiplicación Digital</span>
+                <span class="slogan-text">Orar, Apoyar y Trabajar juntos!!!</span>
+            </div>
+        </div>
+
+        <div class="right-group">
+            <span class="version-link" id="versionLink">Versión Digital</span>
+            <button class="btn-logout-panel" onclick="openModal()" title="Salir del sistema">
+                <svg class="icon-door" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
+                    <path d="M4 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1a1 1 0 0 0-2 0v1H4V3h6v1a1 1 0 0 0 2 0V3a2 2 0 0 0-2-2H4z"/>
+                </svg>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Modal de cierre de sesión -->
+    <div id="exit-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 style="color: var(--rojo-alerta); margin-bottom: 10px;">Cerrar Sesión</h3>
+            <p style="margin-bottom: 20px; color: #636e72;">¿Seguro que deseas salir del sistema?</p>
+            <button class="btn-modal btn-exit" onclick="confirmExit()">Salir ahora</button>
+            <button class="btn-modal btn-cancel" onclick="closeModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        // Elementos
+        const versionLink = document.getElementById('versionLink');
+        let tooltipElement = null;
+        let timeoutId = null;
+
+        function removeTooltip() {
+            if (tooltipElement && tooltipElement.parentNode) {
+                tooltipElement.remove();
+            }
+            tooltipElement = null;
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+                timeoutId = null;
+            }
+        }
+
+        function showInfoTooltip(event) {
+            // Eliminar tooltip existente si lo hay
+            removeTooltip();
+
+            // Crear nuevo tooltip
+            tooltipElement = document.createElement('div');
+            tooltipElement.className = 'info-tooltip';
+            tooltipElement.innerHTML = `
+                <p><span class="bold">Diseño y programación:</span><br>Rómulo Fioravante</p>
+                <p><span class="bold">V.1.0.2026</span></p>
+            `;
+            
+            // Posicionar relativo al .right-group que contiene el enlace
+            const rightGroup = document.querySelector('.right-group');
+            if (rightGroup) {
+                // Asegurar que el contenedor tenga position relative (ya lo tiene por .right-group)
+                rightGroup.style.position = 'relative';
+                rightGroup.appendChild(tooltipElement);
+            } else {
+                // Fallback: adjuntar al body y posicionar absoluto
+                document.body.appendChild(tooltipElement);
+                const rect = versionLink.getBoundingClientRect();
+                tooltipElement.style.position = 'fixed';
+                tooltipElement.style.bottom = (window.innerHeight - rect.top + 8) + 'px';
+                tooltipElement.style.right = (window.innerWidth - rect.right + 5) + 'px';
+            }
+
+            // Auto-cerrar después de 5 segundos
+            timeoutId = setTimeout(() => {
+                removeTooltip();
+            }, 5000);
+        }
+
+        // Evento click en "Versión Digital"
+        versionLink.addEventListener('click', (e) => {
+            e.stopPropagation(); // Evitar que el clic se propague al panel inferior
+            showInfoTooltip(e);
+        });
+
+        // Cerrar tooltip si se hace clic fuera (opcional, pero no interfiere)
+        document.addEventListener('click', function(e) {
+            if (tooltipElement && !versionLink.contains(e.target) && !tooltipElement.contains(e.target)) {
+                removeTooltip();
+            }
+        });
+
+        // Funciones existentes
+        function toggleMenu() {
+            const menu = document.getElementById('menu-overlay');
+            menu.classList.toggle('active');
+        }
+
+        function navigate(viewId) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
+            const target = document.getElementById('view-' + viewId);
+            if(target) target.classList.remove('hidden');
+            toggleMenu();
+        }
+
+        function goToHome() {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('view-home').classList.remove('hidden');
+            const menu = document.getElementById('menu-overlay');
+            if (menu.classList.contains('active')) {
+                menu.classList.remove('active');
+            }
+        }
+
+        function openModal() {
+            document.getElementById('exit-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('exit-modal').style.display = 'none';
+        }
+
+        function confirmExit() {
+            window.location.href = 'index.html'; 
+        }
+
+        // Clic en panel inferior (zona libre) regresa a home
+        const bottomPanel = document.querySelector('.bottom-panel');
+        bottomPanel.addEventListener('click', (event) => {
+            const btnGlobo = document.querySelector('.btn-globo');
+            const infoText = document.querySelector('.info-text');
+            const versionLinkElem = document.querySelector('.version-link');
+            const btnLogout = document.querySelector('.btn-logout-panel');
+            
+            if (btnGlobo && btnGlobo.contains(event.target)) return;
+            if (infoText && infoText.contains(event.target)) return;
+            if (versionLinkElem && versionLinkElem.contains(event.target)) return;
+            if (btnLogout && btnLogout.contains(event.target)) return;
+            
+            goToHome();
+        });
+
+        document.getElementById('content-area').addEventListener('click', () => {
+            document.getElementById('menu-overlay').classList.remove('active');
+            removeTooltip(); // También cerrar tooltip si está abierto
+        });
+
+        // Cerrar modales al hacer clic fuera
+        window.onclick = function(event) {
+            const exitModal = document.getElementById('exit-modal');
+            if (event.target === exitModal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
