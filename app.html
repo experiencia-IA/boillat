@@ -35,7 +35,7 @@
         /* --- PANTALLA CENTRAL --- */
         #content-area {
             flex: 1;
-            padding: 40px 25px;
+            padding: 8px 25px; /* Padding vertical mínimo para maximizar espacio */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -51,9 +51,10 @@
             margin: 0 auto;
         }
 
-        /* Estilos específicos para las vistas con iframe (Tabla y Red Pastoral) */
+        /* Estilos específicos para las vistas con iframe (Tabla, Red Pastoral y Red Discipuladores) */
         #view-tabla,
-        #view-pastoral {
+        #view-pastoral,
+        #view-discipuladores {
             padding: 0 !important;
             height: 100%;
             max-width: 100%;
@@ -61,7 +62,8 @@
             flex-direction: column;
         }
         #view-tabla iframe,
-        #view-pastoral iframe {
+        #view-pastoral iframe,
+        #view-discipuladores iframe {
             width: 100%;
             flex: 1;
             border: none;
@@ -71,15 +73,20 @@
         }
 
         h1 {
-            font-size: 2rem;
+            font-size: 1.7rem;
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             color: var(--azul-oscuro);
+        }
+
+        p {
+            margin-bottom: 5px;
+            font-size: 0.95rem;
         }
 
         /* --- CONTENEDOR GLASSMORFISMO --- */
         .glass-container {
-            margin-top: 30px;
+            margin-top: 12px;
             width: 100%;
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
@@ -87,20 +94,20 @@
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            padding: 24px 20px;
+            padding: 12px 16px;
             transition: all 0.3s ease;
         }
 
         @media (max-width: 768px) {
             .glass-container {
-                padding: 20px 16px;
+                padding: 10px 12px;
                 border-radius: 16px;
             }
         }
 
         .verse-text {
-            font-size: 1rem;
-            line-height: 1.6;
+            font-size: 0.9rem;
+            line-height: 1.4;
             color: #1e2a3a;
             max-width: 100%;
             margin: 0 auto;
@@ -111,12 +118,12 @@
         .verse-reference {
             font-weight: 700;
             color: var(--azul-oscuro);
-            margin-top: 20px;
+            margin-top: 8px;
             display: inline-block;
-            font-size: 1rem;
+            font-size: 0.85rem;
             letter-spacing: 0.5px;
             border-top: 1px solid rgba(10, 25, 47, 0.2);
-            padding-top: 16px;
+            padding-top: 8px;
         }
 
         /* --- PANEL INFERIOR AZUL --- */
@@ -412,8 +419,82 @@
         .hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- RESPONSIVE: MÓVIL --- */
+        /* --- ESTILOS PARA LA IMAGEN MÁXIMA SIN DESPLAZAMIENTO --- */
+        .image-glass-frame {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 32px;
+            padding: 12px;
+            margin: 0 auto 12px auto;
+            width: fit-content;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: transform 0.2s ease;
+        }
+        
+        .image-glass-frame:hover {
+            transform: scale(1.02);
+        }
+
+        .welcome-image {
+            display: block;
+            width: auto;
+            max-width: 560px;   /* Tamaño máximo grande en escritorio */
+            height: auto;
+            max-height: 340px;  /* Altura grande pero controlada para no forzar scroll */
+            object-fit: contain;
+            border-radius: 24px;
+            margin: 0 auto;
+        }
+
+        /* Ajuste para móviles: imagen grande pero proporcionada */
         @media (max-width: 768px) {
+            .welcome-image {
+                max-width: 380px;
+                max-height: 240px;
+            }
+            .image-glass-frame {
+                padding: 10px;
+                border-radius: 28px;
+                margin-bottom: 10px;
+            }
+            #content-area {
+                padding: 6px 20px;
+            }
+            h1 {
+                font-size: 1.4rem;
+                margin-bottom: 4px;
+            }
+            p {
+                font-size: 0.85rem;
+            }
+            .glass-container {
+                margin-top: 10px;
+                padding: 10px 12px;
+            }
+            .verse-text {
+                font-size: 0.8rem;
+            }
+            .verse-reference {
+                font-size: 0.75rem;
+                margin-top: 6px;
+                padding-top: 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-image {
+                max-width: 300px;
+                max-height: 200px;
+            }
+            .image-glass-frame {
+                padding: 8px;
+                margin-bottom: 8px;
+            }
+            h1 {
+                font-size: 1.3rem;
+            }
             .brand-text, .slogan-text {
                 display: none;
             }
@@ -421,53 +502,10 @@
                 display: inline-block;
             }
             .info-text {
-                margin-left: 10px;
-                white-space: nowrap;
-            }
-            .verse-text {
-                font-size: 0.9rem;
-            }
-            .verse-reference {
-                font-size: 0.85rem;
-                margin-top: 18px;
-                padding-top: 14px;
-            }
-            .version-link {
-                font-size: 0.75rem;
-                padding: 4px 8px;
-            }
-            .right-group {
-                gap: 8px;
-            }
-            .info-tooltip {
-                width: 160px;
-                padding: 8px 10px;
-                right: -10px;
-            }
-            .info-tooltip::after {
-                right: 18px;
-            }
-            #view-tabla iframe,
-            #view-pastoral iframe {
-                border-radius: 12px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .mobile-brand {
-                font-size: 0.75rem;
+                margin-left: 8px;
             }
             .bottom-panel {
                 padding: 0 12px;
-            }
-            .info-text {
-                margin-left: 8px;
-            }
-            h1 {
-                font-size: 1.6rem;
-            }
-            .glass-container {
-                padding: 16px 12px;
             }
             .version-link {
                 font-size: 0.7rem;
@@ -478,8 +516,60 @@
                 right: -5px;
             }
             #view-tabla iframe,
-            #view-pastoral iframe {
+            #view-pastoral iframe,
+            #view-discipuladores iframe {
                 border-radius: 8px;
+            }
+        }
+
+        /* Ajuste para pantallas con poca altura (ej: 700px o menos) */
+        @media (max-height: 700px) {
+            #content-area {
+                padding: 5px 20px;
+            }
+            .image-glass-frame {
+                margin-bottom: 8px;
+                padding: 6px;
+            }
+            .welcome-image {
+                max-height: 200px;
+            }
+            h1 {
+                font-size: 1.3rem;
+                margin-bottom: 2px;
+            }
+            p {
+                margin-bottom: 2px;
+                font-size: 0.8rem;
+            }
+            .glass-container {
+                margin-top: 8px;
+                padding: 8px 10px;
+            }
+            .verse-text {
+                font-size: 0.75rem;
+                line-height: 1.3;
+            }
+            .verse-reference {
+                margin-top: 5px;
+                padding-top: 5px;
+                font-size: 0.7rem;
+            }
+        }
+
+        /* Ajuste extra para alturas muy reducidas */
+        @media (max-height: 560px) {
+            .welcome-image {
+                max-height: 150px;
+            }
+            .image-glass-frame {
+                margin-bottom: 5px;
+            }
+            h1 {
+                font-size: 1.2rem;
+            }
+            .verse-text {
+                font-size: 0.7rem;
             }
         }
     </style>
@@ -488,6 +578,12 @@
 
     <main id="content-area">
         <div id="view-home" class="view-section">
+            <!-- Imagen con marco glass de tamaño máximo sin desplazamiento -->
+            <div class="image-glass-frame">
+                <img class="welcome-image" 
+                     src="https://github.com/experiencia-IA/boillat/blob/main/b.png?raw=true" 
+                     alt="Imagen de bienvenida Red de Multiplicación">
+            </div>
             <h1>Bienvenido</h1>
             <p>Utiliza el menú inferior para gestionar la red.</p>
             <div class="glass-container">
@@ -503,13 +599,17 @@
             <iframe src="https://experiencia-ia.github.io/boillat/tabladatos.html" title="Tabla de Registros - Sistema de Red" loading="lazy"></iframe>
         </div>
         
-        <!-- Vista Red Pastoral: ahora con iframe que carga la URL solicitada -->
+        <!-- Vista Red Pastoral: iframe con URL solicitada -->
         <div id="view-pastoral" class="view-section hidden">
             <iframe src="https://experiencia-ia.github.io/boillat/redpastoral.html" title="Red Pastoral - Sistema de Red" loading="lazy"></iframe>
         </div>
         
+        <!-- Vista Red Discipuladores: ahora con iframe que carga la URL proporcionada -->
+        <div id="view-discipuladores" class="view-section hidden">
+            <iframe src="https://experiencia-ia.github.io/boillat/reddiscipuladores.html" title="Red Discipuladores - Sistema de Red" loading="lazy"></iframe>
+        </div>
+        
         <!-- Resto de vistas estáticas (sin cambios funcionales) -->
-        <div id="view-discipuladores" class="view-section hidden"><h1>Red Discipuladores</h1><p>Estructura y seguimiento de discipuladores activos.</p></div>
         <div id="view-material" class="view-section hidden"><h1>Material de Red</h1><p>Recursos, manuales y guías para el crecimiento.</p></div>
         <div id="view-agenda" class="view-section hidden"><h1>Agenda</h1><p>Próximos eventos, reuniones y fechas clave.</p></div>
         <div id="view-reporte" class="view-section hidden"><h1>Reporte Visual</h1><p>Estadísticas y métricas del ministerio en red.</p></div>
