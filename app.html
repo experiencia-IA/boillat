@@ -53,12 +53,13 @@
             margin: 0 auto;
         }
 
-        /* Estilos específicos para las vistas con iframe (Tabla, Red Pastoral, Red Discipuladores, Agenda y ahora Reporte Visual) */
+        /* Estilos específicos para las vistas con iframe (Tabla, Red Pastoral, Red Discipuladores, Agenda, Reporte Visual y NUEVO Gestion y Seguimiento) */
         #view-tabla,
         #view-pastoral,
         #view-discipuladores,
         #view-agenda,
-        #view-reporte {
+        #view-reporte,
+        #view-seguimiento {
             padding: 0 !important;
             height: 100%;
             max-width: 100%;
@@ -69,7 +70,8 @@
         #view-pastoral iframe,
         #view-discipuladores iframe,
         #view-agenda iframe,
-        #view-reporte iframe {
+        #view-reporte iframe,
+        #view-seguimiento iframe {
             width: 100%;
             flex: 1;
             border: none;
@@ -534,7 +536,7 @@
                 font-size: 0.7rem;
             }
             /* Vistas con iframe: ocupan el espacio restante sin scroll externo */
-            #view-tabla, #view-pastoral, #view-discipuladores, #view-agenda, #view-reporte {
+            #view-tabla, #view-pastoral, #view-discipuladores, #view-agenda, #view-reporte, #view-seguimiento {
                 height: calc(100dvh - 70px);
                 max-height: calc(100dvh - 70px);
             }
@@ -542,7 +544,8 @@
             #view-pastoral iframe,
             #view-discipuladores iframe,
             #view-agenda iframe,
-            #view-reporte iframe {
+            #view-reporte iframe,
+            #view-seguimiento iframe {
                 flex: 1;
                 height: 100%;
                 border-radius: 12px;
@@ -660,9 +663,16 @@
         <div id="view-reporte" class="view-section hidden">
             <iframe src="https://experiencia-ia.github.io/boillat/reporte.html" title="Reporte Visual - Sistema de Red" loading="lazy"></iframe>
         </div>
+
+        <!-- NUEVA VISTA: Gestión y Seguimiento (abre dentro de la app) -->
+        <div id="view-seguimiento" class="view-section hidden">
+            <iframe src="https://experiencia-ia.github.io/boillat/seguimiento.html" title="Gestión y Seguimiento - Sistema de Red" loading="lazy"></iframe>
+        </div>
     </main>
 
     <div id="menu-overlay">
+        <!-- NUEVO ÍTEM PRINCIPAL: Gestión y Seguimiento -->
+        <a href="#" class="menu-item" onclick="navigate('seguimiento')">Gestión y Seguimiento</a>
         <a href="#" class="menu-item" onclick="navigate('tabla')">Tabla de Registros</a>
         <a href="#" class="menu-item" onclick="navigate('pastoral')">Red Pastoral</a>
         <a href="#" class="menu-item" onclick="navigate('discipuladores')">Red Discipuladores</a>
