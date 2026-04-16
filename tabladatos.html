@@ -3,34 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Tabla de Registros</title>
+    <title>Tabla de Registros | Gestión Completa</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* (Estilos igual que antes, sin cambios) */
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background:#f0f4f9; height:100vh; width:100vw; overflow:hidden; font-family:'Inter',system-ui,sans-serif; display:flex; flex-direction:column; }
-        .app-wrapper { flex:1; display:flex; flex-direction:column; padding:1rem 1.5rem; overflow:hidden; min-height:0; }
-        .app-card { background:white; border-radius:28px; box-shadow:0 12px 30px rgba(0,0,0,0.05); display:flex; flex-direction:column; overflow:hidden; flex:1; min-height:0; }
-        .header-panel { background:#0b2b4f; background:linear-gradient(135deg,#0a2a44 0%,#0f3b6a 100%); padding:0.5rem 1.8rem; text-align:center; }
-        .header-panel h1 { color:white; font-size:1.5rem; font-weight:600; display:flex; align-items:center; gap:12px; justify-content:center; margin:0; }
-        .toolbar { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:0.8rem; padding:1.2rem 1.8rem 0.8rem 1.8rem; border-bottom:1px solid #edf2f7; flex-shrink:0; }
-        .filters-group { display:flex; flex-wrap:wrap; gap:0.8rem; align-items:center; flex:3; }
-        .search-area { flex:2; min-width:180px; }
-        .search-input { width:100%; padding:0.7rem 1rem 0.7rem 2.5rem; border:1px solid #e2e8f0; border-radius:48px; font-size:0.9rem; background:#fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%234b5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"></circle><line x1="21" y1="21" x2="15" y2="15"></line></svg>') no-repeat 1rem center; background-size:1rem; }
-        .filter-select { padding:0.6rem 1.8rem 0.6rem 1rem; border:1px solid #e2e8f0; border-radius:40px; background:white; font-size:0.85rem; min-width:140px; }
-        .btn-primary, .btn-print { border:none; padding:0.6rem 1.2rem; border-radius:40px; font-weight:500; font-size:0.85rem; cursor:pointer; display:inline-flex; align-items:center; gap:8px; background:#1e3a8a; color:white; transition:all 0.2s; }
-        .table-container { flex:1; overflow:auto; padding:0 1.2rem 1.2rem 1.2rem; min-height:0; scrollbar-width:thin; }
-        .data-table { width:100%; border-collapse:collapse; font-size:0.85rem; min-width:1300px; }
-        .data-table th { position:sticky; top:0; background:#f9fbfe; padding:1rem 0.9rem; border-bottom:2px solid #e2edf7; }
-        .data-table td { padding:0.85rem 0.9rem; border-bottom:1px solid #f0f4fa; }
-        .action-icons { display:flex; gap:8px; flex-wrap:wrap; }
-        .view-btn, .edit-btn, .delete-btn, .tracking-btn { background:none; border:none; font-size:1rem; cursor:pointer; padding:4px 6px; border-radius:8px; }
-        .tracking-btn { color:#16a34a; }
-        .tracking-btn:hover { color:#15803d; background:#e0f2e9; }
-        .foto-miniatura { width:40px; height:40px; object-fit:cover; border-radius:10px; }
-        .sin-foto { width:40px; height:40px; background:#eef2ff; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#1e3a8a; margin:0 auto; }
-        /* Modales (igual que original) ... se omiten por brevedad pero se incluyen en el código completo */
-        /* ... resto de estilos ... */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f0f4f9;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+        .app-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem 1.5rem;
+            overflow: hidden;
+            min-height: 0;
+        }
+        .app-card {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex: 1;
+            min-height: 0;
+        }
+        .header-panel {
+            background: linear-gradient(135deg, #0a2a44 0%, #0f3b6a 100%);
+            padding: 0.8rem 1.8rem;
+            text-align: center;
+        }
+        .header-panel h1 {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            margin: 0;
+        }
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.2rem 1.8rem 0.8rem 1.8rem;
+            border-bottom: 1px solid #e9edf2;
+            flex-shrink: 0;
+            background: #ffffff;
+        }
+        .filters-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            align-items: center;
+            flex: 3;
+        }
+        .search-area {
+            flex: 2;
+            min-width: 200px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 0.7rem 1rem 0.7rem 2.6rem;
+            border: 1px solid #e0e7ef;
+            border-radius: 48px;
+            font-size: 0.9rem;
+            background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%234b5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"></circle><line x1="21" y1="21" x2="15" y2="15"></line></svg>') no-repeat 1rem center;
+            background-size: 1rem;
+            transition: all 0.2s;
+        }
+        .search-input:focus {
+            border-color: #1e3a8a;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(30,58,138,0.1);
+        }
+        .filter-select {
+            padding: 0.6rem 1.8rem 0.6rem 1rem;
+            border: 1px solid #e0e7ef;
+            border-radius: 40px;
+            background: white;
+            font-size: 0.85rem;
+            font-weight: 500;
+            min-width: 150px;
+            cursor: pointer;
+        }
+        .btn-primary, .btn-print {
+            border: none;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #1e3a8a;
+            color: white;
+            transition: all 0.2s;
+        }
+        .btn-print {
+            background: #2c3e66;
+        }
+        .btn-primary:hover, .btn-print:hover {
+            background: #0f2b5c;
+            transform: translateY(-1px);
+        }
+        .table-container {
+            flex: 1;
+            overflow: auto;
+            padding: 0 1.2rem 1.2rem 1.2rem;
+            min-height: 0;
+            scrollbar-width: thin;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 1300px;
+        }
+        .data-table th {
+            position: sticky;
+            top: 0;
+            background: #f8fafd;
+            padding: 1rem 0.9rem;
+            border-bottom: 2px solid #e2edf7;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .data-table td {
+            padding: 0.85rem 0.9rem;
+            border-bottom: 1px solid #f0f4fa;
+            vertical-align: middle;
+        }
+        .action-icons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .view-btn, .edit-btn, .delete-btn, .tracking-btn {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: 10px;
+            transition: 0.15s;
+        }
+        .view-btn { color: #2563eb; }
+        .view-btn:hover { background: #eef2ff; color: #1e40af; }
+        .edit-btn { color: #eab308; }
+        .edit-btn:hover { background: #fef9e3; color: #b45309; }
+        .delete-btn { color: #dc2626; }
+        .delete-btn:hover { background: #fee2e2; color: #b91c1c; }
+        .tracking-btn { color: #16a34a; }
+        .tracking-btn:hover { background: #e0f2e9; color: #0e7c32; }
+        .foto-miniatura {
+            width: 42px;
+            height: 42px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .sin-foto {
+            width: 42px;
+            height: 42px;
+            background: #eef2ff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1e3a8a;
+            margin: 0 auto;
+            font-size: 1.2rem;
+        }
+        footer {
+            background: #f9fbfd;
+            padding: 0.7rem 1.8rem;
+            font-size: 0.7rem;
+            color: #4b5563;
+            border-top: 1px solid #eef2f8;
+            text-align: center;
+        }
+
+        /* MODALES */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(3px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-container {
+            background: white;
+            width: 90%;
+            max-width: 750px;
+            max-height: 85vh;
+            border-radius: 32px;
+            overflow-y: auto;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.25);
+            animation: fadeInUp 0.2s ease;
+        }
+        .modal-header {
+            padding: 1.2rem 1.8rem;
+            border-bottom: 1px solid #eef2f8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafcff;
+        }
+        .modal-header h3 { font-weight: 700; color: #0f3b6a; }
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: #7c8ba0;
+        }
+        .modal-body { padding: 1.5rem 2rem; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .form-field.full-width { grid-column: span 2; }
+        label { font-weight: 600; font-size: 0.8rem; color: #2c3e66; }
+        input, select, textarea {
+            padding: 0.7rem;
+            border: 1px solid #cfdfed;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            background: white;
+        }
+        .tabs {
+            display: flex;
+            gap: 0.8rem;
+            border-bottom: 1px solid #e2edf7;
+            margin-bottom: 1.5rem;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.6rem 1rem;
+            font-weight: 600;
+            color: #5a6e8a;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active {
+            color: #1e3a8a;
+            border-bottom: 2px solid #1e3a8a;
+        }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+        .foto-preview-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .preview-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            object-fit: cover;
+            background: #f1f5f9;
+        }
+        .btn-sec {
+            background: #eef2ff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .modal-footer {
+            padding: 1rem 2rem;
+            border-top: 1px solid #edf2f7;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        .btn-cancel { background: #e2e8f0; color: #1e293b; }
+        .btn-danger { background: #b91c1c; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 680px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .form-field.full-width { grid-column: span 1; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+        }
     </style>
 </head>
 <body>
@@ -41,7 +326,7 @@
         </div>
         <div class="toolbar">
             <div class="filters-group">
-                <div class="search-area"><input type="text" id="searchInput" class="search-input" placeholder="Buscar texto..."></div>
+                <div class="search-area"><input type="text" id="searchInput" class="search-input" placeholder="Buscar por nombre, DNI, iglesia..."></div>
                 <select id="filterCategoria" class="filter-select"><option value="">Todas las categorías</option></select>
                 <select id="filterIglesia" class="filter-select"><option value="">Todas las iglesias</option></select>
             </div>
@@ -53,26 +338,83 @@
         <div class="table-container">
             <table class="data-table" id="dataTable">
                 <thead><tr><th>N° Registro</th><th>Foto</th><th>Apellido</th><th>Nombre</th><th>DNI</th><th>Categoría</th><th>Iglesia</th><th>Contacto</th><th>Observaciones</th><th>Acciones</th></tr></thead>
-                <tbody id="tableBody"><tr class="empty-row"><td colspan="10">Cargando registros...</td></tr></tbody>
+                <tbody id="tableBody"><tr><td colspan="10" style="text-align:center">Cargando registros...</td></tr></tbody>
             </table>
         </div>
-        <footer>Registros orden descendente · Filtros combinados · Botón <i class="fas fa-chart-line"></i> abre seguimiento dentro de la app</footer>
+        <footer><i class="fas fa-chart-simple"></i> Registros orden descendente · Filtros combinados · <i class="fas fa-chart-line"></i> seguimiento integrado</footer>
     </div>
 </div>
 
-<!-- MODALES (se incluye solo lo necesario para funcionalidad, pero se mantiene todo el código original) -->
-<div id="registroModal" class="modal-overlay"><!-- ... contenido completo del modal ... --></div>
-<div id="viewModal" class="modal-overlay"><!-- ... --></div>
-<div id="deleteConfirmModal" class="modal-overlay danger-modal"><!-- ... --></div>
+<!-- MODAL REGISTRO (NUEVO/EDITAR) -->
+<div id="registroModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header"><h3 id="modalTitle">Nuevo Registro</h3><button class="close-modal" id="closeModalBtn">&times;</button></div>
+        <div class="modal-body">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="tabBasico">Información básica</button>
+                <button class="tab-btn" data-tab="tabAdicional">Datos adicionales & Foto</button>
+            </div>
+            <div id="tabBasico" class="tab-pane active">
+                <div class="form-grid">
+                    <div class="form-field"><label>Apellido *</label><input type="text" id="apellido" placeholder="Apellido"></div>
+                    <div class="form-field"><label>Nombre *</label><input type="text" id="nombre" placeholder="Nombre"></div>
+                    <div class="form-field"><label>DNI *</label><input type="text" id="dni" placeholder="DNI"></div>
+                    <div class="form-field"><label>Categoría *</label><select id="categoria"><option value="Pastor">Pastor</option><option value="Discipulador">Discipulador</option><option value="Líder">Líder</option><option value="Consultor">Consultor</option><option value="Nuevo">Nuevo</option></select></div>
+                    <div class="form-field"><label>Iglesia / Denominación</label><input type="text" id="iglesia" placeholder="Nombre de iglesia"></div>
+                    <div class="form-field full-width"><label>Observaciones</label><textarea id="observaciones" rows="2" placeholder="Notas..."></textarea></div>
+                </div>
+            </div>
+            <div id="tabAdicional" class="tab-pane">
+                <div class="form-grid">
+                    <div class="form-field"><label>Domicilio</label><input type="text" id="domicilio"></div>
+                    <div class="form-field"><label>Email</label><input type="email" id="email"></div>
+                    <div class="form-field"><label>Teléfono</label><input type="text" id="telefono"></div>
+                    <div class="form-field"><label>WhatsApp</label><input type="text" id="whatsapp"></div>
+                    <div class="form-field full-width">
+                        <label>Foto (opcional)</label>
+                        <div class="foto-preview-area">
+                            <div id="sinFotoIcono" class="sin-foto"><i class="fas fa-camera"></i></div>
+                            <img id="fotoPreview" class="preview-img" style="display:none;" alt="Vista previa">
+                            <button type="button" id="btnSubirFoto" class="btn-sec"><i class="fas fa-upload"></i> Subir imagen</button>
+                            <input type="file" id="fotoInput" accept="image/*" style="display:none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer"><button id="cancelModalBtn" class="btn-cancel btn-sec">Cancelar</button><button id="saveRegistroBtn" class="btn-primary">Guardar registro</button></div>
+    </div>
+</div>
+
+<!-- MODAL VER DETALLE -->
+<div id="viewModal" class="modal-overlay">
+    <div class="modal-container" style="max-width:650px">
+        <div class="modal-header"><h3><i class="fas fa-id-card"></i> Detalles del registro</h3><button class="close-modal" id="closeViewModalBtn">&times;</button></div>
+        <div class="modal-body" id="viewModalBody"></div>
+        <div class="modal-footer"><button id="closeViewFooterBtn" class="btn-cancel">Cerrar</button><button id="editFromViewBtn" class="btn-primary"><i class="fas fa-edit"></i> Editar</button></div>
+    </div>
+</div>
+
+<!-- MODAL ELIMINAR -->
+<div id="deleteConfirmModal" class="modal-overlay danger-modal">
+    <div class="modal-container" style="max-width:450px">
+        <div class="modal-header"><h3><i class="fas fa-trash-alt"></i> Confirmar eliminación</h3><button class="close-modal" id="closeDeleteModalBtn">&times;</button></div>
+        <div class="modal-body"><p>¿Estás seguro de eliminar este registro? La acción no se puede deshacer.</p></div>
+        <div class="modal-footer"><button id="cancelDeleteBtn" class="btn-cancel">Cancelar</button><button id="confirmDeleteBtn" class="btn-primary" style="background:#b91c1c">Eliminar</button></div>
+    </div>
+</div>
 
 <script>
-    // ---------- MODELO Y FUNCIONES (igual que antes, pero con openSeguimiento modificado) ----------
+    // ---------- MODELO DE DATOS ----------
     let allRegistros = [];
-    let currentFilters = { texto: "", categoria: "", iglesia: "" };
     let editingId = null;
     let currentFotoBase64 = "";
     let pendingDeleteId = null;
 
+    // filtros globales
+    let currentFilters = { texto: "", categoria: "", iglesia: "" };
+
+    // DOM elements
     const tbody = document.getElementById("tableBody");
     const searchInput = document.getElementById("searchInput");
     const filterCategoria = document.getElementById("filterCategoria");
@@ -85,7 +427,7 @@
     const modalTitle = document.getElementById("modalTitle");
     const printBtn = document.getElementById("printTableBtn");
 
-    // Campos del formulario (simplificado, igual que original)
+    // campos formulario
     const apellidoInput = document.getElementById("apellido");
     const nombreInput = document.getElementById("nombre");
     const dniInput = document.getElementById("dni");
@@ -101,7 +443,7 @@
     const fotoPreview = document.getElementById("fotoPreview");
     const sinFotoIcono = document.getElementById("sinFotoIcono");
 
-    // Modales secundarios
+    // modales adicionales
     const viewModal = document.getElementById("viewModal");
     const closeViewModalBtn = document.getElementById("closeViewModalBtn");
     const closeViewFooterBtn = document.getElementById("closeViewFooterBtn");
@@ -111,19 +453,92 @@
     const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
     const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
 
-    // Tabs
-    const tabBtns = document.querySelectorAll(".tab-btn");
-    const panes = document.querySelectorAll(".tab-pane");
-
+    // helpers
     function saveToLocalStorage() { localStorage.setItem("appRegistros_v5", JSON.stringify(allRegistros)); }
+
+    function getNextId() { return allRegistros.length ? Math.max(...allRegistros.map(r=>r.id)) + 1 : 1001; }
     function getNextRegistroNum() { return allRegistros.length ? Math.max(...allRegistros.map(r=>r.registroNum)) + 1 : 1; }
-    function updateFilterOptions() { /* ... */ }
-    function getFilteredAndSorted() { /* ... */ }
-    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-    function formatContacto(reg) { /* ... */ }
-    function renderFotoCell(fotoBase64) { /* ... */ }
-    
-    // FUNCIÓN MODIFICADA: openSeguimiento envía mensaje al padre (app.html) para cambiar vista y precargar
+
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
+
+    function formatContacto(reg) {
+        let html = '';
+        if(reg.email) html += `<div><i class="fas fa-envelope"></i> ${escapeHtml(reg.email)}</div>`;
+        if(reg.telefono) html += `<div><i class="fas fa-phone-alt"></i> ${escapeHtml(reg.telefono)}</div>`;
+        if(reg.whatsapp) html += `<div><i class="fab fa-whatsapp"></i> ${escapeHtml(reg.whatsapp)}</div>`;
+        return html || '<span class="sin-info">—</span>';
+    }
+
+    function renderFotoCell(fotoBase64) {
+        if(fotoBase64 && fotoBase64.startsWith('data:image')) return `<img src="${fotoBase64}" class="foto-miniatura" alt="foto" loading="lazy">`;
+        return `<div class="sin-foto"><i class="fas fa-user-circle"></i></div>`;
+    }
+
+    function updateFilterOptions() {
+        const categorias = [...new Set(allRegistros.map(r=>r.categoria).filter(c=>c))];
+        const iglesias = [...new Set(allRegistros.map(r=>r.iglesia).filter(i=>i))];
+        const currentCat = filterCategoria.value;
+        const currentIgl = filterIglesia.value;
+        filterCategoria.innerHTML = '<option value="">Todas las categorías</option>' + categorias.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+        filterIglesia.innerHTML = '<option value="">Todas las iglesias</option>' + iglesias.map(i=>`<option value="${escapeHtml(i)}">${escapeHtml(i)}</option>`).join('');
+        if(currentCat && categorias.includes(currentCat)) filterCategoria.value = currentCat;
+        if(currentIgl && iglesias.includes(currentIgl)) filterIglesia.value = currentIgl;
+    }
+
+    function getFilteredAndSorted() {
+        let filtered = [...allRegistros];
+        const texto = currentFilters.texto.toLowerCase();
+        if(texto) {
+            filtered = filtered.filter(r => 
+                (r.apellido && r.apellido.toLowerCase().includes(texto)) ||
+                (r.nombre && r.nombre.toLowerCase().includes(texto)) ||
+                (r.dni && r.dni.toLowerCase().includes(texto)) ||
+                (r.categoria && r.categoria.toLowerCase().includes(texto)) ||
+                (r.iglesia && r.iglesia.toLowerCase().includes(texto)) ||
+                (r.observaciones && r.observaciones.toLowerCase().includes(texto))
+            );
+        }
+        if(currentFilters.categoria) filtered = filtered.filter(r => r.categoria === currentFilters.categoria);
+        if(currentFilters.iglesia) filtered = filtered.filter(r => r.iglesia === currentFilters.iglesia);
+        return filtered.sort((a,b)=> b.registroNum - a.registroNum);
+    }
+
+    function renderTable() {
+        const data = getFilteredAndSorted();
+        if(!data.length) { tbody.innerHTML = `<tr class="empty-row"><td colspan="10">📭 No hay registros coincidentes</td></tr>`; return; }
+        let html = "";
+        for(const reg of data) {
+            html += `<tr>
+                <td>${reg.registroNum}</td>
+                <td style="text-align:center">${renderFotoCell(reg.foto)}</td>
+                <td>${escapeHtml(reg.apellido)}</td>
+                <td>${escapeHtml(reg.nombre)}</td>
+                <td>${escapeHtml(reg.dni)}</td>
+                <td>${escapeHtml(reg.categoria)}</td>
+                <td>${escapeHtml(reg.iglesia)}</td>
+                <td>${formatContacto(reg)}</td>
+                <td style="max-width:200px;">${escapeHtml(reg.observaciones) || '—'}</td>
+                <td class="action-icons">
+                    <button class="view-btn" data-id="${reg.id}" title="Ver"><i class="fas fa-eye"></i></button>
+                    <button class="edit-btn" data-id="${reg.id}" title="Editar"><i class="fas fa-edit"></i></button>
+                    <button class="delete-btn" data-id="${reg.id}" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
+                    <button class="tracking-btn" data-id="${reg.id}" title="Seguimiento"><i class="fas fa-chart-line"></i></button>
+                </td>
+            </tr>`;
+        }
+        tbody.innerHTML = html;
+        // attach eventos dinámicos
+        document.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', (e) => openViewModal(parseInt(btn.dataset.id))));
+        document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => openEditModal(parseInt(btn.dataset.id))));
+        document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => showDeleteConfirmModal(parseInt(btn.dataset.id))));
+        document.querySelectorAll('.tracking-btn').forEach(btn => btn.addEventListener('click', (e) => {
+            const id = parseInt(btn.dataset.id);
+            const registro = allRegistros.find(r => r.id === id);
+            if(registro) openSeguimiento(registro);
+        }));
+    }
+
+    // SEGUIMIENTO (Mensaje al padre)
     function openSeguimiento(registro) {
         const fullName = `${registro.apellido} ${registro.nombre}`.trim();
         let denominacion = '';
@@ -140,77 +555,172 @@
             case 'Discipulador': perfilValue = '7'; break;
             case 'Líder': perfilValue = '5'; break;
             case 'Consultor': perfilValue = '5'; break;
-            case 'Nuevo': perfilValue = '15'; break;
-            default: perfilValue = '';
+            default: perfilValue = '15';
         }
-        
-        const prefill = {
-            nombre: fullName,
-            denominacion: denominacion,
-            perfil: perfilValue,
-            proceso: '',
-            etapa: '1',
-            modulosCompletados: 0
-        };
-        
-        // Guardar en sessionStorage por si acaso
+        const prefill = { nombre: fullName, denominacion: denominacion, perfil: perfilValue, proceso: '', etapa: '1', modulosCompletados: 0 };
         sessionStorage.setItem('seguimientoPrefill', JSON.stringify(prefill));
-        
-        // Enviar mensaje al padre (app.html) para que navegue a la vista de seguimiento y precargue
         if (window.parent !== window) {
-            window.parent.postMessage({
-                action: 'navigateToSeguimiento',
-                prefill: prefill
-            }, '*');
+            window.parent.postMessage({ action: 'navigateToSeguimiento', prefill: prefill }, '*');
         } else {
-            // Si no está embebido (fallback), abrir en nueva pestaña
             window.location.href = 'seguimiento.html';
         }
     }
-    
-    function renderTable() {
-        const dataToShow = getFilteredAndSorted();
-        if (!tbody) return;
-        if (dataToShow.length === 0) { tbody.innerHTML = `<tr class="empty-row"><td colspan="10">📭 No hay registros coincidentes</td></tr>`; return; }
-        let html = "";
-        for (let reg of dataToShow) {
-            const fotoHtml = renderFotoCell(reg.foto);
-            const contactoHtml = formatContacto(reg);
-            html += `<tr>
-                        <td>${reg.registroNum}</td>
-                        <td style="text-align:center;">${fotoHtml}</td>
-                        <td>${escapeHtml(reg.apellido)}</td>
-                        <td>${escapeHtml(reg.nombre)}</td>
-                        <td>${escapeHtml(reg.dni)}</td>
-                        <td>${escapeHtml(reg.categoria)}</td>
-                        <td>${escapeHtml(reg.iglesia)}</td>
-                        <td>${contactoHtml}</td>
-                        <td style="max-width:200px;">${escapeHtml(reg.observaciones) || '—'}</td>
-                        <td class="action-icons">
-                            <button class="view-btn" data-id="${reg.id}" title="Ver detalles"><i class="fas fa-eye"></i></button>
-                            <button class="edit-btn" data-id="${reg.id}" title="Editar"><i class="fas fa-edit"></i></button>
-                            <button class="delete-btn" data-id="${reg.id}" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
-                            <button class="tracking-btn" data-id="${reg.id}" title="Abrir Seguimiento (dentro de la app)"><i class="fas fa-chart-line"></i></button>
-                        </td>
-                    </tr>`;
-        }
-        tbody.innerHTML = html;
-        
-        document.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', (e) => { const id = parseInt(btn.getAttribute('data-id')); openViewModal(id); }));
-        document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => { const id = parseInt(btn.getAttribute('data-id')); openEditModal(id); }));
-        document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => { const id = parseInt(btn.getAttribute('data-id')); showDeleteConfirmModal(id); }));
-        document.querySelectorAll('.tracking-btn').forEach(btn => btn.addEventListener('click', (e) => { const id = parseInt(btn.getAttribute('data-id')); const registro = allRegistros.find(r => r.id === id); if (registro) openSeguimiento(registro); else alert("No se encontró el registro"); }));
+
+    // Limpiar y llenar modal de registro
+    function resetFormModal() {
+        apellidoInput.value = ''; nombreInput.value = ''; dniInput.value = '';
+        categoriaSelect.value = 'Pastor'; iglesiaInput.value = ''; observacionesTextarea.value = '';
+        domicilioInput.value = ''; emailInput.value = ''; telefonoInput.value = ''; whatsappInput.value = '';
+        currentFotoBase64 = '';
+        fotoPreview.style.display = 'none';
+        sinFotoIcono.style.display = 'flex';
+        fotoPreview.src = '';
+        editingId = null;
+        modalTitle.innerText = 'Nuevo Registro';
     }
-    
-    // El resto de funciones (openViewModal, openEditModal, saveRegistro, etc.) se mantienen exactamente igual que en la versión original.
-    // Por brevedad en esta respuesta no se vuelven a copiar, pero en el archivo final deben incluirse completas.
-    // Asegúrate de incluir todo el código JS original desde la versión anterior, solo reemplazando la función openSeguimiento y agregando la línea de envío de mensaje.
-    
-    // Inicialización
+
+    function openEditModal(id) {
+        const reg = allRegistros.find(r => r.id === id);
+        if(!reg) return;
+        editingId = reg.id;
+        modalTitle.innerText = 'Editar Registro';
+        apellidoInput.value = reg.apellido || '';
+        nombreInput.value = reg.nombre || '';
+        dniInput.value = reg.dni || '';
+        categoriaSelect.value = reg.categoria || 'Pastor';
+        iglesiaInput.value = reg.iglesia || '';
+        observacionesTextarea.value = reg.observaciones || '';
+        domicilioInput.value = reg.domicilio || '';
+        emailInput.value = reg.email || '';
+        telefonoInput.value = reg.telefono || '';
+        whatsappInput.value = reg.whatsapp || '';
+        currentFotoBase64 = reg.foto || '';
+        if(currentFotoBase64 && currentFotoBase64.startsWith('data:image')) {
+            fotoPreview.src = currentFotoBase64;
+            fotoPreview.style.display = 'block';
+            sinFotoIcono.style.display = 'none';
+        } else {
+            fotoPreview.style.display = 'none';
+            sinFotoIcono.style.display = 'flex';
+        }
+        modalOverlay.style.display = 'flex';
+    }
+
+    function openViewModal(id) {
+        const reg = allRegistros.find(r => r.id === id);
+        if(!reg) return;
+        const fotoHtml = reg.foto ? `<img src="${reg.foto}" style="width:80px;border-radius:16px;margin-bottom:8px;">` : '<div class="sin-foto" style="width:60px;"><i class="fas fa-user"></i></div>';
+        const bodyHtml = `<div style="display:flex; gap:1.5rem; flex-wrap:wrap;"><div>${fotoHtml}</div><div style="flex:1"><p><strong>N° Registro:</strong> ${reg.registroNum}</p><p><strong>Apellido:</strong> ${escapeHtml(reg.apellido)}</p><p><strong>Nombre:</strong> ${escapeHtml(reg.nombre)}</p><p><strong>DNI:</strong> ${escapeHtml(reg.dni)}</p><p><strong>Categoría:</strong> ${escapeHtml(reg.categoria)}</p><p><strong>Iglesia:</strong> ${escapeHtml(reg.iglesia)}</p><p><strong>Domicilio:</strong> ${escapeHtml(reg.domicilio) || '—'}</p><p><strong>Email:</strong> ${escapeHtml(reg.email) || '—'}</p><p><strong>Teléfono:</strong> ${escapeHtml(reg.telefono) || '—'}</p><p><strong>WhatsApp:</strong> ${escapeHtml(reg.whatsapp) || '—'}</p><p><strong>Observaciones:</strong> ${escapeHtml(reg.observaciones) || '—'}</p></div></div>`;
+        document.getElementById("viewModalBody").innerHTML = bodyHtml;
+        viewModal.dataset.editId = reg.id;
+        viewModal.style.display = 'flex';
+    }
+
+    function saveRegistro() {
+        if(!apellidoInput.value.trim() || !nombreInput.value.trim() || !dniInput.value.trim()) {
+            alert("Complete los campos obligatorios: Apellido, Nombre y DNI");
+            return;
+        }
+        const newRegistro = {
+            id: editingId ? editingId : getNextId(),
+            registroNum: editingId ? allRegistros.find(r=>r.id===editingId).registroNum : getNextRegistroNum(),
+            apellido: apellidoInput.value.trim(),
+            nombre: nombreInput.value.trim(),
+            dni: dniInput.value.trim(),
+            categoria: categoriaSelect.value,
+            iglesia: iglesiaInput.value.trim(),
+            observaciones: observacionesTextarea.value.trim(),
+            domicilio: domicilioInput.value.trim(),
+            email: emailInput.value.trim(),
+            telefono: telefonoInput.value.trim(),
+            whatsapp: whatsappInput.value.trim(),
+            foto: currentFotoBase64 || ""
+        };
+        if(editingId) {
+            const index = allRegistros.findIndex(r => r.id === editingId);
+            if(index !== -1) allRegistros[index] = newRegistro;
+        } else {
+            allRegistros.push(newRegistro);
+        }
+        saveToLocalStorage();
+        updateFilterOptions();
+        renderTable();
+        modalOverlay.style.display = 'none';
+        resetFormModal();
+    }
+
+    function showDeleteConfirmModal(id) { pendingDeleteId = id; deleteConfirmModal.style.display = 'flex'; }
+    function confirmDelete() {
+        if(pendingDeleteId !== null) {
+            allRegistros = allRegistros.filter(r => r.id !== pendingDeleteId);
+            saveToLocalStorage();
+            updateFilterOptions();
+            renderTable();
+            deleteConfirmModal.style.display = 'none';
+            pendingDeleteId = null;
+        }
+    }
+    function closeAllModals() {
+        modalOverlay.style.display = 'none';
+        viewModal.style.display = 'none';
+        deleteConfirmModal.style.display = 'none';
+        resetFormModal();
+    }
+
+    // manejo foto
+    btnSubirFoto.addEventListener('click', () => fotoInput.click());
+    fotoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if(file) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                currentFotoBase64 = ev.target.result;
+                fotoPreview.src = currentFotoBase64;
+                fotoPreview.style.display = 'block';
+                sinFotoIcono.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // TABS
+    function initTabs() {
+        const btns = document.querySelectorAll('.tab-btn');
+        btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.dataset.tab;
+                document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+                btns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    }
+
+    function bindEvents() {
+        searchInput.addEventListener('input', (e) => { currentFilters.texto = e.target.value; renderTable(); });
+        filterCategoria.addEventListener('change', (e) => { currentFilters.categoria = e.target.value; renderTable(); });
+        filterIglesia.addEventListener('change', (e) => { currentFilters.iglesia = e.target.value; renderTable(); });
+        openModalBtn.onclick = () => { resetFormModal(); modalOverlay.style.display = 'flex'; };
+        closeModalBtn.onclick = cancelModalBtn.onclick = () => closeAllModals();
+        saveBtn.onclick = saveRegistro;
+        printBtn.onclick = () => window.print();
+        closeViewModalBtn.onclick = closeViewFooterBtn.onclick = () => viewModal.style.display = 'none';
+        editFromViewBtn.onclick = () => {
+            const id = parseInt(viewModal.dataset.editId);
+            viewModal.style.display = 'none';
+            openEditModal(id);
+        };
+        closeDeleteModalBtn.onclick = cancelDeleteBtn.onclick = () => deleteConfirmModal.style.display = 'none';
+        confirmDeleteBtn.onclick = confirmDelete;
+        window.onclick = (e) => { if(e.target.classList.contains('modal-overlay')) closeAllModals(); };
+    }
+
     function initDemoData() {
         const stored = localStorage.getItem("appRegistros_v5");
-        if (stored) allRegistros = JSON.parse(stored);
-        else {
+        if(stored) {
+            allRegistros = JSON.parse(stored);
+        } else {
             allRegistros = [
                 { id: 1001, registroNum: 4, apellido: "García", nombre: "Lucía", dni: "45123456", categoria: "Pastor", iglesia: "Centro de Vida", observaciones: "Pastor principal", domicilio: "Av. Libertad 123", email: "lucia@centrovida.com", telefono: "3512345678", whatsapp: "+5493512345678", foto: "" },
                 { id: 1002, registroNum: 3, apellido: "Martínez", nombre: "Jorge", dni: "33987654", categoria: "Líder", iglesia: "Fe y Gracia", observaciones: "Líder de alabanza", domicilio: "Belgrano 456", email: "jorge@feygracia.org", telefono: "3519876543", whatsapp: "+5493519876543", foto: "" },
@@ -220,8 +730,7 @@
             saveToLocalStorage();
         }
     }
-    
-    function bindEvents() { /* ... */ }
+
     function init() {
         initDemoData();
         bindEvents();
@@ -229,9 +738,9 @@
         updateFilterOptions();
         renderTable();
         currentFilters = { texto: "", categoria: "", iglesia: "" };
-        searchInput.value = "";
-        filterCategoria.value = "";
-        filterIglesia.value = "";
+        if(searchInput) searchInput.value = "";
+        if(filterCategoria) filterCategoria.value = "";
+        if(filterIglesia) filterIglesia.value = "";
     }
     init();
 </script>
