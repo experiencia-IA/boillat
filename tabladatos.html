@@ -818,7 +818,7 @@
         // Guardar en sessionStorage para ser leído por seguimiento.html
         sessionStorage.setItem('seguimientoPrefill', JSON.stringify(prefill));
         // Abrir en nueva pestaña
-        window.open('seguimiento.html', '_blank');
+        window.location.href = 'seguimiento.html';
     }
 
     function renderTable() {
