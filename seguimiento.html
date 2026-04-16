@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Seguimiento Perfiles | Red de Multiplicación</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --header-padding-y: 0.5rem;   /* reducción drástica del alto vertical */
+            --header-padding-x: 1.5rem;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f6fa;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            line-height: 1.4;
+        }
+        /* CABECERA MÁS COMPACTA (ALTO REDUCIDO) */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: var(--header-padding-y) var(--header-padding-x);
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+        }
+        /* Contenedor principal con mejor espaciado responsivo */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 1.8rem;
+            gap: 1.8rem;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+            flex: 1;
+            min-width: 280px;
+            transition: all 0.2s;
+        }
+        h2 {
+            margin-top: 0;
+            margin-bottom: 1.2rem;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 0.5rem;
+            font-size: 1.35rem;
+            font-weight: 600;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: -0.3rem;
+            color: #2c3e50;
+        }
+        input, select, button {
+            padding: 0.7rem 0.8rem;
+            border: 1px solid #ccd1d9;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            background-color: #fff;
+            transition: 0.2s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
+        }
+        button {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.25s, transform 0.05s;
+            border-radius: 40px;
+            padding: 0.75rem;
+            font-size: 0.95rem;
+        }
+        button:hover {
+            background-color: #1f6ea0;
+            transform: translateY(-1px);
+        }
+        button:active {
+            transform: translateY(1px);
+        }
+        /* Tabla responsiva (ya poseía overflow, mejoramos bordes) */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 0.8rem 0.6rem;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+        th {
+            background-color: var(--light);
+            font-weight: 600;
+            color: #1e2a3a;
+        }
+        .action-btn {
+            background-color: #2ecc71;
+            padding: 0.4rem 0.9rem;
+            font-size: 0.75rem;
+            border-radius: 30px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .action-btn:hover {
+            background-color: #239b56;
+        }
+        #chart-container {
+            width: 100%;
+            height: 300px;
+            display: none;
+            margin-top: 1rem;
+            background: #fefefe;
+            border-radius: 14px;
+            padding: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        canvas {
+            max-height: 100%;
+            width: 100%;
+        }
+        /* ----- AJUSTES RESPONSIVOS (móvil y escritorio armonizado) ----- */
+        @media (max-width: 780px) {
+            .container {
+                padding: 1rem;
+                gap: 1.2rem;
+            }
+            .card {
+                padding: 1.2rem;
+                min-width: 100%;
+            }
+            header {
+                padding: 0.4rem 1rem;   /* cabecera aún más baja en móvil */
+            }
+            header h1 {
+                font-size: 1.25rem;
+                font-weight: 600;
+            }
+            h2 {
+                font-size: 1.2rem;
+                margin-bottom: 1rem;
+            }
+            th, td {
+                padding: 0.6rem 0.4rem;
+                font-size: 0.8rem;
+            }
+            .action-btn {
+                padding: 0.3rem 0.7rem;
+                font-size: 0.7rem;
+            }
+            input, select, button {
+                font-size: 0.9rem;
+                padding: 0.65rem 0.75rem;
+            }
+            #chart-container {
+                height: 260px;
+            }
+        }
+
+        /* Ajuste para pantallas muy pequeñas (<=480px) */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.8rem;
+            }
+            .card {
+                padding: 1rem;
+            }
+            header h1 {
+                font-size: 1.1rem;
+            }
+            th, td {
+                display: table-cell;  /* mantiene estructura de tabla, pero con scroll horizontal nativo */
+                padding: 0.5rem 0.3rem;
+            }
+            .action-btn {
+                padding: 0.25rem 0.6rem;
+            }
+            #chart-container {
+                height: 220px;
+            }
+        }
+
+        /* mejorar scroll horizontal en tabla para datos densos */
+        .card > div[style*="overflow-x:auto"] {
+            margin: 0 -0.2rem;
+            padding: 0 0.2rem;
+        }
+        table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+        small {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            display: inline-block;
+            margin-top: 2px;
+        }
+        .porcentaje-badge {
+            font-weight: 600;
+            background: #eef2f7;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📊 Sistema de Gestión y Evolución de Perfiles</h1>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>📌 Nuevo Registro / Actualización</h2>
+            <form id="registroForm">
+                <label for="nombre">👤 Nombre Completo:</label>
+                <input type="text" id="nombre" required placeholder="Ej. Juan Pérez, María Gómez">
+
+                <label for="denominacion">⛪ Denominación:</label>
+                <select id="denominacion" required>
+                    <option value="">Seleccione...</option>
+                    <optgroup label="Denominacional">
+                        <option value="UAD">UAD</option>
+                        <option value="CEPI">CEPI</option>
+                        <option value="MPI">MPI</option>
+                        <option value="CV">CV</option>
+                    </optgroup>
+                    <optgroup label="No Denominacional">
+                        <option value="Consejo de Pastores">Consejo de Pastores</option>
+                        <option value="Pastor">Pastor Indep.</option>
+                    </optgroup>
+                </select>
+
+                <label for="perfil">📚 Perfil (Módulos requeridos):</label>
+                <select id="perfil" required>
+                    <option value="">Seleccione...</option>
+                    <option value="15">🌱 Plantador (15 módulos)</option>
+                    <option value="12">🕊️ Pastores (12 módulos)</option>
+                    <option value="7">📖 Discipulador (7 módulos)</option>
+                    <option value="5">🤝 Mentores (5 módulos)</option>
+                </select>
+
+                <label for="proceso">🔄 Proceso Actual:</label>
+                <select id="proceso" required>
+                    <option value="">Seleccione...</option>
+                    <option value="Plantación">Plantación</option>
+                    <option value="Multiplicación - Mentores">Multiplicación - Mentores</option>
+                    <option value="Mejores Iglesias">Mejores Iglesias</option>
+                    <option value="Iglesia de Impacto">Iglesia de Impacto</option>
+                    <option value="Plantación de Iglesia">Plantación de Iglesia</option>
+                    <option value="Plan Bernabé">Plan Bernabé</option>
+                    <option value="TPI">TPI</option>
+                </select>
+
+                <label for="etapa">📈 Etapa del Proceso Lineal:</label>
+                <select id="etapa" required>
+                    <option value="1">1. Sensibilización</option>
+                    <option value="2">2. Introducción</option>
+                    <option value="3">3. Módulos Discipulador</option>
+                    <option value="4">4. Módulos Mentores</option>
+                    <option value="5">5. Acta Nacimiento</option>
+                    <option value="6">6. Tomando el Pulso</option>
+                    <option value="7">7. Mejores Iglesias</option>
+                </select>
+
+                <label for="modulosCompletados">✅ Módulos Completados:</label>
+                <input type="number" id="modulosCompletados" min="0" value="0" required>
+
+                <button type="submit">💾 Guardar Registro / Actualizar progreso</button>
+            </form>
+        </div>
+
+        <div class="card" style="flex: 2;">
+            <h2>📋 Control Individual | Red de Multiplicación</h2>
+            <div style="overflow-x:auto; border-radius: 12px;">
+                <table id="tablaRegistros">
+                    <thead>
+                        <tr>
+                            <th>Nombre / Etapa</th>
+                            <th>Denom.</th>
+                            <th>Perfil</th>
+                            <th>Proceso</th>
+                            <th>Progreso</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- registros dinámicos -->
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 style="margin-top: 1.8rem;" id="tituloGrafico">📈 Evolución: Selecciona un registro</h2>
+            <div id="chart-container">
+                <canvas id="evolucionChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ---------- INICIALIZACIÓN ----------
+        let registros = JSON.parse(localStorage.getItem('redMultiplicacionDatos')) || [];
+        let chartInstance = null;
+
+        const form = document.getElementById('registroForm');
+        const tablaBody = document.querySelector('#tablaRegistros tbody');
+        const perfilSelect = document.getElementById('perfil');
+        const modulosInput = document.getElementById('modulosCompletados');
+
+        // Sincronizar el máximo de módulos según perfil elegido
+        perfilSelect.addEventListener('change', (e) => {
+            if(e.target.value) {
+                modulosInput.max = e.target.value;
+                // opcional: si el valor actual supera el nuevo máximo, ajustar
+                let currentVal = parseInt(modulosInput.value);
+                if(currentVal > parseInt(e.target.value)) {
+                    modulosInput.value = e.target.value;
+                }
+            } else {
+                modulosInput.removeAttribute('max');
+            }
+        });
+
+        // Disparar validación inicial si ya hay un perfil preseleccionado
+        if(perfilSelect.value) {
+            modulosInput.max = perfilSelect.value;
+        }
+
+        // Guardar o actualizar registro (con trazabilidad de historial de evolución)
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const nombreRaw = document.getElementById('nombre').value.trim();
+            if(!nombreRaw) {
+                alert("Por favor ingresa el nombre completo.");
+                return;
+            }
+            const nombre = nombreRaw;
+            const denominacion = document.getElementById('denominacion').value;
+            if(!denominacion) {
+                alert("Selecciona una denominación.");
+                return;
+            }
+            const perfilValue = perfilSelect.value;
+            if(!perfilValue) {
+                alert("Selecciona un perfil válido.");
+                return;
+            }
+            const perfilNombre = perfilSelect.options[perfilSelect.selectedIndex].text;
+            const modulosTotales = parseInt(perfilValue);
+            let modulosCompletados = parseInt(modulosInput.value);
+            if(isNaN(modulosCompletados)) modulosCompletados = 0;
+            
+            // Validación estricta de módulos
+            if (modulosCompletados > modulosTotales) {
+                alert(`Error: El perfil ${perfilNombre} permite máximo ${modulosTotales} módulos. Ajusta el valor.`);
+                return;
+            }
+            if (modulosCompletados < 0) modulosCompletados = 0;
+            
+            const proceso = document.getElementById('proceso').value;
+            if(!proceso) {
+                alert("Selecciona un proceso actual.");
+                return;
+            }
+            const etapaSelect = document.getElementById('etapa');
+            const etapaTexto = etapaSelect.options[etapaSelect.selectedIndex].text;
+            
+            const nuevoPorcentaje = Math.round((modulosCompletados / modulosTotales) * 100);
+            
+            const nuevoRegistro = {
+                id: Date.now(),
+                nombre: nombre,
+                denominacion: denominacion,
+                perfil: perfilNombre,
+                modulosTotales: modulosTotales,
+                proceso: proceso,
+                etapa: etapaTexto,
+                modulosCompletados: modulosCompletados,
+                porcentaje: nuevoPorcentaje
+            };
+            
+            // Buscar si ya existe el mismo nombre (sin distinción de mayúsculas)
+            const indexExistente = registros.findIndex(r => r.nombre.toLowerCase() === nombre.toLowerCase());
+            
+            if(indexExistente >= 0) {
+                // --- Actualización del perfil existente, conservando historial ---
+                let existing = registros[indexExistente];
+                // Si no tiene propiedad historial, la construimos con valores previos
+                if(!existing.historial || !Array.isArray(existing.historial)) {
+                    existing.historial = [existing.porcentaje];
+                }
+                // Añadir el nuevo porcentaje al historial (evolución)
+                existing.historial.push(nuevoPorcentaje);
+                // Actualizar campos principales
+                existing.modulosCompletados = modulosCompletados;
+                existing.porcentaje = nuevoPorcentaje;
+                existing.etapa = etapaTexto;
+                existing.proceso = proceso;
+                existing.denominacion = denominacion;
+                existing.perfil = perfilNombre;
+                existing.modulosTotales = modulosTotales;
+                // Actualizar también ID no es necesario, pero mantenemos coherencia
+                existing.id = existing.id; 
+            } else {
+                // Nuevo registro: historial inicial con punto de partida 0% y luego el primer porcentaje real
+                nuevoRegistro.historial = [0, nuevoPorcentaje];
+                registros.push(nuevoRegistro);
+            }
+            
+            // Guardar en localStorage y refrescar tabla
+            localStorage.setItem('redMultiplicacionDatos', JSON.stringify(registros));
+            actualizarTabla();
+            form.reset();
+            // Resetear campo max del módulos después de reset
+            modulosInput.removeAttribute('max');
+            if(perfilSelect.value) modulosInput.max = perfilSelect.value;
+            modulosInput.value = 0;
+            
+            // Opcional: mensaje sutil de éxito
+            // No alteramos más nada.
+        });
+        
+        // Función para refrescar la tabla de control individual
+        function actualizarTabla() {
+            tablaBody.innerHTML = '';
+            if(registros.length === 0) {
+                const trVacio = document.createElement('tr');
+                trVacio.innerHTML = `<td colspan="6" style="text-align:center; padding:2rem;">✨ No hay registros aún. Agrega un líder o participante.</td>`;
+                tablaBody.appendChild(trVacio);
+                return;
+            }
+            
+            registros.forEach(reg => {
+                const tr = document.createElement('tr');
+                // Etapa mostrada como texto corto + nombre
+                const etapaCorta = reg.etapa.length > 28 ? reg.etapa.substring(0,25)+'...' : reg.etapa;
+                tr.innerHTML = `
+                    <td style="font-weight:500;">
+                        ${escapeHtml(reg.nombre)}<br>
+                        <small style="color:#4a627a;">📌 ${escapeHtml(etapaCorta)}</small>
+                    </td>
+                    <td>${escapeHtml(reg.denominacion)}</td>
+                    <td>${escapeHtml(reg.perfil)}</td>
+                    <td>${escapeHtml(reg.proceso)}</td>
+                    <td><span class="porcentaje-badge">${reg.modulosCompletados} / ${reg.modulosTotales}</span> <strong>(${reg.porcentaje}%)</strong></td>
+                    <td><button class="action-btn" data-id="${reg.id}">📊 Ver Gráfico</button></td>
+                `;
+                tablaBody.appendChild(tr);
+            });
+            
+            // Asignar eventos a los botones de "Ver Gráfico" después de renderizar (evitar dependencia de onclick global)
+            document.querySelectorAll('.action-btn').forEach(btn => {
+                btn.removeEventListener('click', handleGraphClick);
+                btn.addEventListener('click', handleGraphClick);
+            });
+        }
+        
+        // Manejador unificado para el gráfico
+        function handleGraphClick(e) {
+            const btn = e.currentTarget;
+            const idAttr = btn.getAttribute('data-id');
+            if(idAttr) {
+                const id = parseInt(idAttr);
+                verEvolucion(id);
+            }
+        }
+        
+        // Función para mostrar evolución mediante gráfico (con Chart.js)
+        window.verEvolucion = function(id) {
+            const persona = registros.find(r => r.id === id);
+            if (!persona) {
+                console.warn("No se encontró el registro");
+                return;
+            }
+            
+            const chartContainer = document.getElementById('chart-container');
+            const tituloElem = document.getElementById('tituloGrafico');
+            chartContainer.style.display = 'block';
+            tituloElem.innerText = `📊 Evolución de progreso: ${persona.nombre} (${persona.perfil})`;
+            
+            const ctx = document.getElementById('evolucionChart').getContext('2d');
+            
+            // Destruir gráfico anterior si existe
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+            
+            // Asegurar que el historial sea un array coherente
+            let historialData = [];
+            if(persona.historial && Array.isArray(persona.historial) && persona.historial.length > 0) {
+                historialData = [...persona.historial];
+            } else {
+                // Si por algún motivo no hay historial, construirlo basado en porcentaje actual y punto inicial 0
+                historialData = [0, persona.porcentaje];
+            }
+            
+            // Etiquetas amigables: "Inicio", "Actualización 1", "Actualización 2"...
+            const labels = historialData.map((_, idx) => {
+                if(idx === 0) return "🏁 Inicio";
+                return `📌 Act. ${idx}`;
+            });
+            
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `% Módulos completados · Meta: ${persona.modulosTotales} módulos`,
+                        data: historialData,
+                        borderColor: '#2c6e9e',
+                        backgroundColor: 'rgba(44, 110, 158, 0.08)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#1f6392',
+                        pointBorderColor: '#ffffff',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        fill: true,
+                        tension: 0.2,
+                        borderDash: [],
+                        pointStyle: 'circle'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => `Progreso: ${context.raw}%`
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: { font: { size: 11 } }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Porcentaje de avance (%)',
+                                font: { weight: 'bold', size: 11 }
+                            },
+                            grid: { color: '#e9ecef' }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Registros de evolución',
+                                font: { size: 10 }
+                            },
+                            ticks: { maxRotation: 35, minRotation: 25 }
+                        }
+                    },
+                    interaction: { mode: 'index', intersect: false }
+                }
+            });
+        };
+        
+        // pequeño helper para escapar HTML y evitar inyección (por nombres)
+        function escapeHtml(str) {
+            if(!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if(m === '&') return '&amp;';
+                if(m === '<') return '&lt;';
+                if(m === '>') return '&gt;';
+                return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
+            });
+        }
+        
+        // Inicializar tabla y validar consistencia de historial para registros antiguos sin historial
+        function migrarHistoriales() {
+            let cambio = false;
+            registros = registros.map(reg => {
+                if(!reg.historial || !Array.isArray(reg.historial) || reg.historial.length === 0) {
+                    cambio = true;
+                    // crear historial basado en porcentaje actual y punto de partida 0%
+                    return { ...reg, historial: [0, reg.porcentaje] };
+                }
+                return reg;
+            });
+            if(cambio) {
+                localStorage.setItem('redMultiplicacionDatos', JSON.stringify(registros));
+            }
+        }
+        
+        migrarHistoriales();
+        actualizarTabla();
+        
+        // Si se hace clic en algún botón con clase action-btn después de actualizaciones dinámicas, todo funciona.
+        // Aseguramos también que se puede visualizar gráfico desde la carga si se requiere.
+    </script>
+</body>
+</html>
