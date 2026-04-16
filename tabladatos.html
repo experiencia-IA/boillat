@@ -43,12 +43,13 @@
             min-height: 0;
         }
 
-        /* NUEVO PANEL AZUL OSCURO - Título */
+        /* PANEL AZUL OSCURO - altura reducida y texto centrado */
         .header-panel {
             background: #0b2b4f;
             background: linear-gradient(135deg, #0a2a44 0%, #0f3b6a 100%);
-            padding: 1rem 1.8rem;
+            padding: 0.5rem 1.8rem;      /* antes 1rem, ahora reducido */
             border-bottom: 1px solid #1e4a76;
+            text-align: center;           /* centrado horizontal */
         }
         .header-panel h1 {
             color: white;
@@ -58,6 +59,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            justify-content: center;      /* centra el contenido del flex */
             margin: 0;
         }
         .header-panel h1 i {
@@ -502,7 +504,7 @@
 <body>
 <div class="app-wrapper">
     <div class="app-card">
-        <!-- NUEVO PANEL SUPERIOR AZUL OSCURO -->
+        <!-- PANEL SUPERIOR AZUL OSCURO - altura reducida y centrado -->
         <div class="header-panel">
             <h1><i class="fas fa-table-list"></i> Tabla de Registros</h1>
         </div>
@@ -539,7 +541,7 @@
     </div>
 </div>
 
-<!-- MODAL CREAR/EDITAR (existente) -->
+<!-- MODAL CREAR/EDITAR -->
 <div id="registroModal" class="modal-overlay">
     <div class="modal-container">
         <div class="modal-header">
@@ -641,7 +643,7 @@
     };
     let editingId = null;
     let currentFotoBase64 = "";
-    let pendingDeleteId = null;  // para el modal rojo
+    let pendingDeleteId = null;
 
     // DOM elements
     const tbody = document.getElementById("tableBody");
@@ -797,7 +799,7 @@
                             <button class="edit-btn" data-id="${reg.id}" title="Editar"><i class="fas fa-edit"></i></button>
                             <button class="delete-btn" data-id="${reg.id}" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
                         </td>
-                       </tr>`;
+                    </tr>`;
         }
         tbody.innerHTML = html;
         
@@ -847,7 +849,6 @@
         `;
         document.getElementById("viewContent").innerHTML = content;
         viewModal.classList.add("active");
-        // Guardar id para edición desde el modal
         editFromViewBtn.onclick = () => {
             viewModal.classList.remove("active");
             openEditModal(id);
@@ -985,7 +986,6 @@
         const dataToPrint = getFilteredAndSorted();
         if (dataToPrint.length === 0) { alert("No hay datos para imprimir."); return; }
         let printHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Listado de Registros</title><style>body{font-family:Inter;margin:2rem;} table{border-collapse:collapse;width:100%} th,td{border:1px solid #ccc;padding:8px;}</style></head><body><h2>Reporte de Registros</h2>...`;
-        // simplificado para no alargar
         const win = window.open('', '_blank');
         if (win) { win.document.write(printHtml); win.document.close(); win.print(); }
         else alert("Permita ventanas emergentes.");
@@ -1003,7 +1003,6 @@
         modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
         btnSubirFoto.addEventListener('click', () => fotoInput.click());
         fotoInput.addEventListener('change', (e) => { if (e.target.files && e.target.files[0]) handleFileSelect(e.target.files[0]); });
-        // Cierres modales secundarios
         closeViewModalBtn.addEventListener('click', closeViewModal);
         closeViewFooterBtn.addEventListener('click', closeViewModal);
         closeDeleteModalBtn.addEventListener('click', closeDeleteModal);
