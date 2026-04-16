@@ -233,6 +233,15 @@
             border-radius: 20px;
             font-size: 0.75rem;
         }
+        .prefill-info {
+            background-color: #e8f0fe;
+            border-left: 4px solid #3498db;
+            padding: 0.6rem 1rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            color: #1f4e79;
+        }
     </style>
 </head>
 <body>
@@ -244,6 +253,9 @@
     <div class="container">
         <div class="card">
             <h2>📌 Nuevo Registro / Actualización</h2>
+            <div id="prefillMessage" class="prefill-info" style="display: none;">
+                <i class="fas fa-database" style="margin-right: 6px;"></i> Datos precargados desde ficha. Verifica y guarda para registrar progreso.
+            </div>
             <form id="registroForm">
                 <label for="nombre">👤 Nombre Completo:</label>
                 <input type="text" id="nombre" required placeholder="Ej. Juan Pérez, María Gómez">
@@ -259,7 +271,7 @@
                     </optgroup>
                     <optgroup label="No Denominacional">
                         <option value="Consejo de Pastores">Consejo de Pastores</option>
-                        <option value="Pastor">Pastor Indep.</option>
+                        <option value="Pastor Indep.">Pastor Indep.</option>
                     </optgroup>
                 </select>
 
@@ -338,6 +350,7 @@
         const tablaBody = document.querySelector('#tablaRegistros tbody');
         const perfilSelect = document.getElementById('perfil');
         const modulosInput = document.getElementById('modulosCompletados');
+        const prefillMessageDiv = document.getElementById('prefillMessage');
 
         // Sincronizar el máximo de módulos según perfil elegido
         perfilSelect.addEventListener('change', (e) => {
@@ -621,8 +634,60 @@
             }
         }
         
+        // ----- PRECARGA DE DATOS DESDE TABLADATOS (sessionStorage) -----
+        function cargarPrefiltro() {
+            const prefillRaw = sessionStorage.getItem('seguimientoPrefill');
+            if (!prefillRaw) return false;
+            
+            try {
+                const prefill = JSON.parse(prefillRaw);
+                // Rellenar campos si existen
+                if (prefill.nombre) document.getElementById('nombre').value = prefill.nombre;
+                if (prefill.denominacion) {
+                    const denomSelect = document.getElementById('denominacion');
+                    // Intentar seleccionar por valor exacto
+                    if ([...denomSelect.options].some(opt => opt.value === prefill.denominacion)) {
+                        denomSelect.value = prefill.denominacion;
+                    }
+                }
+                if (prefill.perfil) {
+                    const perfilSelectElem = document.getElementById('perfil');
+                    if ([...perfilSelectElem.options].some(opt => opt.value === prefill.perfil)) {
+                        perfilSelectElem.value = prefill.perfil;
+                        // Disparar evento change para ajustar el max de módulos
+                        perfilSelectElem.dispatchEvent(new Event('change'));
+                    }
+                }
+                if (prefill.proceso) {
+                    const procesoSelect = document.getElementById('proceso');
+                    if ([...procesoSelect.options].some(opt => opt.value === prefill.proceso)) {
+                        procesoSelect.value = prefill.proceso;
+                    }
+                }
+                if (prefill.etapa) {
+                    const etapaSelect = document.getElementById('etapa');
+                    if ([...etapaSelect.options].some(opt => opt.value === prefill.etapa)) {
+                        etapaSelect.value = prefill.etapa;
+                    }
+                }
+                if (prefill.modulosCompletados !== undefined) {
+                    document.getElementById('modulosCompletados').value = prefill.modulosCompletados;
+                }
+                
+                // Mostrar mensaje informativo
+                prefillMessageDiv.style.display = 'block';
+                // Limpiar sessionStorage para que no se vuelva a aplicar en recargas
+                sessionStorage.removeItem('seguimientoPrefill');
+                return true;
+            } catch(e) {
+                console.warn("Error al procesar precarga", e);
+                return false;
+            }
+        }
+        
         migrarHistoriales();
         actualizarTabla();
+        cargarPrefiltro();  // Ejecutar precarga después de cargar la interfaz
         
         // Si se hace clic en algún botón con clase action-btn después de actualizaciones dinámicas, todo funciona.
         // Aseguramos también que se puede visualizar gráfico desde la carga si se requiere.

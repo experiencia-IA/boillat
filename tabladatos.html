@@ -200,7 +200,7 @@
             gap: 8px;
             flex-wrap: wrap;
         }
-        .view-btn, .edit-btn, .delete-btn {
+        .view-btn, .edit-btn, .delete-btn, .tracking-btn {
             background: none;
             border: none;
             font-size: 1rem;
@@ -215,6 +215,8 @@
         .edit-btn:hover { color: #1e3a8a; background: #eef2ff; transform: scale(1.05); }
         .delete-btn { color: #b91c1c; }
         .delete-btn:hover { color: #7f1a1a; background: #ffe5e5; transform: scale(1.05); }
+        .tracking-btn { color: #16a34a; }
+        .tracking-btn:hover { color: #15803d; background: #e0f2e9; transform: scale(1.05); }
 
         .empty-row td {
             text-align: center;
@@ -530,14 +532,14 @@
         <div class="table-container">
             <table class="data-table" id="dataTable">
                 <thead>
-                    <tr><th>N° Registro</th><th>Foto</th><th>Apellido</th><th>Nombre</th><th>DNI</th><th>Categoría</th><th>Iglesia</th><th>Contacto</th><th>Observaciones</th><th style="width: 110px;">Acciones</th></tr>
+                    <tr><th>N° Registro</th><th>Foto</th><th>Apellido</th><th>Nombre</th><th>DNI</th><th>Categoría</th><th>Iglesia</th><th>Contacto</th><th>Observaciones</th><th style="width: 130px;">Acciones</th></tr>
                 </thead>
                 <tbody id="tableBody">
                     <tr class="empty-row"><td colspan="10">Cargando registros...</td></tr>
                 </tbody>
             </table>
         </div>
-        <footer>Registros orden descendente · Filtros combinados · Imágenes JPG/PNG</footer>
+        <footer>Registros orden descendente · Filtros combinados · Imágenes JPG/PNG · Botón <i class="fas fa-chart-line"></i> abre seguimiento con precarga</footer>
     </div>
 </div>
 
@@ -773,6 +775,52 @@
         }
     }
 
+    // Función para abrir seguimiento.html con los datos del registro precargados
+    function openSeguimiento(registro) {
+        // Construir nombre completo
+        const fullName = `${registro.apellido} ${registro.nombre}`.trim();
+        
+        // Mapear iglesia a denominación (opciones conocidas)
+        let denominacion = '';
+        const iglesia = registro.iglesia || '';
+        const denomOptions = ['UAD', 'CEPI', 'MPI', 'CV', 'Consejo de Pastores', 'Pastor Indep.'];
+        const exactMatch = denomOptions.find(opt => opt.toLowerCase() === iglesia.toLowerCase());
+        if (exactMatch) {
+            denominacion = exactMatch;
+        } else if (iglesia.toLowerCase().includes('consejo')) {
+            denominacion = 'Consejo de Pastores';
+        } else if (iglesia.toLowerCase().includes('pastor')) {
+            denominacion = 'Pastor Indep.';
+        } else {
+            denominacion = '';  // se dejará sin seleccionar en el combo
+        }
+        
+        // Mapear categoría a perfil (valores de los módulos)
+        let perfilValue = '';
+        switch (registro.categoria) {
+            case 'Pastor': perfilValue = '12'; break;
+            case 'Discipulador': perfilValue = '7'; break;
+            case 'Líder': perfilValue = '5'; break;
+            case 'Consultor': perfilValue = '5'; break;
+            case 'Nuevo': perfilValue = '15'; break;
+            default: perfilValue = '';
+        }
+        
+        const prefill = {
+            nombre: fullName,
+            denominacion: denominacion,
+            perfil: perfilValue,
+            proceso: '',      // vacío para que el usuario lo seleccione manualmente
+            etapa: '1',       // etapa inicial por defecto
+            modulosCompletados: 0
+        };
+        
+        // Guardar en sessionStorage para ser leído por seguimiento.html
+        sessionStorage.setItem('seguimientoPrefill', JSON.stringify(prefill));
+        // Abrir en nueva pestaña
+        window.open('seguimiento.html', '_blank');
+    }
+
     function renderTable() {
         const dataToShow = getFilteredAndSorted();
         if (!tbody) return;
@@ -798,11 +846,13 @@
                             <button class="view-btn" data-id="${reg.id}" title="Ver detalles"><i class="fas fa-eye"></i></button>
                             <button class="edit-btn" data-id="${reg.id}" title="Editar"><i class="fas fa-edit"></i></button>
                             <button class="delete-btn" data-id="${reg.id}" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
+                            <button class="tracking-btn" data-id="${reg.id}" title="Abrir Seguimiento (precarga datos)"><i class="fas fa-chart-line"></i></button>
                         </td>
                     </tr>`;
         }
         tbody.innerHTML = html;
         
+        // Eventos de botones
         document.querySelectorAll('.view-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const id = parseInt(btn.getAttribute('data-id'));
@@ -819,6 +869,14 @@
             btn.addEventListener('click', (e) => {
                 const id = parseInt(btn.getAttribute('data-id'));
                 showDeleteConfirmModal(id);
+            });
+        });
+        document.querySelectorAll('.tracking-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(btn.getAttribute('data-id'));
+                const registro = allRegistros.find(r => r.id === id);
+                if (registro) openSeguimiento(registro);
+                else alert("No se encontró el registro");
             });
         });
     }
@@ -985,7 +1043,11 @@
     function printFilteredTable() {
         const dataToPrint = getFilteredAndSorted();
         if (dataToPrint.length === 0) { alert("No hay datos para imprimir."); return; }
-        let printHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Listado de Registros</title><style>body{font-family:Inter;margin:2rem;} table{border-collapse:collapse;width:100%} th,td{border:1px solid #ccc;padding:8px;}</style></head><body><h2>Reporte de Registros</h2>...`;
+        let printHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Listado de Registros</title><style>body{font-family:Inter;margin:2rem;} table{border-collapse:collapse;width:100%} th,td{border:1px solid #ccc;padding:8px;}</style></head><body><h2>Reporte de Registros</h2><table><thead><tr><th>N°</th><th>Apellido</th><th>Nombre</th><th>DNI</th><th>Categoría</th><th>Iglesia</th><th>Contacto</th></tr></thead><tbody>`;
+        dataToPrint.forEach(r => {
+            printHtml += `<tr><td>${r.registroNum}</td><td>${escapeHtml(r.apellido)}</td><td>${escapeHtml(r.nombre)}</td><td>${escapeHtml(r.dni)}</td><td>${escapeHtml(r.categoria)}</td><td>${escapeHtml(r.iglesia)}</td><td>${escapeHtml(r.email || '')} ${escapeHtml(r.telefono || '')}</td></tr>`;
+        });
+        printHtml += `</tbody></table></body></html>`;
         const win = window.open('', '_blank');
         if (win) { win.document.write(printHtml); win.document.close(); win.print(); }
         else alert("Permita ventanas emergentes.");
