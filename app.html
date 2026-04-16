@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>AppSistemaRed - Gestión Integral</title>
-    <!-- Google Fonts: Inter moderna -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -16,14 +15,12 @@
             --gris-claro: #f1f2f6;
             --celeste-resalte: #00b4d8;
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', -apple-system, sans-serif;
         }
-
         body {
             background-color: var(--blanco-fondo);
             color: var(--texto-principal);
@@ -33,8 +30,6 @@
             overflow: hidden;
             position: relative;
         }
-
-        /* --- PANTALLA CENTRAL --- */
         #content-area {
             flex: 1;
             padding: 40px 25px;
@@ -45,33 +40,21 @@
             z-index: 1;
             overflow-y: auto;
         }
-
         .view-section {
             animation: fadeIn 0.4s ease-out;
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
         }
-
-        /* Estilos específicos para las vistas con iframe (Tabla, Red Pastoral, Red Discipuladores, Agenda, Reporte Visual y NUEVO Gestion y Seguimiento) */
-        #view-tabla,
-        #view-pastoral,
-        #view-discipuladores,
-        #view-agenda,
-        #view-reporte,
-        #view-seguimiento {
+        #view-tabla, #view-pastoral, #view-discipuladores, #view-agenda, #view-reporte, #view-seguimiento {
             padding: 0 !important;
             height: 100%;
             max-width: 100%;
             display: flex;
             flex-direction: column;
         }
-        #view-tabla iframe,
-        #view-pastoral iframe,
-        #view-discipuladores iframe,
-        #view-agenda iframe,
-        #view-reporte iframe,
-        #view-seguimiento iframe {
+        #view-tabla iframe, #view-pastoral iframe, #view-discipuladores iframe,
+        #view-agenda iframe, #view-reporte iframe, #view-seguimiento iframe {
             width: 100%;
             flex: 1;
             border: none;
@@ -79,8 +62,6 @@
             background-color: white;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
-
-        /* Tamaño del título "Bienvenido" aumentado */
         h1 {
             font-size: 3rem;
             font-weight: 800;
@@ -88,8 +69,6 @@
             color: var(--azul-oscuro);
             letter-spacing: -0.02em;
         }
-
-        /* --- CONTENEDOR GLASSMORFISMO --- */
         .glass-container {
             margin-top: 30px;
             width: 100%;
@@ -100,64 +79,32 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             padding: 24px 20px;
-            transition: all 0.3s ease;
         }
-
-        @media (max-width: 768px) {
-            .glass-container {
-                padding: 20px 16px;
-                border-radius: 16px;
-            }
-            h1 {
-                font-size: 2.4rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 2rem;
-            }
-        }
-
         .verse-text {
             font-size: 1rem;
             line-height: 1.6;
             color: #1e2a3a;
-            max-width: 100%;
-            margin: 0 auto;
-            font-style: normal;
             font-weight: 500;
         }
-
         .verse-reference {
             font-weight: 700;
             color: var(--azul-oscuro);
             margin-top: 20px;
             display: inline-block;
             font-size: 1rem;
-            letter-spacing: 0.5px;
             border-top: 1px solid rgba(10, 25, 47, 0.2);
             padding-top: 16px;
         }
-
-        /* --- ESTILOS PARA LA IMAGEN (MARCO GLASS) --- */
         .image-glass-frame {
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             border-radius: 28px;
             padding: 12px;
             margin: 0 auto 20px auto;
             width: fit-content;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             border: 1px solid rgba(255, 255, 255, 0.4);
-            transition: transform 0.2s ease;
         }
-        
-        .image-glass-frame:hover {
-            transform: scale(1.02);
-        }
-
         .welcome-image {
             display: block;
             width: auto;
@@ -168,31 +115,6 @@
             border-radius: 20px;
             margin: 0 auto;
         }
-
-        @media (max-width: 768px) {
-            .welcome-image {
-                max-width: 260px;
-                max-height: 140px;
-            }
-            .image-glass-frame {
-                padding: 8px;
-                border-radius: 24px;
-                margin-bottom: 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .welcome-image {
-                max-width: 220px;
-                max-height: 120px;
-            }
-            .image-glass-frame {
-                padding: 6px;
-                margin-bottom: 12px;
-            }
-        }
-
-        /* --- PANEL INFERIOR AZUL --- */
         .bottom-panel {
             background-color: var(--azul-oscuro);
             height: 70px;
@@ -204,8 +126,6 @@
             z-index: 110;
             cursor: pointer;
         }
-
-        /* --- BOTÓN GLOBO --- */
         .btn-globo {
             width: 50px;
             height: 50px;
@@ -216,21 +136,14 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             transition: all 0.2s ease;
             flex-shrink: 0;
         }
-
         .btn-globo:hover {
             border-color: var(--celeste-resalte);
             box-shadow: 0 0 8px rgba(0, 180, 216, 0.6);
             transform: scale(1.02);
         }
-
-        .btn-globo:active {
-            transform: scale(0.9);
-        }
-
         .icon-dots {
             width: 20px;
             height: 16px;
@@ -243,14 +156,7 @@
             height: 2px;
             background-color: white;
             border-radius: 2px;
-            transition: background 0.2s;
         }
-
-        .btn-globo:hover .icon-dots span {
-            background-color: var(--celeste-resalte);
-        }
-
-        /* --- TEXTOS JUNTO AL BOTÓN --- */
         .info-text {
             margin-left: 12px;
             display: flex;
@@ -260,17 +166,19 @@
             white-space: nowrap;
             cursor: default;
         }
-
         .brand-text {
             color: white;
             font-weight: 800;
             font-size: clamp(0.85rem, 4vw, 1.1rem);
-            letter-spacing: 0.5px;
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            color: white;
-            text-shadow: 0 0 4px rgba(0,180,216,0.3);
         }
-
+        .mobile-brand {
+            display: none;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
         .slogan-text {
             color: white;
             font-size: 0.8rem;
@@ -279,30 +187,14 @@
             padding: 4px 12px;
             border-radius: 30px;
             border: 1px solid var(--naranja-resalte);
-            box-shadow: 0 0 6px rgba(255, 159, 67, 0.4);
             backdrop-filter: blur(2px);
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-            transition: all 0.2s ease;
         }
-
-        .mobile-brand {
-            display: none;
-            color: white;
-            font-size: 0.85rem;
-            font-weight: 700;
-            white-space: nowrap;
-            text-shadow: 0 0 2px rgba(0,0,0,0.3);
-        }
-
-        /* --- Grupo derecho (Versión Digital + botón salir) --- */
         .right-group {
             display: flex;
             align-items: center;
             gap: 15px;
             position: relative;
         }
-
         .version-link {
             font-weight: 700;
             color: white;
@@ -312,16 +204,61 @@
             border-radius: 20px;
             background: rgba(255,255,255,0.1);
             transition: all 0.2s ease;
-            user-select: none;
-            letter-spacing: 0.3px;
         }
-
         .version-link:hover {
             background: rgba(255,255,255,0.25);
             transform: scale(1.02);
         }
-
-        /* Tooltip (modal pequeño) que aparece arriba del texto */
+        .btn-logout-panel {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .icon-door {
+            width: 28px;
+            height: 28px;
+            fill: var(--naranja-resalte);
+        }
+        #menu-overlay {
+            position: fixed;
+            bottom: 85px;
+            left: 25px;
+            width: 260px;
+            background-color: var(--azul-oscuro);
+            border-radius: 15px;
+            padding: 10px 0;
+            transform: translateY(20px) scale(0.9);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        #menu-overlay.active {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+        .menu-item {
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            display: block;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            text-align: left;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+        .menu-item:hover {
+            border-left-color: var(--celeste-resalte);
+            background-color: rgba(0, 180, 216, 0.2);
+            transform: translateX(4px);
+        }
         .info-tooltip {
             position: absolute;
             bottom: 100%;
@@ -339,8 +276,6 @@
             animation: fadeInUp 0.2s ease;
             border: 1px solid rgba(0,0,0,0.05);
         }
-
-        /* Flecha hacia abajo (apuntando al enlace) */
         .info-tooltip::after {
             content: '';
             position: absolute;
@@ -350,115 +285,20 @@
             border-style: solid;
             border-color: white transparent transparent transparent;
         }
-
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .info-tooltip p {
-            margin: 6px 0;
-            line-height: 1.4;
-        }
-
-        .info-tooltip .bold {
-            font-weight: 700;
-            color: var(--azul-oscuro);
-        }
-
-        /* --- BOTÓN SALIR --- */
-        .btn-logout-panel {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.2s, transform 0.2s;
-            flex-shrink: 0;
-        }
-
-        .btn-logout-panel:hover {
-            opacity: 0.8;
-            transform: scale(1.1);
-        }
-
-        .icon-door {
-            width: 28px;
-            height: 28px;
-            fill: var(--naranja-resalte);
-        }
-
-        /* --- MENÚ LATERAL --- */
-        #menu-overlay {
-            position: fixed;
-            bottom: 85px; 
-            left: 25px;
-            width: 260px;
-            background-color: var(--azul-oscuro);
-            border-radius: 15px;
-            padding: 10px 0;
-            transform: translateY(20px) scale(0.9);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 100;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        #menu-overlay.active {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-            visibility: visible;
-        }
-
-        #menu-overlay:hover .menu-item {
-            opacity: 0.5;
-            transition: opacity 0.2s ease;
-        }
-
-        #menu-overlay .menu-item:hover {
-            opacity: 1;
-            background-color: rgba(0, 180, 216, 0.2);
-            color: white;
-            transform: translateX(4px);
-            transition: all 0.2s ease;
-        }
-
-        .menu-item {
-            padding: 15px 20px;
-            color: white;
-            text-decoration: none;
-            display: block;
-            font-size: 0.95rem;
-            transition: all 0.2s ease;
-            text-align: left;
-            border-left: 3px solid transparent;
-        }
-
-        .menu-item:hover {
-            border-left-color: var(--celeste-resalte);
-        }
-
-        /* --- MODAL DE CERRAR SESIÓN --- */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: rgba(0,0,0,0.6);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 200;
         }
-
         .modal-card {
             background: white;
             padding: 30px;
@@ -468,7 +308,6 @@
             max-width: 320px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
-
         .btn-modal {
             padding: 14px;
             margin-top: 10px;
@@ -478,372 +317,294 @@
             width: 100%;
             font-weight: 700;
         }
-
         .btn-exit { background: var(--rojo-alerta); color: white; }
         .btn-cancel { background: var(--gris-claro); color: var(--texto-principal); }
-
         .hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* --- RESPONSIVE: MÓVIL SIN DESPLAZAMIENTO (TODO VISIBLE) --- */
         @media (max-width: 768px) {
-            body {
-                height: 100dvh;
-                overflow: hidden;
-            }
-            #content-area {
-                overflow: hidden;
-                padding: 8px 16px;
-                min-height: 0;
-            }
-            /* Vista de inicio: centrada y sin desborde */
-            #view-home {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                height: calc(100dvh - 70px);
-                max-height: calc(100dvh - 70px);
-                overflow: hidden;
-            }
-            /* Ajustes de tamaño para que todo quepa */
-            .image-glass-frame {
-                margin-bottom: 6px;
-                padding: 5px;
-            }
-            .welcome-image {
-                max-width: 180px;
-                max-height: 90px;
-            }
-            h1 {
-                font-size: 1.8rem;
-                margin-bottom: 6px;
-            }
-            #view-home p {
-                font-size: 0.85rem;
-                margin-bottom: 4px;
-            }
-            .glass-container {
-                margin-top: 8px;
-                padding: 12px 10px;
-            }
-            .verse-text {
-                font-size: 0.75rem;
-                line-height: 1.35;
-            }
-            .verse-reference {
-                margin-top: 8px;
-                padding-top: 6px;
-                font-size: 0.7rem;
-            }
-            /* Vistas con iframe: ocupan el espacio restante sin scroll externo */
+            #content-area { padding: 8px 16px; overflow: hidden; }
+            #view-home { display: flex; flex-direction: column; justify-content: center; height: calc(100dvh - 70px); }
+            .welcome-image { max-width: 180px; max-height: 90px; }
+            h1 { font-size: 1.8rem; margin-bottom: 6px; }
+            .glass-container { margin-top: 8px; padding: 12px 10px; }
+            .verse-text { font-size: 0.75rem; line-height: 1.35; }
+            .verse-reference { margin-top: 8px; padding-top: 6px; font-size: 0.7rem; }
             #view-tabla, #view-pastoral, #view-discipuladores, #view-agenda, #view-reporte, #view-seguimiento {
                 height: calc(100dvh - 70px);
                 max-height: calc(100dvh - 70px);
             }
-            #view-tabla iframe,
-            #view-pastoral iframe,
-            #view-discipuladores iframe,
-            #view-agenda iframe,
-            #view-reporte iframe,
-            #view-seguimiento iframe {
-                flex: 1;
-                height: 100%;
-                border-radius: 12px;
-            }
-            /* Ajustes de textos del footer en móvil */
-            .brand-text, .slogan-text {
-                display: none;
-            }
-            .mobile-brand {
-                display: inline-block;
-                font-size: 0.7rem;
-            }
-            .info-text {
-                margin-left: 8px;
-                white-space: nowrap;
-            }
-            .version-link {
-                font-size: 0.7rem;
-                padding: 4px 8px;
-            }
-            .right-group {
-                gap: 6px;
-            }
-            .info-tooltip {
-                width: 150px;
-                padding: 6px 8px;
-                right: -5px;
-                font-size: 0.7rem;
-            }
-            .info-tooltip::after {
-                right: 15px;
-            }
-            .bottom-panel {
-                padding: 0 12px;
-                height: 70px;
-            }
-            .btn-globo {
-                width: 44px;
-                height: 44px;
-            }
-            .icon-door {
-                width: 24px;
-                height: 24px;
-            }
+            .brand-text, .slogan-text { display: none; }
+            .mobile-brand { display: inline-block; font-size: 0.7rem; }
+            .info-text { margin-left: 8px; white-space: nowrap; }
+            .version-link { font-size: 0.7rem; padding: 4px 8px; }
+            .right-group { gap: 6px; }
+            .info-tooltip { width: 150px; padding: 6px 8px; right: -5px; font-size: 0.7rem; }
+            .bottom-panel { padding: 0 12px; height: 70px; }
+            .btn-globo { width: 44px; height: 44px; }
+            .icon-door { width: 24px; height: 24px; }
         }
-
         @media (max-width: 480px) {
-            .mobile-brand {
-                font-size: 0.65rem;
-            }
-            .welcome-image {
-                max-width: 150px;
-                max-height: 75px;
-            }
-            h1 {
-                font-size: 1.6rem;
-            }
-            .verse-text {
-                font-size: 0.7rem;
-            }
-            .version-link {
-                font-size: 0.65rem;
-            }
-            .info-tooltip {
-                width: 135px;
-                font-size: 0.65rem;
-            }
+            .mobile-brand { font-size: 0.65rem; }
+            .welcome-image { max-width: 150px; max-height: 75px; }
+            h1 { font-size: 1.6rem; }
+            .verse-text { font-size: 0.7rem; }
+            .version-link { font-size: 0.65rem; }
         }
     </style>
 </head>
 <body>
 
-    <main id="content-area">
-        <div id="view-home" class="view-section">
-            <!-- Imagen sobre el título Bienvenido -->
-            <div class="image-glass-frame">
-                <img class="welcome-image" 
-                     src="https://github.com/experiencia-IA/boillat/blob/main/b.png?raw=true" 
-                     alt="Imagen de bienvenida Red de Multiplicación">
+<main id="content-area">
+    <div id="view-home" class="view-section">
+        <div class="image-glass-frame">
+            <img class="welcome-image" src="https://github.com/experiencia-IA/boillat/blob/main/b.png?raw=true" alt="Bienvenida">
+        </div>
+        <h1>Bienvenido</h1>
+        <p>Utiliza el menú inferior para gestionar la red.</p>
+        <div class="glass-container">
+            <div class="verse-text">
+                «Por tanto, id, y haced discípulos a todas las naciones, bautizándolos en el nombre del Padre, y del Hijo, y del Espíritu Santo; enseñándoles que guarden todas las cosas que os he mandado; y he aquí yo estoy con vosotros todos los días, hasta el fin del mundo. Amén».
             </div>
-            <h1>Bienvenido</h1>
-            <p>Utiliza el menú inferior para gestionar la red.</p>
-            <div class="glass-container">
-                <div class="verse-text">
-                    «Por tanto, id, y haced discípulos a todas las naciones, bautizándolos en el nombre del Padre, y del Hijo, y del Espíritu Santo; enseñándoles que guarden todas las cosas que os he mandado; y he aquí yo estoy con vosotros todos los días, hasta el fin del mundo. Amén».
-                </div>
-                <div class="verse-reference">Mateo 28:19-20</div>
-            </div>
-        </div>
-        
-        <!-- Vista Tabla de Registros: iframe con URL externa -->
-        <div id="view-tabla" class="view-section hidden">
-            <iframe src="https://experiencia-ia.github.io/boillat/tabladatos.html" title="Tabla de Registros - Sistema de Red" loading="lazy"></iframe>
-        </div>
-        
-        <!-- Vista Red Pastoral: iframe con URL solicitada -->
-        <div id="view-pastoral" class="view-section hidden">
-            <iframe src="https://experiencia-ia.github.io/boillat/redpastoral.html" title="Red Pastoral - Sistema de Red" loading="lazy"></iframe>
-        </div>
-        
-        <!-- Vista Red Discipuladores: iframe con la URL proporcionada -->
-        <div id="view-discipuladores" class="view-section hidden">
-            <iframe src="https://experiencia-ia.github.io/boillat/reddiscipuladores.html" title="Red Discipuladores - Sistema de Red" loading="lazy"></iframe>
-        </div>
-        
-        <!-- Vista Material de Red: estática (sin cambios) -->
-        <div id="view-material" class="view-section hidden"><h1>Material de Red</h1><p>Recursos, manuales y guías para el crecimiento.</p></div>
-        
-        <!-- Vista Agenda: ahora con iframe que carga la URL solicitada -->
-        <div id="view-agenda" class="view-section hidden">
-            <iframe src="https://experiencia-ia.github.io/boillat/agenda.html" title="Agenda - Sistema de Red" loading="lazy"></iframe>
-        </div>
-        
-        <!-- Vista Reporte Visual: ahora con iframe que carga la URL solicitada -->
-        <div id="view-reporte" class="view-section hidden">
-            <iframe src="https://experiencia-ia.github.io/boillat/reporte.html" title="Reporte Visual - Sistema de Red" loading="lazy"></iframe>
-        </div>
-
-        <!-- NUEVA VISTA: Gestión y Seguimiento (abre dentro de la app) -->
-        <div id="view-seguimiento" class="view-section hidden">
-            <iframe src="https://experiencia-ia.github.io/boillat/seguimiento.html" title="Gestión y Seguimiento - Sistema de Red" loading="lazy"></iframe>
-        </div>
-    </main>
-
-    <div id="menu-overlay">
-        <!-- NUEVO ÍTEM PRINCIPAL: Gestión y Seguimiento -->
-        <a href="#" class="menu-item" onclick="navigate('seguimiento')">Gestión y Seguimiento</a>
-        <a href="#" class="menu-item" onclick="navigate('tabla')">Tabla de Registros</a>
-        <a href="#" class="menu-item" onclick="navigate('pastoral')">Red Pastoral</a>
-        <a href="#" class="menu-item" onclick="navigate('discipuladores')">Red Discipuladores</a>
-        <a href="#" class="menu-item" onclick="navigate('material')">Material de Red</a>
-        <a href="#" class="menu-item" onclick="navigate('agenda')">Agenda</a>
-        <a href="#" class="menu-item" onclick="navigate('reporte')">Reporte Visual</a>
-    </div>
-
-    <footer class="bottom-panel">
-        <div style="display: flex; align-items: center;">
-            <button class="btn-globo" onclick="toggleMenu()">
-                <div class="icon-dots">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </button>
-            <div class="info-text">
-                <span class="brand-text">Red de Multiplicación - Aplicación Gestión y Seguimiento</span>
-                <span class="mobile-brand">Red Multiplicación Digital</span>
-                <span class="slogan-text">Orar, Apoyar y Trabajar juntos!!!</span>
-            </div>
-        </div>
-
-        <div class="right-group">
-            <span class="version-link" id="versionLink">Versión Digital</span>
-            <button class="btn-logout-panel" onclick="openModal()" title="Salir del sistema">
-                <svg class="icon-door" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
-                    <path d="M4 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1a1 1 0 0 0-2 0v1H4V3h6v1a1 1 0 0 0 2 0V3a2 2 0 0 0-2-2H4z"/>
-                </svg>
-            </button>
-        </div>
-    </footer>
-
-    <!-- Modal de cierre de sesión -->
-    <div id="exit-modal" class="modal-overlay">
-        <div class="modal-card">
-            <h3 style="color: var(--rojo-alerta); margin-bottom: 10px;">Cerrar Sesión</h3>
-            <p style="margin-bottom: 20px; color: #636e72;">¿Seguro que deseas salir del sistema?</p>
-            <button class="btn-modal btn-exit" onclick="confirmExit()">Salir ahora</button>
-            <button class="btn-modal btn-cancel" onclick="closeModal()">Cancelar</button>
+            <div class="verse-reference">Mateo 28:19-20</div>
         </div>
     </div>
+    <div id="view-tabla" class="view-section hidden">
+        <iframe src="https://experiencia-ia.github.io/boillat/tabladatos.html" title="Tabla de Registros"></iframe>
+    </div>
+    <div id="view-pastoral" class="view-section hidden">
+        <iframe src="https://experiencia-ia.github.io/boillat/redpastoral.html" title="Red Pastoral"></iframe>
+    </div>
+    <div id="view-discipuladores" class="view-section hidden">
+        <iframe src="https://experiencia-ia.github.io/boillat/reddiscipuladores.html" title="Red Discipuladores"></iframe>
+    </div>
+    <div id="view-material" class="view-section hidden">
+        <h1>Material de Red</h1>
+        <p>Recursos, manuales y guías para el crecimiento.</p>
+    </div>
+    <div id="view-agenda" class="view-section hidden">
+        <iframe src="https://experiencia-ia.github.io/boillat/agenda.html" title="Agenda"></iframe>
+    </div>
+    <div id="view-reporte" class="view-section hidden">
+        <iframe src="https://experiencia-ia.github.io/boillat/reporte.html" title="Reporte Visual"></iframe>
+    </div>
+    <div id="view-seguimiento" class="view-section hidden">
+        <iframe src="https://experiencia-ia.github.io/boillat/seguimiento.html" title="Gestión y Seguimiento"></iframe>
+    </div>
+</main>
 
-    <script>
-        // Elementos y lógica de tooltip (sin cambios)
-        const versionLink = document.getElementById('versionLink');
-        let tooltipElement = null;
-        let timeoutId = null;
+<div id="menu-overlay">
+    <div class="menu-item" data-view="seguimiento">📊 Gestión y Seguimiento</div>
+    <div class="menu-item" data-view="tabla">📋 Tabla de Registros</div>
+    <div class="menu-item" data-view="pastoral">⛪ Red Pastoral</div>
+    <div class="menu-item" data-view="discipuladores">📖 Red Discipuladores</div>
+    <div class="menu-item" data-view="material">📚 Material de Red</div>
+    <div class="menu-item" data-view="agenda">📅 Agenda</div>
+    <div class="menu-item" data-view="reporte">📊 Reporte Visual</div>
+</div>
 
-        function removeTooltip() {
-            if (tooltipElement && tooltipElement.parentNode) {
-                tooltipElement.remove();
-            }
-            tooltipElement = null;
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-                timeoutId = null;
-            }
-        }
+<footer class="bottom-panel">
+    <div style="display: flex; align-items: center;">
+        <button class="btn-globo" id="menuButton">
+            <div class="icon-dots"><span></span><span></span><span></span></div>
+        </button>
+        <div class="info-text">
+            <span class="brand-text">Red de Multiplicación - Aplicación Gestión y Seguimiento</span>
+            <span class="mobile-brand">Red Multiplicación Digital</span>
+            <span class="slogan-text">Orar, Apoyar y Trabajar juntos!!!</span>
+        </div>
+    </div>
+    <div class="right-group">
+        <span class="version-link" id="versionLink">Versión Digital</span>
+        <button class="btn-logout-panel" id="logoutButton">
+            <svg class="icon-door" viewBox="0 0 16 16">
+                <path d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
+                <path d="M4 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1a1 1 0 0 0-2 0v1H4V3h6v1a1 1 0 0 0 2 0V3a2 2 0 0 0-2-2H4z"/>
+            </svg>
+        </button>
+    </div>
+</footer>
 
-        function showInfoTooltip(event) {
-            removeTooltip();
-            tooltipElement = document.createElement('div');
-            tooltipElement.className = 'info-tooltip';
-            tooltipElement.innerHTML = `
-                <p><span class="bold">Diseño y programación:</span><br>Rómulo Fioravante</p>
-                <p><span class="bold">V.1.0.2026</span></p>
-            `;
-            
-            const rightGroup = document.querySelector('.right-group');
-            if (rightGroup) {
-                rightGroup.style.position = 'relative';
-                rightGroup.appendChild(tooltipElement);
-            } else {
-                document.body.appendChild(tooltipElement);
-                const rect = versionLink.getBoundingClientRect();
-                tooltipElement.style.position = 'fixed';
-                tooltipElement.style.bottom = (window.innerHeight - rect.top + 8) + 'px';
-                tooltipElement.style.right = (window.innerWidth - rect.right + 5) + 'px';
-            }
-            timeoutId = setTimeout(() => {
-                removeTooltip();
-            }, 5000);
-        }
+<div id="exit-modal" class="modal-overlay">
+    <div class="modal-card">
+        <h3 style="color: var(--rojo-alerta);">Cerrar Sesión</h3>
+        <p style="margin-bottom: 20px;">¿Seguro que deseas salir del sistema?</p>
+        <button class="btn-modal btn-exit" id="confirmExitBtn">Salir ahora</button>
+        <button class="btn-modal btn-cancel" id="cancelExitBtn">Cancelar</button>
+    </div>
+</div>
 
-        versionLink.addEventListener('click', (e) => {
-            e.stopPropagation();
-            showInfoTooltip(e);
+<script>
+    // Elementos del DOM
+    const menuOverlay = document.getElementById('menu-overlay');
+    const menuButton = document.getElementById('menuButton');
+    const logoutButton = document.getElementById('logoutButton');
+    const exitModal = document.getElementById('exit-modal');
+    const confirmExitBtn = document.getElementById('confirmExitBtn');
+    const cancelExitBtn = document.getElementById('cancelExitBtn');
+    const versionLink = document.getElementById('versionLink');
+    const contentArea = document.getElementById('content-area');
+    const bottomPanel = document.querySelector('.bottom-panel');
+
+    // Variables para tooltip
+    let tooltipElement = null;
+    let timeoutId = null;
+
+    // ---------- FUNCIONES DE NAVEGACIÓN ----------
+    function navigate(viewId) {
+        // Ocultar todas las secciones
+        document.querySelectorAll('.view-section').forEach(section => {
+            section.classList.add('hidden');
         });
-
-        document.addEventListener('click', function(e) {
-            if (tooltipElement && !versionLink.contains(e.target) && !tooltipElement.contains(e.target)) {
-                removeTooltip();
-            }
-        });
-
-        // Funciones de navegación y menú (se mantiene exacta la lógica original)
-        function toggleMenu() {
-            const menu = document.getElementById('menu-overlay');
-            menu.classList.toggle('active');
-        }
-
-        function navigate(viewId) {
-            // Ocultar todas las secciones
-            document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
-            const target = document.getElementById('view-' + viewId);
-            if(target) target.classList.remove('hidden');
-            
-            // Cerrar el menú lateral después de la navegación
-            const menu = document.getElementById('menu-overlay');
-            if (menu.classList.contains('active')) {
-                menu.classList.remove('active');
-            }
-        }
-
-        function goToHome() {
-            document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
+        // Mostrar la sección seleccionada
+        const target = document.getElementById('view-' + viewId);
+        if (target) {
+            target.classList.remove('hidden');
+        } else {
+            // Si no existe, mostrar home por defecto
             document.getElementById('view-home').classList.remove('hidden');
-            const menu = document.getElementById('menu-overlay');
-            if (menu.classList.contains('active')) {
-                menu.classList.remove('active');
-            }
+        }
+        // Cerrar menú
+        menuOverlay.classList.remove('active');
+        // Eliminar tooltip si está visible
+        removeTooltip();
+    }
+
+    function goToHome() {
+        document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
+        document.getElementById('view-home').classList.remove('hidden');
+        menuOverlay.classList.remove('active');
+        removeTooltip();
+    }
+
+    // ---------- TOOLTIP ----------
+    function removeTooltip() {
+        if (tooltipElement && tooltipElement.parentNode) {
+            tooltipElement.remove();
+        }
+        tooltipElement = null;
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+            timeoutId = null;
+        }
+    }
+
+    function showInfoTooltip(event) {
+        event.stopPropagation();
+        removeTooltip();
+        tooltipElement = document.createElement('div');
+        tooltipElement.className = 'info-tooltip';
+        tooltipElement.innerHTML = `
+            <p><span class="bold">Diseño y programación:</span><br>Rómulo Fioravante</p>
+            <p><span class="bold">V.1.0.2026</span></p>
+        `;
+        const rightGroup = document.querySelector('.right-group');
+        if (rightGroup) {
+            rightGroup.style.position = 'relative';
+            rightGroup.appendChild(tooltipElement);
+        } else {
+            document.body.appendChild(tooltipElement);
+            const rect = versionLink.getBoundingClientRect();
+            tooltipElement.style.position = 'fixed';
+            tooltipElement.style.bottom = (window.innerHeight - rect.top + 8) + 'px';
+            tooltipElement.style.right = (window.innerWidth - rect.right + 5) + 'px';
+        }
+        timeoutId = setTimeout(() => {
+            removeTooltip();
+        }, 5000);
+    }
+
+    // ---------- MENÚ ----------
+    function toggleMenu() {
+        menuOverlay.classList.toggle('active');
+    }
+
+    // Cerrar menú al hacer clic fuera (en content-area)
+    contentArea.addEventListener('click', () => {
+        menuOverlay.classList.remove('active');
+        removeTooltip();
+    });
+
+    // Clic en el panel inferior: ir a home excepto si se hizo clic en botón de menú, version o logout
+    bottomPanel.addEventListener('click', (event) => {
+        if (event.target.closest('.btn-globo')) return;
+        if (event.target.closest('.version-link')) return;
+        if (event.target.closest('.btn-logout-panel')) return;
+        goToHome();
+    });
+
+    // Asignar eventos a los items del menú
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            const view = item.getAttribute('data-view');
+            if (view) navigate(view);
+        });
+    });
+
+    // Botón de menú
+    menuButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMenu();
+    });
+
+    // Versión Digital tooltip
+    versionLink.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showInfoTooltip(e);
+    });
+
+    // Cerrar tooltip si se clica fuera
+    document.addEventListener('click', (e) => {
+        if (tooltipElement && !versionLink.contains(e.target) && !tooltipElement.contains(e.target)) {
             removeTooltip();
         }
+    });
 
-        function openModal() {
-            document.getElementById('exit-modal').style.display = 'flex';
-        }
+    // ---------- MODAL DE SALIDA ----------
+    function openModal() {
+        exitModal.style.display = 'flex';
+    }
+    function closeModal() {
+        exitModal.style.display = 'none';
+    }
+    function confirmExit() {
+        window.location.href = 'index.html';
+    }
+    logoutButton.addEventListener('click', openModal);
+    confirmExitBtn.addEventListener('click', confirmExit);
+    cancelExitBtn.addEventListener('click', closeModal);
+    exitModal.addEventListener('click', (e) => {
+        if (e.target === exitModal) closeModal();
+    });
 
-        function closeModal() {
-            document.getElementById('exit-modal').style.display = 'none';
-        }
-
-        function confirmExit() {
-            window.location.href = 'index.html'; 
-        }
-
-        // Clic en panel inferior (zona libre) regresa a home, excepto si se hizo clic en elementos interactivos
-        const bottomPanel = document.querySelector('.bottom-panel');
-        bottomPanel.addEventListener('click', (event) => {
-            const btnGlobo = document.querySelector('.btn-globo');
-            const infoText = document.querySelector('.info-text');
-            const versionLinkElem = document.querySelector('.version-link');
-            const btnLogout = document.querySelector('.btn-logout-panel');
-            
-            if (btnGlobo && btnGlobo.contains(event.target)) return;
-            if (infoText && infoText.contains(event.target)) return;
-            if (versionLinkElem && versionLinkElem.contains(event.target)) return;
-            if (btnLogout && btnLogout.contains(event.target)) return;
-            
-            goToHome();
-        });
-
-        // Clic en el área principal cierra el menú y tooltips
-        document.getElementById('content-area').addEventListener('click', () => {
-            const menu = document.getElementById('menu-overlay');
-            if (menu.classList.contains('active')) {
-                menu.classList.remove('active');
+    // ---------- COMUNICACIÓN CON IFRAMES (Seguimiento) ----------
+    window.addEventListener('message', (event) => {
+        // Aceptamos mensajes para navegar a seguimiento y precargar datos
+        if (event.data && event.data.action === 'navigateToSeguimiento') {
+            // Cambiar a la vista de seguimiento
+            navigate('seguimiento');
+            // Enviar los datos al iframe de seguimiento cuando esté listo
+            const iframeSeguimiento = document.querySelector('#view-seguimiento iframe');
+            if (iframeSeguimiento) {
+                const sendData = () => {
+                    if (iframeSeguimiento.contentWindow) {
+                        iframeSeguimiento.contentWindow.postMessage({
+                            action: 'prefillData',
+                            prefill: event.data.prefill
+                        }, '*');
+                    }
+                };
+                if (iframeSeguimiento.contentWindow) {
+                    // Si ya existe, enviar inmediatamente
+                    sendData();
+                } else {
+                    iframeSeguimiento.addEventListener('load', sendData);
+                }
             }
-            removeTooltip();
-        });
-
-        // Cerrar modal de salida al hacer clic fuera
-        window.onclick = function(event) {
-            const exitModal = document.getElementById('exit-modal');
-            if (event.target === exitModal) {
-                closeModal();
-            }
         }
-    </script>
+    });
+
+    // Inicializar: mostrar home
+    goToHome();
+</script>
 </body>
 </html>
