@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>AppSistemaRed - Gestión Integral</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <style>
@@ -21,24 +21,29 @@
             box-sizing: border-box;
             font-family: 'Inter', -apple-system, sans-serif;
         }
-        body {
+        html, body {
+            height: 100%;
             background-color: var(--blanco-fondo);
-            color: var(--texto-principal);
-            height: 100vh;
+        }
+        body {
             display: flex;
             flex-direction: column;
             overflow: hidden;
             position: relative;
+            color: var(--texto-principal);
+            /* Mejora para iOS: área segura */
+            padding-bottom: env(safe-area-inset-bottom);
         }
         #content-area {
             flex: 1;
-            padding: 40px 25px;
+            padding: 20px 16px;
             display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
             z-index: 1;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .view-section {
             animation: fadeIn 0.4s ease-out;
@@ -61,6 +66,7 @@
             border-radius: 16px;
             background-color: white;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            min-height: 300px;
         }
         h1 {
             font-size: 3rem;
@@ -115,16 +121,22 @@
             border-radius: 20px;
             margin: 0 auto;
         }
+        /* PANEL INFERIOR - siempre visible y robusto en móvil */
         .bottom-panel {
             background-color: var(--azul-oscuro);
-            height: 70px;
+            min-height: 70px;
+            height: auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 25px;
+            padding: 12px 20px;
             position: relative;
             z-index: 110;
             cursor: pointer;
+            flex-shrink: 0;
+            /* Asegurar visibilidad total incluso en gestos */
+            border-top: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
         }
         .btn-globo {
             width: 50px;
@@ -225,8 +237,8 @@
         #menu-overlay {
             position: fixed;
             bottom: 85px;
-            left: 25px;
-            width: 260px;
+            left: 20px;
+            width: 270px;
             background-color: var(--azul-oscuro);
             border-radius: 15px;
             padding: 10px 0;
@@ -234,7 +246,7 @@
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 100;
+            z-index: 1000;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.1);
         }
@@ -244,7 +256,7 @@
             visibility: visible;
         }
         .menu-item {
-            padding: 15px 20px;
+            padding: 14px 20px;
             color: white;
             text-decoration: none;
             display: block;
@@ -321,34 +333,117 @@
         .btn-cancel { background: var(--gris-claro); color: var(--texto-principal); }
         .hidden { display: none !important; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* MEJORAS MÓVIL: panel inferior visible y ajustes de altura */
         @media (max-width: 768px) {
-            #content-area { padding: 8px 16px; overflow: hidden; }
-            #view-home { display: flex; flex-direction: column; justify-content: center; height: calc(100dvh - 70px); }
-            .welcome-image { max-width: 180px; max-height: 90px; }
-            h1 { font-size: 1.8rem; margin-bottom: 6px; }
-            .glass-container { margin-top: 8px; padding: 12px 10px; }
-            .verse-text { font-size: 0.75rem; line-height: 1.35; }
-            .verse-reference { margin-top: 8px; padding-top: 6px; font-size: 0.7rem; }
-            #view-tabla, #view-pastoral, #view-discipuladores, #view-agenda, #view-reporte, #view-seguimiento {
-                height: calc(100dvh - 70px);
-                max-height: calc(100dvh - 70px);
+            #content-area {
+                padding: 12px 12px;
+                overflow-y: auto;
             }
-            .brand-text, .slogan-text { display: none; }
-            .mobile-brand { display: inline-block; font-size: 0.7rem; }
-            .info-text { margin-left: 8px; white-space: nowrap; }
-            .version-link { font-size: 0.7rem; padding: 4px 8px; }
-            .right-group { gap: 6px; }
-            .info-tooltip { width: 150px; padding: 6px 8px; right: -5px; font-size: 0.7rem; }
-            .bottom-panel { padding: 0 12px; height: 70px; }
-            .btn-globo { width: 44px; height: 44px; }
-            .icon-door { width: 24px; height: 24px; }
+            #view-home {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                min-height: 100%;
+            }
+            .welcome-image { 
+                max-width: 160px; 
+                max-height: 80px; 
+            }
+            h1 { 
+                font-size: 1.8rem; 
+                margin-bottom: 8px; 
+            }
+            .glass-container { 
+                margin-top: 12px; 
+                padding: 12px 12px; 
+            }
+            .verse-text { 
+                font-size: 0.75rem; 
+                line-height: 1.4; 
+            }
+            .verse-reference { 
+                margin-top: 8px; 
+                padding-top: 6px; 
+                font-size: 0.7rem; 
+            }
+            #view-tabla, #view-pastoral, #view-discipuladores, #view-agenda, #view-reporte, #view-seguimiento {
+                height: calc(100dvh - 75px);
+                max-height: calc(100dvh - 75px);
+            }
+            .brand-text, .slogan-text { 
+                display: none; 
+            }
+            .mobile-brand { 
+                display: inline-block; 
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+            .info-text { 
+                margin-left: 8px; 
+                white-space: nowrap; 
+            }
+            .version-link { 
+                font-size: 0.7rem; 
+                padding: 4px 8px; 
+            }
+            .right-group { 
+                gap: 8px; 
+            }
+            .info-tooltip { 
+                width: 150px; 
+                padding: 6px 8px; 
+                right: -5px; 
+                font-size: 0.7rem; 
+            }
+            .bottom-panel { 
+                padding: 8px 12px;
+                min-height: 65px;
+            }
+            .btn-globo { 
+                width: 44px; 
+                height: 44px; 
+            }
+            .icon-door { 
+                width: 24px; 
+                height: 24px; 
+            }
+            #menu-overlay {
+                bottom: 75px;
+                left: 12px;
+                width: 250px;
+            }
+            .menu-item {
+                padding: 12px 16px;
+                font-size: 0.85rem;
+            }
         }
         @media (max-width: 480px) {
-            .mobile-brand { font-size: 0.65rem; }
-            .welcome-image { max-width: 150px; max-height: 75px; }
-            h1 { font-size: 1.6rem; }
-            .verse-text { font-size: 0.7rem; }
-            .version-link { font-size: 0.65rem; }
+            .mobile-brand { 
+                font-size: 0.7rem; 
+            }
+            .welcome-image { 
+                max-width: 130px; 
+                max-height: 70px; 
+            }
+            h1 { 
+                font-size: 1.5rem; 
+            }
+            .verse-text { 
+                font-size: 0.7rem; 
+            }
+            .version-link { 
+                font-size: 0.65rem; 
+            }
+            .bottom-panel {
+                padding: 6px 10px;
+            }
+        }
+        /* Ajuste adicional para pantallas muy pequeñas con gestos */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .bottom-panel {
+                padding-bottom: max(8px, env(safe-area-inset-bottom));
+            }
         }
     </style>
 </head>
@@ -369,7 +464,7 @@
         </div>
     </div>
     <div id="view-tabla" class="view-section hidden">
-        <iframe src="https://experiencia-ia.github.io/boillat/tabladatos.html" title="Tabla de Registros"></iframe>
+        <iframe src="https://experiencia-ia.github.io/boillat/tabladatos.html" title="Registros y Seguimiento"></iframe>
     </div>
     <div id="view-pastoral" class="view-section hidden">
         <iframe src="https://experiencia-ia.github.io/boillat/redpastoral.html" title="Red Pastoral"></iframe>
@@ -392,9 +487,9 @@
     </div>
 </main>
 
+<!-- MENÚ MODIFICADO: se eliminó "Gestión y Seguimiento" y se renombró "Tabla de Registros" a "Registros y Seguimiento" -->
 <div id="menu-overlay">
-    <div class="menu-item" data-view="seguimiento">📊 Gestión y Seguimiento</div>
-    <div class="menu-item" data-view="tabla">📋 Tabla de Registros</div>
+    <div class="menu-item" data-view="tabla">📋 Registros y Seguimiento</div>
     <div class="menu-item" data-view="pastoral">⛪ Red Pastoral</div>
     <div class="menu-item" data-view="discipuladores">📖 Red Discipuladores</div>
     <div class="menu-item" data-view="material">📚 Material de Red</div>
@@ -459,6 +554,14 @@
         const target = document.getElementById('view-' + viewId);
         if (target) {
             target.classList.remove('hidden');
+            // Si es la vista de tabla (Registros y Seguimiento) podemos ajustar título por si el iframe requiere mensaje
+            if (viewId === 'tabla') {
+                // Opcional: enviar mensaje de contexto al iframe de tabla si es necesario
+                const iframeTabla = document.querySelector('#view-tabla iframe');
+                if (iframeTabla && iframeTabla.contentWindow) {
+                    iframeTabla.contentWindow.postMessage({ action: 'sectionActive', source: 'menu' }, '*');
+                }
+            }
         } else {
             // Si no existe, mostrar home por defecto
             document.getElementById('view-home').classList.remove('hidden');
@@ -494,8 +597,8 @@
         tooltipElement = document.createElement('div');
         tooltipElement.className = 'info-tooltip';
         tooltipElement.innerHTML = `
-            <p><span class="bold">Diseño y programación:</span><br>Rómulo Fioravante</p>
-            <p><span class="bold">V.1.0.2026</span></p>
+            <p><strong>Diseño y programación:</strong><br>Rómulo Fioravante</p>
+            <p><strong>V.1.0.2026</strong></p>
         `;
         const rightGroup = document.querySelector('.right-group');
         if (rightGroup) {
@@ -532,7 +635,7 @@
         goToHome();
     });
 
-    // Asignar eventos a los items del menú
+    // Asignar eventos a los items del menú (ahora solo los definidos)
     document.querySelectorAll('.menu-item').forEach(item => {
         item.addEventListener('click', (e) => {
             const view = item.getAttribute('data-view');
@@ -578,11 +681,10 @@
 
     // ---------- COMUNICACIÓN CON IFRAMES (Seguimiento) ----------
     window.addEventListener('message', (event) => {
-        // Aceptamos mensajes para navegar a seguimiento y precargar datos
+        // Soporte para redirigir desde otros iframes a la vista de seguimiento (aún existe el iframe, pero el menú ya no tiene acceso directo)
         if (event.data && event.data.action === 'navigateToSeguimiento') {
-            // Cambiar a la vista de seguimiento
+            // Cambiar a la vista de seguimiento (aunque el ítem se eliminó, la funcionalidad interna se conserva)
             navigate('seguimiento');
-            // Enviar los datos al iframe de seguimiento cuando esté listo
             const iframeSeguimiento = document.querySelector('#view-seguimiento iframe');
             if (iframeSeguimiento) {
                 const sendData = () => {
@@ -594,14 +696,30 @@
                     }
                 };
                 if (iframeSeguimiento.contentWindow) {
-                    // Si ya existe, enviar inmediatamente
                     sendData();
                 } else {
                     iframeSeguimiento.addEventListener('load', sendData);
                 }
             }
         }
+        // Permitir también navegación a tabla (Registros y Seguimiento) desde otros módulos
+        if (event.data && event.data.action === 'navigateToTabla') {
+            navigate('tabla');
+        }
     });
+
+    // Ajuste adicional para garantizar que en móviles el contenido no quede oculto detrás del panel
+    function adjustContentPadding() {
+        const bottomPanelHeight = bottomPanel.offsetHeight;
+        if (window.innerWidth <= 768) {
+            // Asegurar que el área de contenido no quede tapada
+            contentArea.style.paddingBottom = '4px';
+        } else {
+            contentArea.style.paddingBottom = '';
+        }
+    }
+    window.addEventListener('resize', adjustContentPadding);
+    adjustContentPadding();
 
     // Inicializar: mostrar home
     goToHome();

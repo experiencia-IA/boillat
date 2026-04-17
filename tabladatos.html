@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Tabla de Registros | Gestión Completa</title>
+    <title>Tabla Registro y Seguimiento</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -12,309 +13,348 @@
             box-sizing: border-box;
         }
         body {
-            background: #f0f4f9;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
+            background: #f0f2f5;
             font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+            height: 100vh;
             display: flex;
             flex-direction: column;
         }
         .app-wrapper {
             flex: 1;
+            padding: 1rem 1rem 0.5rem 1rem;
             display: flex;
             flex-direction: column;
-            padding: 1rem 1.5rem;
             overflow: hidden;
-            min-height: 0;
         }
         .app-card {
             background: white;
-            border-radius: 32px;
-            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+            border-radius: 28px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             flex: 1;
-            min-height: 0;
         }
         .header-panel {
-            background: linear-gradient(135deg, #0a2a44 0%, #0f3b6a 100%);
-            padding: 0.8rem 1.8rem;
+            background: linear-gradient(135deg, #0a2a44, #0f3b6a);
+            padding: 0.7rem 1.5rem;
             text-align: center;
         }
         .header-panel h1 {
             color: white;
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 1.3rem;
+            font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 12px;
             justify-content: center;
-            margin: 0;
+            gap: 12px;
         }
         .toolbar {
             display: flex;
             flex-wrap: wrap;
+            gap: 0.8rem;
             justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-            padding: 1.2rem 1.8rem 0.8rem 1.8rem;
-            border-bottom: 1px solid #e9edf2;
-            flex-shrink: 0;
-            background: #ffffff;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #eef2f8;
         }
         .filters-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.8rem;
-            align-items: center;
+            gap: 0.6rem;
             flex: 3;
         }
-        .search-area {
-            flex: 2;
-            min-width: 200px;
-        }
         .search-input {
-            width: 100%;
-            padding: 0.7rem 1rem 0.7rem 2.6rem;
-            border: 1px solid #e0e7ef;
-            border-radius: 48px;
-            font-size: 0.9rem;
-            background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%234b5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"></circle><line x1="21" y1="21" x2="15" y2="15"></line></svg>') no-repeat 1rem center;
+            flex: 2;
+            min-width: 160px;
+            padding: 0.5rem 1rem 0.5rem 2.2rem;
+            border: 1px solid #d1d9e8;
+            border-radius: 40px;
+            background: white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%235b6e8c" stroke-width="2"><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>') no-repeat 0.8rem center;
             background-size: 1rem;
-            transition: all 0.2s;
-        }
-        .search-input:focus {
-            border-color: #1e3a8a;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(30,58,138,0.1);
+            font-size: 0.85rem;
         }
         .filter-select {
-            padding: 0.6rem 1.8rem 0.6rem 1rem;
-            border: 1px solid #e0e7ef;
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d9e8;
             border-radius: 40px;
             background: white;
-            font-size: 0.85rem;
-            font-weight: 500;
-            min-width: 150px;
             cursor: pointer;
+            font-size: 0.85rem;
         }
         .btn-primary, .btn-print {
+            background: #1e3a8a;
             border: none;
-            padding: 0.6rem 1.4rem;
+            padding: 0.5rem 1.2rem;
             border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.85rem;
+            color: white;
+            font-weight: 500;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: #1e3a8a;
-            color: white;
-            transition: all 0.2s;
-        }
-        .btn-print {
-            background: #2c3e66;
+            font-size: 0.85rem;
+            transition: background 0.2s;
         }
         .btn-primary:hover, .btn-print:hover {
-            background: #0f2b5c;
-            transform: translateY(-1px);
+            background: #0f2b6d;
         }
         .table-container {
             flex: 1;
-            overflow: auto;
-            padding: 0 1.2rem 1.2rem 1.2rem;
-            min-height: 0;
+            overflow-x: auto;
+            overflow-y: auto;
+            padding: 0 1rem 1rem 1rem;
             scrollbar-width: thin;
         }
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.85rem;
-            min-width: 1300px;
+            font-size: 0.75rem;
+            min-width: 1200px;
         }
         .data-table th {
             position: sticky;
             top: 0;
-            background: #f8fafd;
-            padding: 1rem 0.9rem;
+            background: #fafcff;
+            padding: 0.8rem 0.5rem;
             border-bottom: 2px solid #e2edf7;
             font-weight: 600;
-            color: #1e293b;
+            white-space: nowrap;
+            color: #1e2f44;
         }
         .data-table td {
-            padding: 0.85rem 0.9rem;
+            padding: 0.7rem 0.5rem;
             border-bottom: 1px solid #f0f4fa;
             vertical-align: middle;
         }
         .action-icons {
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 6px;
+            flex-wrap: nowrap;
         }
-        .view-btn, .edit-btn, .delete-btn, .tracking-btn {
+        .view-btn, .edit-btn, .delete-btn, .track-btn {
             background: none;
             border: none;
             font-size: 1rem;
             cursor: pointer;
-            padding: 6px 8px;
-            border-radius: 10px;
-            transition: 0.15s;
+            padding: 4px;
+            border-radius: 8px;
+            transition: background 0.1s;
         }
-        .view-btn { color: #2563eb; }
-        .view-btn:hover { background: #eef2ff; color: #1e40af; }
-        .edit-btn { color: #eab308; }
-        .edit-btn:hover { background: #fef9e3; color: #b45309; }
-        .delete-btn { color: #dc2626; }
-        .delete-btn:hover { background: #fee2e2; color: #b91c1c; }
-        .tracking-btn { color: #16a34a; }
-        .tracking-btn:hover { background: #e0f2e9; color: #0e7c32; }
+        .view-btn { color: #2c6e9e; }
+        .edit-btn { color: #4b5563; }
+        .delete-btn { color: #b91c1c; }
+        .track-btn { color: #16a34a; }
         .foto-miniatura {
-            width: 42px;
-            height: 42px;
+            width: 32px;
+            height: 32px;
             object-fit: cover;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto;
         }
         .sin-foto {
-            width: 42px;
-            height: 42px;
+            width: 32px;
+            height: 32px;
             background: #eef2ff;
-            border-radius: 12px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #1e3a8a;
             margin: 0 auto;
-            font-size: 1.2rem;
+            color: #1e3a8a;
         }
-        footer {
-            background: #f9fbfd;
-            padding: 0.7rem 1.8rem;
-            font-size: 0.7rem;
-            color: #4b5563;
-            border-top: 1px solid #eef2f8;
-            text-align: center;
+        .progress-bar-container {
+            width: 70px;
+            background: #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: middle;
         }
-
-        /* MODALES */
+        .progress-bar {
+            background: #2ecc71;
+            height: 6px;
+            width: 0%;
+        }
+        /* MODALES MODERNOS - SIN BOTÓN CERRAR, CIERRE POR CLIC FUERA */
         .modal-overlay {
-            display: none;
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(3px);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex;
             align-items: center;
             justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s ease;
             z-index: 1000;
         }
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
         .modal-container {
-            background: white;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(2px);
             width: 90%;
-            max-width: 750px;
-            max-height: 85vh;
+            max-width: 780px;
+            max-height: 90vh;
             border-radius: 32px;
-            overflow-y: auto;
-            box-shadow: 0 25px 40px rgba(0,0,0,0.25);
-            animation: fadeInUp 0.2s ease;
+            box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease;
+            transform: scale(0.98);
+        }
+        .active .modal-container {
+            transform: scale(1);
         }
         .modal-header {
-            padding: 1.2rem 1.8rem;
-            border-bottom: 1px solid #eef2f8;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #fafcff;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            background: #ffffff;
         }
-        .modal-header h3 { font-weight: 700; color: #0f3b6a; }
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.6rem;
-            cursor: pointer;
-            color: #7c8ba0;
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #0f2b3f;
         }
-        .modal-body { padding: 1.5rem 2rem; }
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        /* sin botón cerrar, solo decorativo */
+        .tabs-container {
+            display: flex;
             gap: 1rem;
-        }
-        .form-field {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
-        .form-field.full-width { grid-column: span 2; }
-        label { font-weight: 600; font-size: 0.8rem; color: #2c3e66; }
-        input, select, textarea {
-            padding: 0.7rem;
-            border: 1px solid #cfdfed;
-            border-radius: 16px;
-            font-size: 0.85rem;
+            padding: 0 1.5rem;
+            border-bottom: 1px solid #edf2f7;
             background: white;
-        }
-        .tabs {
-            display: flex;
-            gap: 0.8rem;
-            border-bottom: 1px solid #e2edf7;
-            margin-bottom: 1.5rem;
         }
         .tab-btn {
             background: none;
             border: none;
-            padding: 0.6rem 1rem;
-            font-weight: 600;
-            color: #5a6e8a;
+            padding: 0.8rem 0;
+            font-weight: 500;
             cursor: pointer;
             border-bottom: 2px solid transparent;
+            color: #5c6f87;
+            transition: 0.2s;
         }
         .tab-btn.active {
             color: #1e3a8a;
-            border-bottom: 2px solid #1e3a8a;
+            border-bottom-color: #1e3a8a;
         }
-        .tab-pane { display: none; }
-        .tab-pane.active { display: block; }
-        .foto-preview-area {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
+        .tab-pane {
+            display: none;
+            padding: 1.2rem;
+            background: white;
+            overflow-y: auto;
+            max-height: 55vh;
         }
-        .preview-img {
-            width: 70px;
-            height: 70px;
+        .tab-pane.active-pane {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #4b6a8f;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.65rem;
+            border: 1px solid #dce5f0;
             border-radius: 16px;
-            object-fit: cover;
-            background: #f1f5f9;
-        }
-        .btn-sec {
-            background: #eef2ff;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 40px;
-            font-size: 0.75rem;
-            cursor: pointer;
+            font-size: 0.85rem;
+            background: #fff;
         }
         .modal-footer {
-            padding: 1rem 2rem;
-            border-top: 1px solid #edf2f7;
+            padding: 1rem 1.5rem;
             display: flex;
             justify-content: flex-end;
-            gap: 1rem;
+            gap: 12px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            background: #ffffff;
         }
-        .btn-cancel { background: #e2e8f0; color: #1e293b; }
-        .btn-danger { background: #b91c1c; }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
+        .btn-cancel {
+            background: #f1f5f9;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #1e293b;
         }
-        @media (max-width: 680px) {
-            .form-grid { grid-template-columns: 1fr; }
-            .form-field.full-width { grid-column: span 1; }
-            .toolbar { flex-direction: column; align-items: stretch; }
+        .btn-save {
+            background: #1e3a8a;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+        /* vista solo lectura (ver) */
+        .readonly-value {
+            background: #f8fafc;
+            padding: 0.65rem;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            color: #1e293b;
+            border: 1px solid #eef2f8;
+        }
+        /* seguimiento modal */
+        .track-content {
+            padding: 1.2rem;
+            background: white;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+        .chart-container {
+            height: 240px;
+            margin: 1rem 0;
+        }
+        .history-list {
+            max-height: 160px;
+            overflow-y: auto;
+            background: #f9fafc;
+            border-radius: 20px;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            font-size: 0.8rem;
+        }
+        .history-item {
+            padding: 0.4rem 0;
+            border-bottom: 1px solid #eef2f8;
+        }
+        footer {
+            font-size: 0.65rem;
+            text-align: center;
+            padding: 0.5rem;
+            color: #7c8ea0;
+            border-top: 1px solid #edf2f7;
+            background: white;
+        }
+        @media (max-width: 640px) {
+            .toolbar { flex-direction: column; align-items: stretch; padding: 0.8rem; }
+            .filters-group { flex-direction: column; }
+            .modal-container { width: 95%; max-height: 95vh; }
+            .tab-pane { max-height: 50vh; }
+            .chart-container { height: 200px; }
         }
     </style>
 </head>
@@ -322,427 +362,591 @@
 <div class="app-wrapper">
     <div class="app-card">
         <div class="header-panel">
-            <h1><i class="fas fa-table-list"></i> Tabla de Registros</h1>
+            <h1><i class="fas fa-chart-line"></i>Registo y Seguimiento</h1>
         </div>
         <div class="toolbar">
             <div class="filters-group">
-                <div class="search-area"><input type="text" id="searchInput" class="search-input" placeholder="Buscar por nombre, DNI, iglesia..."></div>
-                <select id="filterCategoria" class="filter-select"><option value="">Todas las categorías</option></select>
-                <select id="filterIglesia" class="filter-select"><option value="">Todas las iglesias</option></select>
+                <input type="text" id="searchInput" class="search-input" placeholder="Buscar...">
+                <select id="filterEstadoCivil" class="filter-select"><option value="">Estado civil</option></select>
+                <select id="filterSexo" class="filter-select"><option value="">Sexo</option></select>
+                <select id="filterIglesia" class="filter-select"><option value="">Iglesia</option></select>
+                <select id="filterDepartamento" class="filter-select"><option value="">Departamento</option></select>
             </div>
             <div class="action-buttons">
                 <button id="printTableBtn" class="btn-print"><i class="fas fa-print"></i> Imprimir</button>
-                <button id="openModalBtn" class="btn-primary"><i class="fas fa-plus-circle"></i> Nuevo Registro</button>
+                <button id="openModalBtn" class="btn-primary"><i class="fas fa-plus-circle"></i> Nuevo</button>
             </div>
         </div>
         <div class="table-container">
             <table class="data-table" id="dataTable">
-                <thead><tr><th>N° Registro</th><th>Foto</th><th>Apellido</th><th>Nombre</th><th>DNI</th><th>Categoría</th><th>Iglesia</th><th>Contacto</th><th>Observaciones</th><th>Acciones</th></tr></thead>
-                <tbody id="tableBody"><tr><td colspan="10" style="text-align:center">Cargando registros...</td></tr></tbody>
+                <thead>
+                    <tr>
+                        <th>N°</th><th>Foto</th><th>Apellido</th><th>Nombres</th><th>Iglesia</th>
+                        <th>#ABC</th><th>Contactos</th><th>Conversiones</th><th>Bautismos</th>
+                        <th>Líderes</th><th>Grupos</th><th>Personas</th><th>Líderes c/grupo</th>
+                        <th>Teléfono</th><th>Estado civil</th><th>Sexo</th><th>Edad</th><th>Departamento</th>
+                        <th>Progreso</th><th>Seguimiento</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr><td colspan="20">Cargando registros...</td></tr>
+                </tbody>
             </table>
         </div>
-        <footer><i class="fas fa-chart-simple"></i> Registros orden descendente · Filtros combinados · <i class="fas fa-chart-line"></i> seguimiento integrado</footer>
+        <footer>📌 16 registros reales de Argentina · Cada persona tiene su propia línea de evolución</footer>
     </div>
 </div>
 
-<!-- MODAL REGISTRO (NUEVO/EDITAR) -->
+<!-- MODAL NUEVO/EDITAR (con solapas y sin botón cerrar) -->
 <div id="registroModal" class="modal-overlay">
     <div class="modal-container">
-        <div class="modal-header"><h3 id="modalTitle">Nuevo Registro</h3><button class="close-modal" id="closeModalBtn">&times;</button></div>
-        <div class="modal-body">
-            <div class="tabs">
-                <button class="tab-btn active" data-tab="tabBasico">Información básica</button>
-                <button class="tab-btn" data-tab="tabAdicional">Datos adicionales & Foto</button>
+        <div class="modal-header">
+            <h3 id="modalTitle">Nuevo Registro</h3>
+            <!-- No hay botón cerrar, se cierra al hacer clic fuera -->
+        </div>
+        <div class="tabs-container">
+            <button class="tab-btn active" data-tab="tab1">Personales</button>
+            <button class="tab-btn" data-tab="tab2">Iglesia y métricas</button>
+            <button class="tab-btn" data-tab="tab3">Dirección</button>
+            <button class="tab-btn" data-tab="tab4">Foto / Obs.</button>
+        </div>
+        <div id="tab1" class="tab-pane active-pane">
+            <div class="form-group"><label>Apellido *</label><input type="text" id="apellido"></div>
+            <div class="form-group"><label>Nombres *</label><input type="text" id="nombres"></div>
+            <div class="form-group"><label>Estado civil</label><select id="estadoCivil"><option>Soltero</option><option>Casado</option><option>Viudo</option></select></div>
+            <div class="form-group"><label>Sexo</label><select id="sexo"><option>Masculino</option><option>Femenino</option></select></div>
+            <div class="form-group"><label>Fecha nacimiento</label><input type="date" id="fechaNacimiento"></div>
+            <div class="form-group"><label>Teléfono</label><input type="tel" id="phone"></div>
+        </div>
+        <div id="tab2" class="tab-pane">
+            <div class="form-group"><label>Iglesia *</label><input type="text" id="nombreIglesia"></div>
+            <div class="form-group"><label># ABC</label><input type="number" id="abc" value="0"></div>
+            <div class="form-group"><label>Contactos</label><input type="number" id="contactos" value="0"></div>
+            <div class="form-group"><label>Conversiones</label><input type="number" id="conversiones" value="0"></div>
+            <div class="form-group"><label>Bautismos</label><input type="number" id="bautismos" value="0"></div>
+            <div class="form-group"><label>Líderes</label><input type="number" id="lideres" value="0"></div>
+            <div class="form-group"><label>Grupos</label><input type="number" id="grupos" value="0"></div>
+            <div class="form-group"><label>Personas en grupos</label><input type="number" id="personasGrupos" value="0"></div>
+            <div class="form-group"><label>Líderes con grupo</label><input type="number" id="lideresConGrupo" value="0"></div>
+            <div class="form-group"><label>Denominación</label><input type="text" id="denominacion"></div>
+            <div class="form-group"><label>Pastor</label><input type="text" id="nombrePastor"></div>
+        </div>
+        <div id="tab3" class="tab-pane">
+            <div class="form-group"><label>Calle</label><input type="text" id="domicilio"></div>
+            <div class="form-group"><label>Ciudad</label><input type="text" id="ciudad"></div>
+            <div class="form-group"><label>Barrio</label><input type="text" id="barrio"></div>
+            <div class="form-group"><label>Departamento</label><input type="text" id="departamento"></div>
+            <div class="form-group"><label>País</label><input type="text" id="pais" value="Argentina" readonly style="background:#f5f7fa;"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="email"></div>
+            <div class="form-group"><label>WhatsApp</label><input type="tel" id="whatsapp"></div>
+        </div>
+        <div id="tab4" class="tab-pane">
+            <div class="form-group"><label>Foto</label><input type="file" id="fotoInput" accept="image/jpeg,image/png"><div id="fotoPreview" style="margin-top:8px;"></div></div>
+            <div class="form-group"><label>Observaciones</label><textarea id="observaciones" rows="2"></textarea></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" id="cancelModalBtn">Cancelar</button>
+            <button class="btn-save" id="saveRegistroBtn">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL VER (con solapas iguales pero solo lectura) -->
+<div id="viewModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>Ver Detalle Completo</h3>
+        </div>
+        <div class="tabs-container">
+            <button class="tab-btn-ver active" data-tab-ver="tabVer1">Personales</button>
+            <button class="tab-btn-ver" data-tab-ver="tabVer2">Iglesia y métricas</button>
+            <button class="tab-btn-ver" data-tab-ver="tabVer3">Dirección</button>
+            <button class="tab-btn-ver" data-tab-ver="tabVer4">Foto / Obs.</button>
+        </div>
+        <div id="tabVer1" class="tab-pane-ver active-pane-ver" style="padding:1.2rem;">
+            <!-- contenido dinámico -->
+        </div>
+        <div id="tabVer2" class="tab-pane-ver" style="padding:1.2rem;"></div>
+        <div id="tabVer3" class="tab-pane-ver" style="padding:1.2rem;"></div>
+        <div id="tabVer4" class="tab-pane-ver" style="padding:1.2rem;"></div>
+        <div class="modal-footer">
+            <button class="btn-save" id="editFromViewBtn">Editar registro</button>
+            <button class="btn-cancel" id="closeViewFooterBtn">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL SEGUIMIENTO (sin botón cerrar, cierra al clic fuera) -->
+<div id="trackModal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 800px;">
+        <div class="modal-header">
+            <h3 id="trackTitle">Evolución de progreso</h3>
+        </div>
+        <div class="track-content">
+            <div class="chart-container">
+                <canvas id="evolutionChart"></canvas>
             </div>
-            <div id="tabBasico" class="tab-pane active">
-                <div class="form-grid">
-                    <div class="form-field"><label>Apellido *</label><input type="text" id="apellido" placeholder="Apellido"></div>
-                    <div class="form-field"><label>Nombre *</label><input type="text" id="nombre" placeholder="Nombre"></div>
-                    <div class="form-field"><label>DNI *</label><input type="text" id="dni" placeholder="DNI"></div>
-                    <div class="form-field"><label>Categoría *</label><select id="categoria"><option value="Pastor">Pastor</option><option value="Discipulador">Discipulador</option><option value="Líder">Líder</option><option value="Consultor">Consultor</option><option value="Nuevo">Nuevo</option></select></div>
-                    <div class="form-field"><label>Iglesia / Denominación</label><input type="text" id="iglesia" placeholder="Nombre de iglesia"></div>
-                    <div class="form-field full-width"><label>Observaciones</label><textarea id="observaciones" rows="2" placeholder="Notas..."></textarea></div>
+            <h4 style="margin-top:0.5rem;">Historial de actualizaciones</h4>
+            <div id="historyList" class="history-list">Cargando...</div>
+            <div style="margin-top: 1rem;">
+                <label for="newProgress" style="font-weight:500;">Nuevo porcentaje de avance (0-100):</label>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.3rem;">
+                    <input type="number" id="newProgress" min="0" max="100" step="1" style="flex:1; padding:0.6rem; border-radius:30px; border:1px solid #dce5f0;">
+                    <button id="addProgressBtn" class="btn-save">Registrar avance</button>
                 </div>
-            </div>
-            <div id="tabAdicional" class="tab-pane">
-                <div class="form-grid">
-                    <div class="form-field"><label>Domicilio</label><input type="text" id="domicilio"></div>
-                    <div class="form-field"><label>Email</label><input type="email" id="email"></div>
-                    <div class="form-field"><label>Teléfono</label><input type="text" id="telefono"></div>
-                    <div class="form-field"><label>WhatsApp</label><input type="text" id="whatsapp"></div>
-                    <div class="form-field full-width">
-                        <label>Foto (opcional)</label>
-                        <div class="foto-preview-area">
-                            <div id="sinFotoIcono" class="sin-foto"><i class="fas fa-camera"></i></div>
-                            <img id="fotoPreview" class="preview-img" style="display:none;" alt="Vista previa">
-                            <button type="button" id="btnSubirFoto" class="btn-sec"><i class="fas fa-upload"></i> Subir imagen</button>
-                            <input type="file" id="fotoInput" accept="image/*" style="display:none">
-                        </div>
-                    </div>
-                </div>
+                <small>Se agregará una nueva entrada al historial y se actualizará el gráfico.</small>
             </div>
         </div>
-        <div class="modal-footer"><button id="cancelModalBtn" class="btn-cancel btn-sec">Cancelar</button><button id="saveRegistroBtn" class="btn-primary">Guardar registro</button></div>
+        <div class="modal-footer">
+            <button class="btn-cancel" id="closeTrackFooterBtn">Cerrar</button>
+        </div>
     </div>
 </div>
 
-<!-- MODAL VER DETALLE -->
-<div id="viewModal" class="modal-overlay">
-    <div class="modal-container" style="max-width:650px">
-        <div class="modal-header"><h3><i class="fas fa-id-card"></i> Detalles del registro</h3><button class="close-modal" id="closeViewModalBtn">&times;</button></div>
-        <div class="modal-body" id="viewModalBody"></div>
-        <div class="modal-footer"><button id="closeViewFooterBtn" class="btn-cancel">Cerrar</button><button id="editFromViewBtn" class="btn-primary"><i class="fas fa-edit"></i> Editar</button></div>
-    </div>
-</div>
-
-<!-- MODAL ELIMINAR -->
-<div id="deleteConfirmModal" class="modal-overlay danger-modal">
-    <div class="modal-container" style="max-width:450px">
-        <div class="modal-header"><h3><i class="fas fa-trash-alt"></i> Confirmar eliminación</h3><button class="close-modal" id="closeDeleteModalBtn">&times;</button></div>
-        <div class="modal-body"><p>¿Estás seguro de eliminar este registro? La acción no se puede deshacer.</p></div>
-        <div class="modal-footer"><button id="cancelDeleteBtn" class="btn-cancel">Cancelar</button><button id="confirmDeleteBtn" class="btn-primary" style="background:#b91c1c">Eliminar</button></div>
+<!-- MODAL ELIMINAR (sin botón cerrar) -->
+<div id="deleteConfirmModal" class="modal-overlay">
+    <div class="modal-container" style="max-width:400px;">
+        <div class="modal-header">
+            <h3 style="color:#b91c1c;">Confirmar eliminación</h3>
+        </div>
+        <div style="padding:1rem;"><p>¿Estás seguro? Esta acción no se puede deshacer.</p></div>
+        <div class="modal-footer">
+            <button class="btn-cancel" id="cancelDeleteBtn">Cancelar</button>
+            <button class="btn-danger" id="confirmDeleteBtn">Eliminar</button>
+        </div>
     </div>
 </div>
 
 <script>
-    // ---------- MODELO DE DATOS ----------
+    // ---------- DATOS Y LÓGICA (sin cambios en el resto) ----------
     let allRegistros = [];
+    let currentFilters = { texto: "", estadoCivil: "", sexo: "", iglesia: "", departamento: "" };
     let editingId = null;
     let currentFotoBase64 = "";
     let pendingDeleteId = null;
+    let currentTrackId = null;
+    let trackChart = null;
 
-    // filtros globales
-    let currentFilters = { texto: "", categoria: "", iglesia: "" };
-
-    // DOM elements
-    const tbody = document.getElementById("tableBody");
-    const searchInput = document.getElementById("searchInput");
-    const filterCategoria = document.getElementById("filterCategoria");
-    const filterIglesia = document.getElementById("filterIglesia");
-    const openModalBtn = document.getElementById("openModalBtn");
-    const modalOverlay = document.getElementById("registroModal");
-    const closeModalBtn = document.getElementById("closeModalBtn");
-    const cancelModalBtn = document.getElementById("cancelModalBtn");
-    const saveBtn = document.getElementById("saveRegistroBtn");
-    const modalTitle = document.getElementById("modalTitle");
-    const printBtn = document.getElementById("printTableBtn");
-
-    // campos formulario
-    const apellidoInput = document.getElementById("apellido");
-    const nombreInput = document.getElementById("nombre");
-    const dniInput = document.getElementById("dni");
-    const categoriaSelect = document.getElementById("categoria");
-    const iglesiaInput = document.getElementById("iglesia");
-    const observacionesTextarea = document.getElementById("observaciones");
-    const domicilioInput = document.getElementById("domicilio");
-    const emailInput = document.getElementById("email");
-    const telefonoInput = document.getElementById("telefono");
-    const whatsappInput = document.getElementById("whatsapp");
-    const fotoInput = document.getElementById("fotoInput");
-    const btnSubirFoto = document.getElementById("btnSubirFoto");
-    const fotoPreview = document.getElementById("fotoPreview");
-    const sinFotoIcono = document.getElementById("sinFotoIcono");
-
-    // modales adicionales
-    const viewModal = document.getElementById("viewModal");
-    const closeViewModalBtn = document.getElementById("closeViewModalBtn");
-    const closeViewFooterBtn = document.getElementById("closeViewFooterBtn");
-    const editFromViewBtn = document.getElementById("editFromViewBtn");
-    const deleteConfirmModal = document.getElementById("deleteConfirmModal");
-    const closeDeleteModalBtn = document.getElementById("closeDeleteModalBtn");
-    const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
-    const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
-
-    // helpers
-    function saveToLocalStorage() { localStorage.setItem("appRegistros_v5", JSON.stringify(allRegistros)); }
-
-    function getNextId() { return allRegistros.length ? Math.max(...allRegistros.map(r=>r.id)) + 1 : 1001; }
-    function getNextRegistroNum() { return allRegistros.length ? Math.max(...allRegistros.map(r=>r.registroNum)) + 1 : 1; }
-
-    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
-
-    function formatContacto(reg) {
-        let html = '';
-        if(reg.email) html += `<div><i class="fas fa-envelope"></i> ${escapeHtml(reg.email)}</div>`;
-        if(reg.telefono) html += `<div><i class="fas fa-phone-alt"></i> ${escapeHtml(reg.telefono)}</div>`;
-        if(reg.whatsapp) html += `<div><i class="fab fa-whatsapp"></i> ${escapeHtml(reg.whatsapp)}</div>`;
-        return html || '<span class="sin-info">—</span>';
+    function calcularEdad(fechaNac) {
+        if (!fechaNac) return null;
+        const hoy = new Date(), nac = new Date(fechaNac);
+        let edad = hoy.getFullYear() - nac.getFullYear();
+        const m = hoy.getMonth() - nac.getMonth();
+        if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
+        return edad;
     }
 
-    function renderFotoCell(fotoBase64) {
-        if(fotoBase64 && fotoBase64.startsWith('data:image')) return `<img src="${fotoBase64}" class="foto-miniatura" alt="foto" loading="lazy">`;
-        return `<div class="sin-foto"><i class="fas fa-user-circle"></i></div>`;
-    }
-
-    function updateFilterOptions() {
-        const categorias = [...new Set(allRegistros.map(r=>r.categoria).filter(c=>c))];
-        const iglesias = [...new Set(allRegistros.map(r=>r.iglesia).filter(i=>i))];
-        const currentCat = filterCategoria.value;
-        const currentIgl = filterIglesia.value;
-        filterCategoria.innerHTML = '<option value="">Todas las categorías</option>' + categorias.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
-        filterIglesia.innerHTML = '<option value="">Todas las iglesias</option>' + iglesias.map(i=>`<option value="${escapeHtml(i)}">${escapeHtml(i)}</option>`).join('');
-        if(currentCat && categorias.includes(currentCat)) filterCategoria.value = currentCat;
-        if(currentIgl && iglesias.includes(currentIgl)) filterIglesia.value = currentIgl;
-    }
-
-    function getFilteredAndSorted() {
-        let filtered = [...allRegistros];
-        const texto = currentFilters.texto.toLowerCase();
-        if(texto) {
-            filtered = filtered.filter(r => 
-                (r.apellido && r.apellido.toLowerCase().includes(texto)) ||
-                (r.nombre && r.nombre.toLowerCase().includes(texto)) ||
-                (r.dni && r.dni.toLowerCase().includes(texto)) ||
-                (r.categoria && r.categoria.toLowerCase().includes(texto)) ||
-                (r.iglesia && r.iglesia.toLowerCase().includes(texto)) ||
-                (r.observaciones && r.observaciones.toLowerCase().includes(texto))
-            );
+    function cargarRegistrosArgentina() {
+        const registros = [];
+        const posadas = [
+            { apellido:"Blanco", nombres:"Griselda Soledad", iglesia:"Renacer", abc:4, contactos:13, conversiones:5, bautismos:0, lideres:0, grupos:2, personasGrupos:8, lideresConGrupo:0, phone:"376457945", estadoCivil:"", sexo:"Femenino", fechaNac:"", ciudad:"Posadas", departamento:"Misiones", denominacion:"", pastor:"" },
+            { apellido:"Szydlowki", nombres:"Pamela", iglesia:"Renacer", abc:4, contactos:10, conversiones:3, bautismos:0, lideres:1, grupos:3, personasGrupos:9, lideresConGrupo:0, phone:"3755646938", estadoCivil:"", sexo:"Femenino", fechaNac:"", ciudad:"Posadas", departamento:"Misiones" },
+            { apellido:"Garcia", nombres:"Andrea Fabiana", iglesia:"Renacer", abc:4, contactos:11, conversiones:4, bautismos:0, lideres:0, grupos:1, personasGrupos:4, lideresConGrupo:0, phone:"3764326041", estadoCivil:"", sexo:"Femenino", ciudad:"Posadas", departamento:"Misiones" },
+            { apellido:"Vagni", nombres:"Edgardo Gabriel", iglesia:"Renacer", abc:2, contactos:8, conversiones:2, bautismos:0, lideres:0, grupos:4, personasGrupos:6, lideresConGrupo:0, phone:"3764373871", estadoCivil:"", sexo:"Masculino", ciudad:"Posadas", departamento:"Misiones" },
+            { apellido:"Gonzalez", nombres:"Veronica Celeste", iglesia:"Renacer", abc:3, contactos:12, conversiones:6, bautismos:0, lideres:2, grupos:3, personasGrupos:14, lideresConGrupo:0, phone:"3751507236", estadoCivil:"", sexo:"Femenino", ciudad:"Posadas", departamento:"Misiones" },
+            { apellido:"Canien", nombres:"Hilda", iglesia:"Renacer", abc:2, contactos:8, conversiones:3, bautismos:0, lideres:1, grupos:2, personasGrupos:6, lideresConGrupo:0, phone:"3764378427", estadoCivil:"", sexo:"Femenino", ciudad:"Posadas", departamento:"Misiones" },
+            { apellido:"Cañete", nombres:"Facundo Nahuel", iglesia:"rHEMA", abc:4, contactos:15, conversiones:5, bautismos:0, lideres:1, grupos:5, personasGrupos:3, lideresConGrupo:0, phone:"376498796", estadoCivil:"", sexo:"Masculino", ciudad:"Posadas", departamento:"Misiones" },
+            { apellido:"Peri", nombres:"Andrea Soledad", iglesia:"Rhema ministerio", abc:4, contactos:14, conversiones:7, bautismos:0, lideres:1, grupos:4, personasGrupos:18, lideresConGrupo:0, phone:"1137943280", estadoCivil:"", sexo:"Femenino", ciudad:"Posadas", departamento:"Misiones" },
+            { apellido:"Vasquez", nombres:"Sebastian", iglesia:"RHEMA", abc:1, contactos:4, conversiones:1, bautismos:0, lideres:0, grupos:1, personasGrupos:3, lideresConGrupo:0, phone:"3765158382", estadoCivil:"", sexo:"Masculino", ciudad:"Posadas", departamento:"Misiones" },
+            { apellido:"Antunez", nombres:"Mirta", iglesia:"REHMA", abc:4, contactos:16, conversiones:8, bautismos:0, lideres:1, grupos:3, personasGrupos:9, lideresConGrupo:0, phone:"1159364082", estadoCivil:"", sexo:"Femenino", ciudad:"Posadas", departamento:"Misiones" },
+            { apellido:"Cañete", nombres:"Epifanio", iglesia:"Renacer", abc:1, contactos:5, conversiones:3, bautismos:0, lideres:1, grupos:1, personasGrupos:3, lideresConGrupo:0, phone:"1149386642", estadoCivil:"", sexo:"Masculino", ciudad:"Posadas", departamento:"Misiones" },
+            { apellido:"Zorn", nombres:"Patricia", iglesia:"Renacer", abc:0, contactos:0, conversiones:0, bautismos:0, lideres:0, grupos:0, personasGrupos:0, lideresConGrupo:0, phone:"375523641", estadoCivil:"", sexo:"Femenino", ciudad:"Posadas", departamento:"Misiones" }
+        ];
+        for (let p of posadas) {
+            let progresoInicial = 0;
+            if (p.contactos > 0) progresoInicial = Math.min(100, Math.round((p.conversiones / p.contactos) * 100));
+            registros.push({
+                apellido: p.apellido, nombres: p.nombres, nombreIglesia: p.iglesia,
+                abc: p.abc, contactos: p.contactos, conversiones: p.conversiones, bautismos: p.bautismos,
+                lideres: p.lideres, grupos: p.grupos, personasGrupos: p.personasGrupos, lideresConGrupo: p.lideresConGrupo,
+                phone: p.phone, estadoCivil: p.estadoCivil || "", sexo: p.sexo, fechaNacimiento: p.fechaNac || null,
+                ciudad: p.ciudad, departamento: p.departamento, pais: "Argentina",
+                denominacion: p.denominacion || "", nombrePastor: p.pastor || "",
+                observaciones: "", domicilio: "", barrio: "", email: "", whatsapp: "", foto: "",
+                progreso: progresoInicial,
+                historial: [{ fecha: new Date().toISOString(), porcentaje: progresoInicial }]
+            });
         }
-        if(currentFilters.categoria) filtered = filtered.filter(r => r.categoria === currentFilters.categoria);
-        if(currentFilters.iglesia) filtered = filtered.filter(r => r.iglesia === currentFilters.iglesia);
-        return filtered.sort((a,b)=> b.registroNum - a.registroNum);
+        const perfilArg = [
+            { nombreCompleto:"Alberto Ignacio Gamboa", estadoCivil:"Casado", sexo:"Masculino", fechaNac:"1972-06-28", telefono:"+543764724040", iglesia:"Iglesia Cristiana Vida", denominacion:"Union De Las Asambleas De Dios (UAD)", pastor:"Alberto Ignacio Gamboa", ciudad:"Posadas", departamento:"Misiones", observaciones:"Vida vacía; Toqué fondo; Para crecer" },
+            { nombreCompleto:"Fretes Catalina Del Carmen", estadoCivil:"Casado", sexo:"Femenino", fechaNac:"1983-09-18", telefono:"3764-170037", iglesia:"Iglesia Cristiana Vida", denominacion:"Iglesia Cristiana Vida", pastor:"Gamboa Alberto", ciudad:"Posadas", departamento:"Misiones", observaciones:"Sin esperanza; Mi madre; Expandir buenas noticias" },
+            { nombreCompleto:"Martin Eduardo Moreno", estadoCivil:"Casado", sexo:"Femenino", fechaNac:"1974-06-21", telefono:"2314615330", iglesia:"Bajo tu Reino", denominacion:"Unión de la asamblea", pastor:"Juan Carlos Noreiko", ciudad:"San Carlos de Bolivar", departamento:"Buenos Aires", observaciones:"Vivía en plazas; Pastora Eugenia Manso; Misionera" },
+            { nombreCompleto:"Andrea Mabel Belén de Moreno", estadoCivil:"Casado", sexo:"Femenino", fechaNac:"1974-06-06", telefono:"2314625330", iglesia:"Bajo tu Reino", denominacion:"Unión de la asamblea", pastor:"Juan Carlos Noreiko", ciudad:"San Carlos de Bolivar", departamento:"Buenos Aires", observaciones:"Adicta al alcohol; Pastora me habló; Misioneros" }
+        ];
+        for (let item of perfilArg) {
+            const partes = item.nombreCompleto.split(' ');
+            const apellido = partes.pop();
+            const nombres = partes.join(' ');
+            registros.push({
+                apellido, nombres, nombreIglesia: item.iglesia,
+                abc: 0, contactos: 0, conversiones: 0, bautismos: 0, lideres: 0, grupos: 0, personasGrupos: 0, lideresConGrupo: 0,
+                phone: item.telefono, estadoCivil: item.estadoCivil, sexo: item.sexo, fechaNacimiento: item.fechaNac,
+                ciudad: item.ciudad, departamento: item.departamento, pais: "Argentina",
+                denominacion: item.denominacion, nombrePastor: item.pastor,
+                observaciones: item.observaciones, domicilio: "", barrio: "", email: "", whatsapp: "", foto: "",
+                progreso: 0,
+                historial: [{ fecha: new Date().toISOString(), porcentaje: 0 }]
+            });
+        }
+        registros.forEach((r, idx) => { r.id = Date.now() + idx; r.registroNum = idx + 1; });
+        registros.sort((a,b) => b.registroNum - a.registroNum);
+        return registros;
     }
 
-    function renderTable() {
-        const data = getFilteredAndSorted();
-        if(!data.length) { tbody.innerHTML = `<tr class="empty-row"><td colspan="10">📭 No hay registros coincidentes</td></tr>`; return; }
+    function guardarLocalStorage() { localStorage.setItem("registrosArgentinaSeguimiento", JSON.stringify(allRegistros)); }
+    function cargarLocalStorage() {
+        const stored = localStorage.getItem("registrosArgentinaSeguimiento");
+        if (stored) {
+            allRegistros = JSON.parse(stored);
+            allRegistros = allRegistros.map(r => {
+                if (!r.historial || !Array.isArray(r.historial) || r.historial.length === 0)
+                    return { ...r, historial: [{ fecha: new Date().toISOString(), porcentaje: r.progreso || 0 }] };
+                return r;
+            });
+        } else {
+            allRegistros = cargarRegistrosArgentina();
+            guardarLocalStorage();
+        }
+    }
+    cargarLocalStorage();
+
+    function actualizarFiltros() {
+        const estados = new Set(), sexos = new Set(), iglesias = new Set(), deptos = new Set();
+        allRegistros.forEach(r => {
+            if (r.estadoCivil) estados.add(r.estadoCivil);
+            if (r.sexo) sexos.add(r.sexo);
+            if (r.nombreIglesia) iglesias.add(r.nombreIglesia);
+            if (r.departamento) deptos.add(r.departamento);
+        });
+        document.getElementById("filterEstadoCivil").innerHTML = '<option value="">Estado civil</option>' + Array.from(estados).map(e => `<option value="${e}">${e}</option>`).join('');
+        document.getElementById("filterSexo").innerHTML = '<option value="">Sexo</option>' + Array.from(sexos).map(s => `<option value="${s}">${s}</option>`).join('');
+        document.getElementById("filterIglesia").innerHTML = '<option value="">Iglesia</option>' + Array.from(iglesias).map(i => `<option value="${i}">${i}</option>`).join('');
+        document.getElementById("filterDepartamento").innerHTML = '<option value="">Departamento</option>' + Array.from(deptos).map(d => `<option value="${d}">${d}</option>`).join('');
+    }
+
+    function obtenerFiltrados() {
+        let filtrados = [...allRegistros];
+        const txt = currentFilters.texto.trim().toLowerCase();
+        if (txt) filtrados = filtrados.filter(r => Object.values(r).some(v => v && v.toString().toLowerCase().includes(txt)));
+        if (currentFilters.estadoCivil) filtrados = filtrados.filter(r => r.estadoCivil === currentFilters.estadoCivil);
+        if (currentFilters.sexo) filtrados = filtrados.filter(r => r.sexo === currentFilters.sexo);
+        if (currentFilters.iglesia) filtrados = filtrados.filter(r => r.nombreIglesia === currentFilters.iglesia);
+        if (currentFilters.departamento) filtrados = filtrados.filter(r => r.departamento === currentFilters.departamento);
+        return filtrados.sort((a,b) => b.registroNum - a.registroNum);
+    }
+
+    function escapeHtml(s) { if (!s) return ''; return s.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
+
+    function renderizarTabla() {
+        const data = obtenerFiltrados();
+        const tbody = document.getElementById("tableBody");
+        if (!data.length) { tbody.innerHTML = '<tr><td colspan="20">No hay registros</td></tr>'; return; }
         let html = "";
-        for(const reg of data) {
+        for (let r of data) {
+            const fotoHtml = (r.foto && r.foto.startsWith('data:image')) ? `<img src="${r.foto}" class="foto-miniatura">` : `<div class="sin-foto"><i class="fas fa-user-circle"></i></div>`;
+            const edad = r.edad ? r.edad : (r.fechaNacimiento ? calcularEdad(r.fechaNacimiento) : '');
+            const progreso = r.progreso !== undefined ? r.progreso : 0;
             html += `<tr>
-                <td>${reg.registroNum}</td>
-                <td style="text-align:center">${renderFotoCell(reg.foto)}</td>
-                <td>${escapeHtml(reg.apellido)}</td>
-                <td>${escapeHtml(reg.nombre)}</td>
-                <td>${escapeHtml(reg.dni)}</td>
-                <td>${escapeHtml(reg.categoria)}</td>
-                <td>${escapeHtml(reg.iglesia)}</td>
-                <td>${formatContacto(reg)}</td>
-                <td style="max-width:200px;">${escapeHtml(reg.observaciones) || '—'}</td>
-                <td class="action-icons">
-                    <button class="view-btn" data-id="${reg.id}" title="Ver"><i class="fas fa-eye"></i></button>
-                    <button class="edit-btn" data-id="${reg.id}" title="Editar"><i class="fas fa-edit"></i></button>
-                    <button class="delete-btn" data-id="${reg.id}" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
-                    <button class="tracking-btn" data-id="${reg.id}" title="Seguimiento"><i class="fas fa-chart-line"></i></button>
-                </td>
-            </tr>`;
+                        <td>${r.registroNum}</td>
+                        <td style="text-align:center">${fotoHtml}</td>
+                        <td>${escapeHtml(r.apellido)}</td>
+                        <td>${escapeHtml(r.nombres)}</td>
+                        <td>${escapeHtml(r.nombreIglesia)}</td>
+                        <td>${r.abc ?? 0}</td><td>${r.contactos ?? 0}</td><td>${r.conversiones ?? 0}</td><td>${r.bautismos ?? 0}</td>
+                        <td>${r.lideres ?? 0}</td><td>${r.grupos ?? 0}</td><td>${r.personasGrupos ?? 0}</td><td>${r.lideresConGrupo ?? 0}</td>
+                        <td>${escapeHtml(r.phone)}</td><td>${escapeHtml(r.estadoCivil)}</td><td>${escapeHtml(r.sexo)}</td>
+                        <td>${edad}</td><td>${escapeHtml(r.departamento)}</td>
+                        <td><div class="progress-bar-container"><div class="progress-bar" style="width:${progreso}%"></div></div> ${progreso}%</td>
+                        <td class="action-icons">
+                            <button class="track-btn" data-id="${r.id}" title="Ver evolución"><i class="fas fa-chart-line"></i></button>
+                            <button class="view-btn" data-id="${r.id}"><i class="fas fa-eye"></i></button>
+                            <button class="edit-btn" data-id="${r.id}"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn" data-id="${r.id}"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>`;
         }
         tbody.innerHTML = html;
-        // attach eventos dinámicos
-        document.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', (e) => openViewModal(parseInt(btn.dataset.id))));
-        document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => openEditModal(parseInt(btn.dataset.id))));
-        document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => showDeleteConfirmModal(parseInt(btn.dataset.id))));
-        document.querySelectorAll('.tracking-btn').forEach(btn => btn.addEventListener('click', (e) => {
-            const id = parseInt(btn.dataset.id);
-            const registro = allRegistros.find(r => r.id === id);
-            if(registro) openSeguimiento(registro);
-        }));
+        document.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', () => abrirVerModal(parseInt(btn.dataset.id))));
+        document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', () => abrirEditarModal(parseInt(btn.dataset.id))));
+        document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', () => mostrarEliminarModal(parseInt(btn.dataset.id))));
+        document.querySelectorAll('.track-btn').forEach(btn => btn.addEventListener('click', () => abrirTrackModal(parseInt(btn.dataset.id))));
     }
 
-    // SEGUIMIENTO (Mensaje al padre)
-    function openSeguimiento(registro) {
-        const fullName = `${registro.apellido} ${registro.nombre}`.trim();
-        let denominacion = '';
-        const iglesia = registro.iglesia || '';
-        const denomOptions = ['UAD', 'CEPI', 'MPI', 'CV', 'Consejo de Pastores', 'Pastor Indep.'];
-        const exactMatch = denomOptions.find(opt => opt.toLowerCase() === iglesia.toLowerCase());
-        if (exactMatch) denominacion = exactMatch;
-        else if (iglesia.toLowerCase().includes('consejo')) denominacion = 'Consejo de Pastores';
-        else if (iglesia.toLowerCase().includes('pastor')) denominacion = 'Pastor Indep.';
-        
-        let perfilValue = '';
-        switch (registro.categoria) {
-            case 'Pastor': perfilValue = '12'; break;
-            case 'Discipulador': perfilValue = '7'; break;
-            case 'Líder': perfilValue = '5'; break;
-            case 'Consultor': perfilValue = '5'; break;
-            default: perfilValue = '15';
-        }
-        const prefill = { nombre: fullName, denominacion: denominacion, perfil: perfilValue, proceso: '', etapa: '1', modulosCompletados: 0 };
-        sessionStorage.setItem('seguimientoPrefill', JSON.stringify(prefill));
-        if (window.parent !== window) {
-            window.parent.postMessage({ action: 'navigateToSeguimiento', prefill: prefill }, '*');
-        } else {
-            window.location.href = 'seguimiento.html';
-        }
-    }
-
-    // Limpiar y llenar modal de registro
-    function resetFormModal() {
-        apellidoInput.value = ''; nombreInput.value = ''; dniInput.value = '';
-        categoriaSelect.value = 'Pastor'; iglesiaInput.value = ''; observacionesTextarea.value = '';
-        domicilioInput.value = ''; emailInput.value = ''; telefonoInput.value = ''; whatsappInput.value = '';
-        currentFotoBase64 = '';
-        fotoPreview.style.display = 'none';
-        sinFotoIcono.style.display = 'flex';
-        fotoPreview.src = '';
-        editingId = null;
-        modalTitle.innerText = 'Nuevo Registro';
-    }
-
-    function openEditModal(id) {
+    // ---------- MODAL VER con solapas solo lectura ----------
+    function abrirVerModal(id) {
         const reg = allRegistros.find(r => r.id === id);
-        if(!reg) return;
-        editingId = reg.id;
-        modalTitle.innerText = 'Editar Registro';
-        apellidoInput.value = reg.apellido || '';
-        nombreInput.value = reg.nombre || '';
-        dniInput.value = reg.dni || '';
-        categoriaSelect.value = reg.categoria || 'Pastor';
-        iglesiaInput.value = reg.iglesia || '';
-        observacionesTextarea.value = reg.observaciones || '';
-        domicilioInput.value = reg.domicilio || '';
-        emailInput.value = reg.email || '';
-        telefonoInput.value = reg.telefono || '';
-        whatsappInput.value = reg.whatsapp || '';
-        currentFotoBase64 = reg.foto || '';
-        if(currentFotoBase64 && currentFotoBase64.startsWith('data:image')) {
-            fotoPreview.src = currentFotoBase64;
-            fotoPreview.style.display = 'block';
-            sinFotoIcono.style.display = 'none';
-        } else {
-            fotoPreview.style.display = 'none';
-            sinFotoIcono.style.display = 'flex';
-        }
-        modalOverlay.style.display = 'flex';
+        if (!reg) return;
+        const edad = reg.edad ? reg.edad : (reg.fechaNacimiento ? calcularEdad(reg.fechaNacimiento) : '');
+        const fotoHtml = reg.foto && reg.foto.startsWith('data:image') ? `<div style="text-align:center; margin-bottom:1rem;"><img src="${reg.foto}" style="max-width:120px; border-radius:20px;"></div>` : '';
+        // Construir contenido de cada pestaña (solo lectura)
+        document.getElementById("tabVer1").innerHTML = `
+            ${fotoHtml}
+            <div class="form-group"><label>Apellido</label><div class="readonly-value">${escapeHtml(reg.apellido)}</div></div>
+            <div class="form-group"><label>Nombres</label><div class="readonly-value">${escapeHtml(reg.nombres)}</div></div>
+            <div class="form-group"><label>Estado civil</label><div class="readonly-value">${escapeHtml(reg.estadoCivil)}</div></div>
+            <div class="form-group"><label>Sexo</label><div class="readonly-value">${escapeHtml(reg.sexo)}</div></div>
+            <div class="form-group"><label>Fecha nacimiento</label><div class="readonly-value">${reg.fechaNacimiento || ''}</div></div>
+            <div class="form-group"><label>Teléfono</label><div class="readonly-value">${escapeHtml(reg.phone)}</div></div>
+        `;
+        document.getElementById("tabVer2").innerHTML = `
+            <div class="form-group"><label>Iglesia</label><div class="readonly-value">${escapeHtml(reg.nombreIglesia)}</div></div>
+            <div class="form-group"><label># ABC</label><div class="readonly-value">${reg.abc}</div></div>
+            <div class="form-group"><label>Contactos</label><div class="readonly-value">${reg.contactos}</div></div>
+            <div class="form-group"><label>Conversiones</label><div class="readonly-value">${reg.conversiones}</div></div>
+            <div class="form-group"><label>Bautismos</label><div class="readonly-value">${reg.bautismos}</div></div>
+            <div class="form-group"><label>Líderes</label><div class="readonly-value">${reg.lideres}</div></div>
+            <div class="form-group"><label>Grupos</label><div class="readonly-value">${reg.grupos}</div></div>
+            <div class="form-group"><label>Personas en grupos</label><div class="readonly-value">${reg.personasGrupos}</div></div>
+            <div class="form-group"><label>Líderes con grupo</label><div class="readonly-value">${reg.lideresConGrupo}</div></div>
+            <div class="form-group"><label>Denominación</label><div class="readonly-value">${escapeHtml(reg.denominacion)}</div></div>
+            <div class="form-group"><label>Pastor</label><div class="readonly-value">${escapeHtml(reg.nombrePastor)}</div></div>
+        `;
+        document.getElementById("tabVer3").innerHTML = `
+            <div class="form-group"><label>Calle</label><div class="readonly-value">${escapeHtml(reg.domicilio)}</div></div>
+            <div class="form-group"><label>Ciudad</label><div class="readonly-value">${escapeHtml(reg.ciudad)}</div></div>
+            <div class="form-group"><label>Barrio</label><div class="readonly-value">${escapeHtml(reg.barrio)}</div></div>
+            <div class="form-group"><label>Departamento</label><div class="readonly-value">${escapeHtml(reg.departamento)}</div></div>
+            <div class="form-group"><label>País</label><div class="readonly-value">${escapeHtml(reg.pais)}</div></div>
+            <div class="form-group"><label>Email</label><div class="readonly-value">${escapeHtml(reg.email)}</div></div>
+            <div class="form-group"><label>WhatsApp</label><div class="readonly-value">${escapeHtml(reg.whatsapp)}</div></div>
+        `;
+        document.getElementById("tabVer4").innerHTML = `
+            <div class="form-group"><label>Observaciones</label><div class="readonly-value">${escapeHtml(reg.observaciones)}</div></div>
+            <div class="form-group"><label>Progreso actual</label><div class="readonly-value">${reg.progreso}%</div></div>
+        `;
+        document.getElementById("viewModal").classList.add("active");
+        document.getElementById("editFromViewBtn").onclick = () => { cerrarModalVer(); abrirEditarModal(id); };
     }
+    function cerrarModalVer() { document.getElementById("viewModal").classList.remove("active"); }
 
-    function openViewModal(id) {
+    // ---------- MODAL EDITAR (mismo que Nuevo) ----------
+    function abrirEditarModal(id) {
         const reg = allRegistros.find(r => r.id === id);
-        if(!reg) return;
-        const fotoHtml = reg.foto ? `<img src="${reg.foto}" style="width:80px;border-radius:16px;margin-bottom:8px;">` : '<div class="sin-foto" style="width:60px;"><i class="fas fa-user"></i></div>';
-        const bodyHtml = `<div style="display:flex; gap:1.5rem; flex-wrap:wrap;"><div>${fotoHtml}</div><div style="flex:1"><p><strong>N° Registro:</strong> ${reg.registroNum}</p><p><strong>Apellido:</strong> ${escapeHtml(reg.apellido)}</p><p><strong>Nombre:</strong> ${escapeHtml(reg.nombre)}</p><p><strong>DNI:</strong> ${escapeHtml(reg.dni)}</p><p><strong>Categoría:</strong> ${escapeHtml(reg.categoria)}</p><p><strong>Iglesia:</strong> ${escapeHtml(reg.iglesia)}</p><p><strong>Domicilio:</strong> ${escapeHtml(reg.domicilio) || '—'}</p><p><strong>Email:</strong> ${escapeHtml(reg.email) || '—'}</p><p><strong>Teléfono:</strong> ${escapeHtml(reg.telefono) || '—'}</p><p><strong>WhatsApp:</strong> ${escapeHtml(reg.whatsapp) || '—'}</p><p><strong>Observaciones:</strong> ${escapeHtml(reg.observaciones) || '—'}</p></div></div>`;
-        document.getElementById("viewModalBody").innerHTML = bodyHtml;
-        viewModal.dataset.editId = reg.id;
-        viewModal.style.display = 'flex';
+        if (!reg) return;
+        editingId = id;
+        document.getElementById("modalTitle").innerText = "Editar Registro";
+        document.getElementById("apellido").value = reg.apellido || "";
+        document.getElementById("nombres").value = reg.nombres || "";
+        document.getElementById("estadoCivil").value = reg.estadoCivil || "";
+        document.getElementById("sexo").value = reg.sexo || "";
+        document.getElementById("fechaNacimiento").value = reg.fechaNacimiento || "";
+        document.getElementById("phone").value = reg.phone || "";
+        document.getElementById("nombreIglesia").value = reg.nombreIglesia || "";
+        document.getElementById("abc").value = reg.abc ?? 0;
+        document.getElementById("contactos").value = reg.contactos ?? 0;
+        document.getElementById("conversiones").value = reg.conversiones ?? 0;
+        document.getElementById("bautismos").value = reg.bautismos ?? 0;
+        document.getElementById("lideres").value = reg.lideres ?? 0;
+        document.getElementById("grupos").value = reg.grupos ?? 0;
+        document.getElementById("personasGrupos").value = reg.personasGrupos ?? 0;
+        document.getElementById("lideresConGrupo").value = reg.lideresConGrupo ?? 0;
+        document.getElementById("denominacion").value = reg.denominacion || "";
+        document.getElementById("nombrePastor").value = reg.nombrePastor || "";
+        document.getElementById("domicilio").value = reg.domicilio || "";
+        document.getElementById("ciudad").value = reg.ciudad || "";
+        document.getElementById("barrio").value = reg.barrio || "";
+        document.getElementById("departamento").value = reg.departamento || "";
+        document.getElementById("pais").value = reg.pais || "Argentina";
+        document.getElementById("email").value = reg.email || "";
+        document.getElementById("whatsapp").value = reg.whatsapp || "";
+        document.getElementById("observaciones").value = reg.observaciones || "";
+        currentFotoBase64 = reg.foto || "";
+        document.getElementById("fotoPreview").innerHTML = currentFotoBase64 ? `<img src="${currentFotoBase64}" style="max-width:80px; border-radius:12px;">` : "";
+        document.getElementById("registroModal").classList.add("active");
     }
 
-    function saveRegistro() {
-        if(!apellidoInput.value.trim() || !nombreInput.value.trim() || !dniInput.value.trim()) {
-            alert("Complete los campos obligatorios: Apellido, Nombre y DNI");
-            return;
-        }
-        const newRegistro = {
-            id: editingId ? editingId : getNextId(),
-            registroNum: editingId ? allRegistros.find(r=>r.id===editingId).registroNum : getNextRegistroNum(),
-            apellido: apellidoInput.value.trim(),
-            nombre: nombreInput.value.trim(),
-            dni: dniInput.value.trim(),
-            categoria: categoriaSelect.value,
-            iglesia: iglesiaInput.value.trim(),
-            observaciones: observacionesTextarea.value.trim(),
-            domicilio: domicilioInput.value.trim(),
-            email: emailInput.value.trim(),
-            telefono: telefonoInput.value.trim(),
-            whatsapp: whatsappInput.value.trim(),
-            foto: currentFotoBase64 || ""
+    function guardarRegistro() {
+        const apellido = document.getElementById("apellido").value.trim();
+        const nombres = document.getElementById("nombres").value.trim();
+        const nombreIglesia = document.getElementById("nombreIglesia").value.trim();
+        if (!apellido || !nombres || !nombreIglesia) { alert("Apellido, Nombres e Iglesia son obligatorios"); return; }
+        const nuevoReg = {
+            apellido, nombres, nombreIglesia,
+            estadoCivil: document.getElementById("estadoCivil").value,
+            sexo: document.getElementById("sexo").value,
+            fechaNacimiento: document.getElementById("fechaNacimiento").value || null,
+            phone: document.getElementById("phone").value,
+            abc: parseInt(document.getElementById("abc").value) || 0,
+            contactos: parseInt(document.getElementById("contactos").value) || 0,
+            conversiones: parseInt(document.getElementById("conversiones").value) || 0,
+            bautismos: parseInt(document.getElementById("bautismos").value) || 0,
+            lideres: parseInt(document.getElementById("lideres").value) || 0,
+            grupos: parseInt(document.getElementById("grupos").value) || 0,
+            personasGrupos: parseInt(document.getElementById("personasGrupos").value) || 0,
+            lideresConGrupo: parseInt(document.getElementById("lideresConGrupo").value) || 0,
+            denominacion: document.getElementById("denominacion").value,
+            nombrePastor: document.getElementById("nombrePastor").value,
+            domicilio: document.getElementById("domicilio").value,
+            ciudad: document.getElementById("ciudad").value,
+            barrio: document.getElementById("barrio").value,
+            departamento: document.getElementById("departamento").value,
+            pais: document.getElementById("pais").value || "Argentina",
+            email: document.getElementById("email").value,
+            whatsapp: document.getElementById("whatsapp").value,
+            observaciones: document.getElementById("observaciones").value,
+            foto: currentFotoBase64,
+            progreso: 0,
+            historial: [{ fecha: new Date().toISOString(), porcentaje: 0 }]
         };
-        if(editingId) {
+        if (editingId !== null) {
             const index = allRegistros.findIndex(r => r.id === editingId);
-            if(index !== -1) allRegistros[index] = newRegistro;
+            if (index !== -1) {
+                allRegistros[index] = { ...allRegistros[index], ...nuevoReg, historial: allRegistros[index].historial };
+                guardarLocalStorage();
+                actualizarFiltros();
+                renderizarTabla();
+                cerrarModalRegistro();
+            }
         } else {
-            allRegistros.push(newRegistro);
-        }
-        saveToLocalStorage();
-        updateFilterOptions();
-        renderTable();
-        modalOverlay.style.display = 'none';
-        resetFormModal();
-    }
-
-    function showDeleteConfirmModal(id) { pendingDeleteId = id; deleteConfirmModal.style.display = 'flex'; }
-    function confirmDelete() {
-        if(pendingDeleteId !== null) {
-            allRegistros = allRegistros.filter(r => r.id !== pendingDeleteId);
-            saveToLocalStorage();
-            updateFilterOptions();
-            renderTable();
-            deleteConfirmModal.style.display = 'none';
-            pendingDeleteId = null;
+            const newId = Date.now();
+            const maxNum = allRegistros.length ? Math.max(...allRegistros.map(r => r.registroNum)) : 0;
+            const newRegNum = maxNum + 1;
+            allRegistros.push({ id: newId, registroNum: newRegNum, ...nuevoReg });
+            guardarLocalStorage();
+            actualizarFiltros();
+            renderizarTabla();
+            cerrarModalRegistro();
         }
     }
-    function closeAllModals() {
-        modalOverlay.style.display = 'none';
-        viewModal.style.display = 'none';
-        deleteConfirmModal.style.display = 'none';
-        resetFormModal();
+
+    function cerrarModalRegistro() { document.getElementById("registroModal").classList.remove("active"); editingId = null; currentFotoBase64 = ""; document.getElementById("fotoPreview").innerHTML = ""; }
+
+    // ---------- MODAL SEGUIMIENTO ----------
+    function abrirTrackModal(id) {
+        currentTrackId = id;
+        const persona = allRegistros.find(r => r.id === id);
+        if (!persona) return;
+        document.getElementById("trackTitle").innerHTML = `📈 Evolución de ${escapeHtml(persona.nombres)} ${escapeHtml(persona.apellido)}`;
+        const historial = persona.historial || [];
+        const historyListDiv = document.getElementById("historyList");
+        if (historial.length === 0) historyListDiv.innerHTML = "<em>Sin registros de evolución</em>";
+        else {
+            let histHtml = "";
+            historial.forEach((h, idx) => {
+                const fecha = new Date(h.fecha).toLocaleString();
+                histHtml += `<div class="history-item">📅 ${fecha} → <strong>${h.porcentaje}%</strong></div>`;
+            });
+            historyListDiv.innerHTML = histHtml;
+        }
+        const ctx = document.getElementById('evolutionChart').getContext('2d');
+        if (trackChart) trackChart.destroy();
+        const labels = historial.map((_, i) => `#${i+1}`);
+        const dataPoints = historial.map(h => h.porcentaje);
+        trackChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels, datasets: [{ label: 'Progreso (%)', data: dataPoints, borderColor: '#1e3a8a', backgroundColor: 'rgba(30,58,138,0.05)', borderWidth: 3, pointBackgroundColor: '#2c6e9e', pointRadius: 5, fill: true, tension: 0.2 }] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: '% Avance' } } } }
+        });
+        document.getElementById("trackModal").classList.add("active");
+        document.getElementById("newProgress").value = "";
+    }
+    function cerrarTrackModal() { document.getElementById("trackModal").classList.remove("active"); if (trackChart) { trackChart.destroy(); trackChart = null; } currentTrackId = null; }
+    function agregarNuevoProgreso() {
+        if (currentTrackId === null) return;
+        const nuevoPorcentaje = parseInt(document.getElementById("newProgress").value);
+        if (isNaN(nuevoPorcentaje) || nuevoPorcentaje < 0 || nuevoPorcentaje > 100) { alert("Ingrese un porcentaje entre 0 y 100"); return; }
+        const index = allRegistros.findIndex(r => r.id === currentTrackId);
+        if (index === -1) return;
+        const persona = allRegistros[index];
+        if (!persona.historial) persona.historial = [];
+        persona.historial.push({ fecha: new Date().toISOString(), porcentaje: nuevoPorcentaje });
+        persona.progreso = nuevoPorcentaje;
+        guardarLocalStorage();
+        actualizarFiltros();
+        renderizarTabla();
+        abrirTrackModal(currentTrackId);
     }
 
-    // manejo foto
-    btnSubirFoto.addEventListener('click', () => fotoInput.click());
-    fotoInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if(file) {
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                currentFotoBase64 = ev.target.result;
-                fotoPreview.src = currentFotoBase64;
-                fotoPreview.style.display = 'block';
-                sinFotoIcono.style.display = 'none';
-            };
-            reader.readAsDataURL(file);
-        }
-    });
+    // ---------- MODAL ELIMINAR ----------
+    function mostrarEliminarModal(id) { pendingDeleteId = id; document.getElementById("deleteConfirmModal").classList.add("active"); }
+    function eliminarConfirmado() { if (pendingDeleteId) { allRegistros = allRegistros.filter(r => r.id !== pendingDeleteId); guardarLocalStorage(); actualizarFiltros(); renderizarTabla(); cerrarEliminarModal(); } }
+    function cerrarEliminarModal() { document.getElementById("deleteConfirmModal").classList.remove("active"); pendingDeleteId = null; }
 
-    // TABS
-    function initTabs() {
-        const btns = document.querySelectorAll('.tab-btn');
-        btns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tabId = btn.dataset.tab;
-                document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-                document.getElementById(tabId).classList.add('active');
-                btns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+    // ---------- EVENTOS Y CIERRE POR CLIC FUERA ----------
+    function inicializar() {
+        actualizarFiltros();
+        renderizarTabla();
+        // Filtros
+        document.getElementById("searchInput").addEventListener("input", e => { currentFilters.texto = e.target.value; renderizarTabla(); });
+        document.getElementById("filterEstadoCivil").addEventListener("change", e => { currentFilters.estadoCivil = e.target.value; renderizarTabla(); });
+        document.getElementById("filterSexo").addEventListener("change", e => { currentFilters.sexo = e.target.value; renderizarTabla(); });
+        document.getElementById("filterIglesia").addEventListener("change", e => { currentFilters.iglesia = e.target.value; renderizarTabla(); });
+        document.getElementById("filterDepartamento").addEventListener("change", e => { currentFilters.departamento = e.target.value; renderizarTabla(); });
+        // Botones
+        document.getElementById("openModalBtn").addEventListener("click", () => {
+            editingId = null;
+            document.getElementById("modalTitle").innerText = "Nuevo Registro";
+            document.querySelectorAll("#registroModal input, #registroModal select, #registroModal textarea").forEach(el => el.value = "");
+            document.getElementById("pais").value = "Argentina";
+            document.getElementById("fotoPreview").innerHTML = "";
+            currentFotoBase64 = "";
+            document.getElementById("registroModal").classList.add("active");
+        });
+        document.getElementById("cancelModalBtn").addEventListener("click", cerrarModalRegistro);
+        document.getElementById("saveRegistroBtn").addEventListener("click", guardarRegistro);
+        document.getElementById("closeViewFooterBtn").addEventListener("click", cerrarModalVer);
+        document.getElementById("cancelDeleteBtn").addEventListener("click", cerrarEliminarModal);
+        document.getElementById("confirmDeleteBtn").addEventListener("click", eliminarConfirmado);
+        document.getElementById("closeTrackFooterBtn").addEventListener("click", cerrarTrackModal);
+        document.getElementById("addProgressBtn").addEventListener("click", agregarNuevoProgreso);
+        document.getElementById("printTableBtn").addEventListener("click", () => window.print());
+        document.getElementById("fotoInput").addEventListener("change", e => {
+            const file = e.target.files[0];
+            if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
+                const reader = new FileReader();
+                reader.onload = ev => { currentFotoBase64 = ev.target.result; document.getElementById("fotoPreview").innerHTML = `<img src="${currentFotoBase64}" style="max-width:80px; border-radius:12px;">`; };
+                reader.readAsDataURL(file);
+            } else alert("Solo JPG o PNG");
+        });
+        // Cierre de modales al hacer clic fuera (overlay)
+        const modals = ["registroModal", "viewModal", "trackModal", "deleteConfirmModal"];
+        modals.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            modal.addEventListener("click", function(e) {
+                if (e.target === modal) {
+                    if (modalId === "registroModal") cerrarModalRegistro();
+                    if (modalId === "viewModal") cerrarModalVer();
+                    if (modalId === "trackModal") cerrarTrackModal();
+                    if (modalId === "deleteConfirmModal") cerrarEliminarModal();
+                }
             });
         });
+        // Tabs para el modal Ver
+        const tabsVer = document.querySelectorAll('.tab-btn-ver');
+        const panesVer = document.querySelectorAll('.tab-pane-ver');
+        tabsVer.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab-ver');
+                tabsVer.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                panesVer.forEach(pane => pane.classList.remove('active-pane-ver'));
+                document.getElementById(tabId).classList.add('active-pane-ver');
+            });
+        });
+        // Tabs para modal edición
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active-pane'));
+                document.getElementById(tabId).classList.add('active-pane');
+            });
+        });
+        // Estilos para pestañas de ver
+        const style = document.createElement('style');
+        style.textContent = `
+            .tab-btn-ver { background: none; border: none; padding: 0.8rem 0; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; color: #5c6f87; transition: 0.2s; }
+            .tab-btn-ver.active { color: #1e3a8a; border-bottom-color: #1e3a8a; }
+            .tab-pane-ver { display: none; }
+            .tab-pane-ver.active-pane-ver { display: block; }
+        `;
+        document.head.appendChild(style);
+        // Activar primera pestaña de ver
+        if (document.querySelector('.tab-btn-ver')) document.querySelector('.tab-btn-ver').classList.add('active');
+        if (document.getElementById('tabVer1')) document.getElementById('tabVer1').classList.add('active-pane-ver');
     }
-
-    function bindEvents() {
-        searchInput.addEventListener('input', (e) => { currentFilters.texto = e.target.value; renderTable(); });
-        filterCategoria.addEventListener('change', (e) => { currentFilters.categoria = e.target.value; renderTable(); });
-        filterIglesia.addEventListener('change', (e) => { currentFilters.iglesia = e.target.value; renderTable(); });
-        openModalBtn.onclick = () => { resetFormModal(); modalOverlay.style.display = 'flex'; };
-        closeModalBtn.onclick = cancelModalBtn.onclick = () => closeAllModals();
-        saveBtn.onclick = saveRegistro;
-        printBtn.onclick = () => window.print();
-        closeViewModalBtn.onclick = closeViewFooterBtn.onclick = () => viewModal.style.display = 'none';
-        editFromViewBtn.onclick = () => {
-            const id = parseInt(viewModal.dataset.editId);
-            viewModal.style.display = 'none';
-            openEditModal(id);
-        };
-        closeDeleteModalBtn.onclick = cancelDeleteBtn.onclick = () => deleteConfirmModal.style.display = 'none';
-        confirmDeleteBtn.onclick = confirmDelete;
-        window.onclick = (e) => { if(e.target.classList.contains('modal-overlay')) closeAllModals(); };
-    }
-
-    function initDemoData() {
-        const stored = localStorage.getItem("appRegistros_v5");
-        if(stored) {
-            allRegistros = JSON.parse(stored);
-        } else {
-            allRegistros = [
-                { id: 1001, registroNum: 4, apellido: "García", nombre: "Lucía", dni: "45123456", categoria: "Pastor", iglesia: "Centro de Vida", observaciones: "Pastor principal", domicilio: "Av. Libertad 123", email: "lucia@centrovida.com", telefono: "3512345678", whatsapp: "+5493512345678", foto: "" },
-                { id: 1002, registroNum: 3, apellido: "Martínez", nombre: "Jorge", dni: "33987654", categoria: "Líder", iglesia: "Fe y Gracia", observaciones: "Líder de alabanza", domicilio: "Belgrano 456", email: "jorge@feygracia.org", telefono: "3519876543", whatsapp: "+5493519876543", foto: "" },
-                { id: 1003, registroNum: 2, apellido: "Ramos", nombre: "Camila", dni: "28765432", categoria: "Discipulador", iglesia: "Casa de Oración", observaciones: "Discipulado de jóvenes", domicilio: "San Martín 789", email: "camila@casaoracion.com", telefono: "3514567890", whatsapp: "", foto: "" },
-                { id: 1004, registroNum: 1, apellido: "López", nombre: "Daniel", dni: "41239876", categoria: "Consultor", iglesia: "Iglesia del Pacto", observaciones: "Consultor externo", domicilio: "", email: "daniel@pacto.org", telefono: "3512223344", whatsapp: "+5493512223344", foto: "" }
-            ];
-            saveToLocalStorage();
-        }
-    }
-
-    function init() {
-        initDemoData();
-        bindEvents();
-        initTabs();
-        updateFilterOptions();
-        renderTable();
-        currentFilters = { texto: "", categoria: "", iglesia: "" };
-        if(searchInput) searchInput.value = "";
-        if(filterCategoria) filterCategoria.value = "";
-        if(filterIglesia) filterIglesia.value = "";
-    }
-    init();
+    inicializar();
 </script>
 </body>
 </html>
