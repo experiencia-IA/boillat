@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Reporte Visual de Crecimiento · Discipulado | Iglesia Evangélica</title>
+    <title>Reporte real · Seguimiento individual de discipulado</title>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <!-- Font Awesome 6 (solo se usará para iconos decorativos de títulos y botones, no en KPIs) -->
+    <!-- Font Awesome 6 (solo iconos decorativos) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -23,16 +23,16 @@
         }
 
         .dashboard-container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
-        /* Header con nuevo título - altura reducida y texto centrado */
+        /* Header */
         .header {
-            margin-bottom: 1rem;        /* antes 2rem, reducido */
+            margin-bottom: 1.5rem;
             text-align: center;
             border-bottom: 2px solid #0a2f4420;
-            padding-bottom: 0.5rem;     /* antes 1rem, reducido */
+            padding-bottom: 0.75rem;
         }
         .header h1 {
             font-size: 2rem;
@@ -49,13 +49,23 @@
             font-weight: 500;
             margin-top: 8px;
         }
+        .badge-real {
+            background: #e6f4ea;
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #1e6f5c;
+            margin-top: 6px;
+        }
 
-        /* KPI cards SIN iconos */
+        /* KPI reales SIN iconos ficticios */
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1.5rem;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
         }
         .kpi-card {
             background: white;
@@ -69,9 +79,8 @@
         .kpi-card:hover {
             transform: translateY(-3px);
         }
-        /* Ya no hay .kpi-icon */
         .kpi-label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             font-weight: 600;
             letter-spacing: 1px;
@@ -86,552 +95,597 @@
             line-height: 1.2;
         }
         .kpi-trend {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #2c7a5e;
         }
 
-        /* Contenedor para los 3 gráficos en una misma línea */
-        .charts-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-        /* Tarjeta base para gráficos */
-        .chart-card {
-            background: white;
-            border-radius: 28px;
-            padding: 1.2rem 1rem 1rem 1rem;
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
-            transition: box-shadow 0.2s;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        .chart-card h3 {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #0a2f44;
-            margin-bottom: 1rem;
-            padding-left: 6px;
-            border-left: 4px solid #0a2f44;
-        }
-        .chart-card h3 i {
-            margin-right: 8px;
-            color: #1e6f5c;
-        }
-        canvas {
-            max-height: 280px;
-            width: 100%;
-            flex-shrink: 0;
-        }
-        /* Contenedor del cuarto gráfico (ancho completo) */
-        .full-width-chart {
-            margin-bottom: 2rem;
-        }
-
-        /* Botones */
+        /* Panel de acciones (solo recarga real) */
         .action-bar {
             display: flex;
             flex-wrap: wrap;
-            justify-content: center;
-            gap: 1.2rem;
-            margin: 1rem 0 2rem;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
         }
         .btn {
             background-color: #0a2f44;
             border: none;
-            padding: 12px 28px;
+            padding: 10px 24px;
             border-radius: 60px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: white;
             cursor: pointer;
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         .btn i {
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
         .btn:hover {
             background-color: #0e4b6e;
             transform: scale(0.97);
-            box-shadow: 0 4px 12px rgba(10, 47, 68, 0.3);
-        }
-        .btn-secondary {
-            background-color: #1e4a6b;
-            border: 1px solid #ffffff30;
-        }
-        .btn-secondary:hover {
-            background-color: #0a2f44;
         }
 
-        /* Tabla */
-        .data-table-section {
+        /* Gráfico global (tendencia real) */
+        .global-chart-card {
             background: white;
             border-radius: 28px;
-            padding: 1.2rem;
-            margin-top: 1rem;
-            overflow-x: auto;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+            padding: 1.2rem 1rem 1rem 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
         }
-        .data-table-section h3 {
-            color: #0a2f44;
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
+        .global-chart-card h3 {
+            font-size: 1.3rem;
             font-weight: 600;
+            color: #0a2f44;
+            margin-bottom: 1rem;
+            border-left: 4px solid #1e6f5c;
+            padding-left: 12px;
         }
-        table {
+        .global-chart-card h3 i {
+            margin-right: 8px;
+            color: #1e6f5c;
+        }
+        canvas#globalTrendChart {
+            max-height: 280px;
             width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-        }
-        th {
-            background-color: #eef2f7;
-            color: #0a2f44;
-            padding: 12px 8px;
-            font-weight: 700;
-        }
-        td {
-            padding: 10px 8px;
-            border-bottom: 1px solid #e2e8f0;
-            color: #1e3a5f;
-            text-align: center;
-        }
-        tr:hover {
-            background-color: #f8fafc;
-        }
-        .month-name {
-            font-weight: 700;
-            color: #0a2f44;
         }
 
+        /* Grid de tarjetas individuales (cada registro = gráfico lineal de seguimiento) */
+        .cards-section-title {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin: 1.5rem 0 1rem 0;
+            flex-wrap: wrap;
+        }
+        .cards-section-title h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #0a2f44;
+        }
+        .cards-section-title span {
+            background: #eef2f7;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .person-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .person-card {
+            background: white;
+            border-radius: 28px;
+            padding: 1rem 1rem 1rem 1rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #eaf0f5;
+        }
+        .person-card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        .person-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px dashed #dce5ef;
+            padding-bottom: 0.5rem;
+        }
+        .person-name {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #0a2f44;
+        }
+        .person-name i {
+            color: #2c7a5e;
+            margin-right: 6px;
+        }
+        .current-progress {
+            background: #eef2fa;
+            border-radius: 40px;
+            padding: 0.2rem 0.7rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #0f4c5f;
+        }
+        .person-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #4a6f8f;
+            margin: 0.4rem 0 0.6rem 0;
+        }
+        .chart-container-individual {
+            position: relative;
+            height: 150px;
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+        .empty-chart-placeholder {
+            background: #f9fafc;
+            border-radius: 20px;
+            text-align: center;
+            padding: 1rem;
+            color: #7c8ea0;
+            font-size: 0.75rem;
+        }
+        .badge-events {
+            font-size: 0.7rem;
+            background: #eef2ff;
+            padding: 0.2rem 0.5rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 6px;
+        }
         footer {
             text-align: center;
-            margin-top: 2.5rem;
+            margin-top: 2rem;
             font-size: 0.75rem;
             color: #4a6f8f;
             border-top: 1px solid #cbdbe2;
             padding-top: 1.5rem;
         }
-        @media (max-width: 980px) {
-            .charts-row {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
+        @media (max-width: 780px) {
             body {
                 padding: 1rem;
             }
-            .btn {
-                padding: 8px 18px;
-                font-size: 0.8rem;
+            .person-grid {
+                grid-template-columns: 1fr;
             }
+            .kpi-value {
+                font-size: 1.6rem;
+            }
+        }
+        .no-data-message {
+            background: #fef9e6;
+            border-radius: 28px;
+            padding: 2rem;
+            text-align: center;
+            color: #a16207;
+            margin: 1rem 0;
         }
     </style>
 </head>
 <body>
 <div class="dashboard-container">
     <div class="header">
-        <h1><i class="fas fa-church"></i> Reporte Visual de Crecimiento</h1>
-        <p>Discipulado · aprendizaje · nuevos creyentes · multiplicación de discipuladores</p>
+        <h1><i class="fas fa-chart-line"></i> Seguimiento real del discipulado</h1>
+        <p>📊 Progreso individual histórico · cada gráfico representa la evolución personal</p>
+        <div class="badge-real"><i class="fas fa-database"></i> Datos 100% reales desde la tabla de registros</div>
     </div>
 
-    <!-- Tarjetas resumen (KPIs SIN iconos) -->
+    <!-- KPIs reales basados en registros -->
     <div class="kpi-grid" id="kpiContainer">
         <div class="kpi-card">
-            <div class="kpi-label">NUEVOS CREYENTES (AÑO)</div>
-            <div class="kpi-value" id="totalNewBelievers">0</div>
-            <div class="kpi-trend">+ crecimiento anual</div>
+            <div class="kpi-label"><i class="fas fa-users"></i> PERSONAS REGISTRADAS</div>
+            <div class="kpi-value" id="totalPeople">0</div>
+            <div class="kpi-trend">discípulos en seguimiento</div>
         </div>
         <div class="kpi-card">
-            <div class="kpi-label">NUEVOS DISCIPULADORES</div>
-            <div class="kpi-value" id="totalNewDisciplers">0</div>
-            <div class="kpi-trend">multiplicadores formados</div>
+            <div class="kpi-label"><i class="fas fa-chart-simple"></i> PROGRESO PROMEDIO</div>
+            <div class="kpi-value" id="avgProgress">0<span style="font-size:1rem;">%</span></div>
+            <div class="kpi-trend">último avance registrado</div>
         </div>
         <div class="kpi-card">
-            <div class="kpi-label">NIVEL APRENDIZAJE PROM.</div>
-            <div class="kpi-value" id="avgLearning">0<span style="font-size:1rem;">%</span></div>
-            <div class="kpi-trend">comprensión bíblica</div>
+            <div class="kpi-label"><i class="fas fa-calendar-week"></i> EVENTOS DE SEGUIMIENTO</div>
+            <div class="kpi-value" id="totalEvents">0</div>
+            <div class="kpi-trend">actualizaciones de progreso</div>
         </div>
         <div class="kpi-card">
-            <div class="kpi-label">MIEMBROS ACTIVOS (DIC)</div>
-            <div class="kpi-value" id="totalMembersDec">0</div>
-            <div class="kpi-trend">crecimiento acumulado</div>
+            <div class="kpi-label"><i class="fas fa-chart-line"></i> CON PROGRESO >0%</div>
+            <div class="kpi-value" id="activePeople">0</div>
+            <div class="kpi-trend">iniciaron su caminata</div>
         </div>
     </div>
 
-    <!-- FILA: 3 gráficos principales en una misma línea -->
-    <div class="charts-row">
-        <div class="chart-card">
-            <h3><i class="fas fa-people-arrows"></i> Nuevos Creyentes & Discipuladores</h3>
-            <canvas id="chartCreyentesDiscipuladores" width="400" height="280" style="max-height: 280px;"></canvas>
-            <p style="font-size: 0.7rem; color: #3c6e8f; text-align:center; margin-top: 8px;">📈 Evolución mensual comparada</p>
-        </div>
-        <div class="chart-card">
-            <h3><i class="fas fa-graduation-cap"></i> Nivel de Aprendizaje (%)</h3>
-            <canvas id="chartAprendizaje" width="400" height="280" style="max-height: 280px;"></canvas>
-            <p style="font-size: 0.7rem; color: #3c6e8f; text-align:center; margin-top: 8px;">📊 Dominio de principios del discipulado</p>
-        </div>
-        <div class="chart-card">
-            <h3><i class="fas fa-tree"></i> Crecimiento Total de Miembros</h3>
-            <canvas id="chartCrecimiento" width="400" height="280" style="max-height: 280px;"></canvas>
-            <p style="font-size: 0.7rem; color: #3c6e8f; text-align:center; margin-top: 8px;">🌱 Iglesia local · acumulado mes a mes</p>
-        </div>
-    </div>
-
-    <!-- CUARTO GRÁFICO: exclusivo de Nuevos Creyentes (ancho completo) -->
-    <div class="full-width-chart">
-        <div class="chart-card">
-            <h3><i class="fas fa-chart-simple"></i> Evolución Lineal de Nuevos Creyentes (mensual)</h3>
-            <canvas id="chartNuevosCreyentesOnly" width="400" height="280" style="max-height: 300px;"></canvas>
-            <p style="font-size: 0.7rem; color: #3c6e8f; text-align:center; margin-top: 8px;">📊 Crecimiento específico de almas alcanzadas mes a mes</p>
-        </div>
-    </div>
-
-    <!-- Botones de control -->
+    <!-- Botón de recarga real (sin datos ficticios) -->
     <div class="action-bar">
-        <button class="btn" id="resetDataBtn"><i class="fas fa-database"></i> Datos base (2024)</button>
-        <button class="btn btn-secondary" id="randomGrowthBtn"><i class="fas fa-chart-simple"></i> Simular crecimiento 2025</button>
-        <button class="btn btn-secondary" id="refreshViewBtn"><i class="fas fa-sync-alt"></i> Refrescar gráficos</button>
+        <button class="btn" id="refreshRealDataBtn"><i class="fas fa-sync-alt"></i> Recargar desde registros</button>
     </div>
 
-    <!-- Tabla detallada mensual -->
-    <div class="data-table-section">
-        <h3><i class="fas fa-table-list"></i> Seguimiento mensual detallado</h3>
-        <div style="overflow-x: auto;">
-            <table id="monthlyTable">
-                <thead>
-                    <tr><th>Mes</th><th>Nuevos Creyentes</th><th>Nuevos Discipuladores</th><th>Nivel Aprendizaje (%)</th><th>Total Miembros (fin de mes)</th></tr>
-                </thead>
-                <tbody id="tableBody">
-                    <!-- JS llena dinámicamente -->
-                </tbody>
-            </table>
-        </div>
+    <!-- Gráfico global: tendencia promedio mensual real -->
+    <div class="global-chart-card">
+        <h3><i class="fas fa-chart-line"></i> Tendencia global promedio · progreso mensual (todos los discípulos)</h3>
+        <canvas id="globalTrendChart" width="400" height="280" style="max-height: 280px; width:100%"></canvas>
+        <p style="font-size: 0.7rem; color: #3c6e8f; text-align:center; margin-top: 10px;">📅 Promedio de porcentaje de avance agrupado por mes (datos históricos reales)</p>
+    </div>
+
+    <!-- Sección: cada persona con su gráfico lineal de seguimiento -->
+    <div class="cards-section-title">
+        <h2><i class="fas fa-user-check"></i> Evolución individual por persona</h2>
+        <span>📈 Gráfico lineal de cada discípulo</span>
+    </div>
+    <div id="personCardsGrid" class="person-grid">
+        <!-- Aquí se inyectan dinámicamente las tarjetas con gráficos reales -->
+        <div class="no-data-message" style="grid-column:1/-1;">Cargando datos desde el almacenamiento local...</div>
     </div>
     <footer>
-        <i class="fas fa-chart-line"></i> Reporte de discipulado · visualización de crecimiento y aprendizaje · cada dato refleja el avance del Reino
+        <i class="fas fa-church"></i> Reporte basado en registros reales de la aplicación "Tabla Registro y Seguimiento" · 
+        Los gráficos muestran el historial de progreso (%) de cada persona, ordenado cronológicamente.
     </footer>
 </div>
 
 <script>
-    // --------------------- DATOS INICIALES (BASE 2024) -------------------------
-    const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    // ----------------------------------------------
+    // 1. OBTENER DATOS REALES desde localStorage (misma clave que tabladatos.html)
+    // ----------------------------------------------
+    const STORAGE_KEY = "registrosArgentinaSeguimiento";
     
-    // Datos base con crecimiento claro y aprendizaje ascendente
-    let defaultData = {
-        nuevosCreyentes: [5, 8, 12, 15, 20, 25, 30, 28, 35, 40, 45, 50],
-        nuevosDiscipuladores: [1, 2, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12],
-        nivelAprendizaje: [45, 50, 55, 60, 65, 70, 75, 78, 80, 85, 88, 92],
-    };
-    
-    // Calcular total miembros acumulados (base inicial 100 en enero)
-    function calcularTotalMiembros(nuevosCreyentesArr) {
-        let acumulado = 100;
-        let totals = [];
-        for (let i = 0; i < nuevosCreyentesArr.length; i++) {
-            acumulado += nuevosCreyentesArr[i];
-            totals.push(acumulado);
+    // Referencias globales
+    let allRegistros = [];
+    let globalChartInstance = null;
+    let individualCharts = [];  // para almacenar instancias y destruirlas antes de re-renderizar
+
+    // Helper: cargar desde localStorage y sanitizar
+    function cargarRegistrosReales() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            try {
+                let parsed = JSON.parse(stored);
+                if (Array.isArray(parsed)) {
+                    // Asegurar que cada registro tenga historial y estructura válida
+                    allRegistros = parsed.map(reg => {
+                        // garantizar historial como array ordenable
+                        let historial = reg.historial;
+                        if (!historial || !Array.isArray(historial) || historial.length === 0) {
+                            // Si no tiene historial, creamos uno con el progreso actual (si existe) o 0
+                            const progresoActual = (typeof reg.progreso === 'number') ? reg.progreso : 0;
+                            historial = [{ fecha: new Date().toISOString(), porcentaje: progresoActual }];
+                        }
+                        // Ordenar historial por fecha (más antigua primero)
+                        historial.sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
+                        // Asegurar que el progreso actual sea el último valor del historial
+                        const ultimoPorcentaje = historial.length ? historial[historial.length-1].porcentaje : 0;
+                        return {
+                            ...reg,
+                            historial: historial,
+                            progreso: ultimoPorcentaje,
+                            // Campos esenciales
+                            id: reg.id || (reg.registroNum ? reg.registroNum + Date.now() : Date.now()),
+                            nombres: reg.nombres || "?",
+                            apellido: reg.apellido || ""
+                        };
+                    });
+                    // Ordenar por nombre o ID para consistencia
+                    allRegistros.sort((a,b) => (a.apellido + a.nombres).localeCompare(b.apellido + b.nombres));
+                    return;
+                }
+            } catch(e) { console.warn(e); }
         }
-        return totals;
+        // Si no hay datos en localStorage, mostramos vacío (sin ficticios)
+        allRegistros = [];
     }
-    
-    // Estado actual
-    let currentData = {
-        nuevosCreyentes: [...defaultData.nuevosCreyentes],
-        nuevosDiscipuladores: [...defaultData.nuevosDiscipuladores],
-        nivelAprendizaje: [...defaultData.nivelAprendizaje],
-        totalMiembros: calcularTotalMiembros(defaultData.nuevosCreyentes)
-    };
-    
-    // Referencias a gráficos
-    let chartCreyDisc = null;
-    let chartAprend = null;
-    let chartGrowth = null;
-    let chartNuevosCreyentesOnly = null;
-    
-    function updateAllDashboard() {
-        // recalcular total miembros
-        currentData.totalMiembros = calcularTotalMiembros(currentData.nuevosCreyentes);
-        
-        // KPIs
-        const totalCreyentesAnual = currentData.nuevosCreyentes.reduce((a,b) => a+b, 0);
-        const totalDiscipuladoresAnual = currentData.nuevosDiscipuladores.reduce((a,b) => a+b, 0);
-        const promedioAprendizaje = (currentData.nivelAprendizaje.reduce((a,b) => a+b,0) / 12).toFixed(1);
-        const miembrosFinDic = currentData.totalMiembros[11];
-        
-        document.getElementById('totalNewBelievers').innerText = totalCreyentesAnual;
-        document.getElementById('totalNewDisciplers').innerText = totalDiscipuladoresAnual;
-        document.getElementById('avgLearning').innerHTML = promedioAprendizaje + '<span style="font-size:1rem;">%</span>';
-        document.getElementById('totalMembersDec').innerText = miembrosFinDic;
-        
-        // Tabla mensual
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '';
-        for (let i = 0; i < meses.length; i++) {
-            const row = tbody.insertRow();
-            row.insertCell(0).innerHTML = `<span class="month-name">${meses[i]}</span>`;
-            row.insertCell(1).innerText = currentData.nuevosCreyentes[i];
-            row.insertCell(2).innerText = currentData.nuevosDiscipuladores[i];
-            row.insertCell(3).innerText = currentData.nivelAprendizaje[i] + '%';
-            row.insertCell(4).innerText = currentData.totalMiembros[i];
+
+    // Calcular KPIs reales
+    function actualizarKPIs() {
+        const total = allRegistros.length;
+        let sumaProgreso = 0;
+        let totalEventos = 0;
+        let activos = 0;
+        for (let p of allRegistros) {
+            const prog = (typeof p.progreso === 'number') ? p.progreso : 0;
+            sumaProgreso += prog;
+            if (p.historial && Array.isArray(p.historial)) totalEventos += p.historial.length;
+            if (prog > 0) activos++;
         }
-        
-        // Destruir gráficos viejos
-        if (chartCreyDisc) chartCreyDisc.destroy();
-        if (chartAprend) chartAprend.destroy();
-        if (chartGrowth) chartGrowth.destroy();
-        if (chartNuevosCreyentesOnly) chartNuevosCreyentesOnly.destroy();
-        
-        renderCharts();
+        const avg = total === 0 ? 0 : (sumaProgreso / total).toFixed(1);
+        document.getElementById('totalPeople').innerText = total;
+        document.getElementById('avgProgress').innerHTML = avg + '<span style="font-size:1rem;">%</span>';
+        document.getElementById('totalEvents').innerText = totalEventos;
+        document.getElementById('activePeople').innerText = activos;
     }
-    
-    function renderCharts() {
-        const ctx1 = document.getElementById('chartCreyentesDiscipuladores').getContext('2d');
-        const ctx2 = document.getElementById('chartAprendizaje').getContext('2d');
-        const ctx3 = document.getElementById('chartCrecimiento').getContext('2d');
-        const ctx4 = document.getElementById('chartNuevosCreyentesOnly').getContext('2d');
-        
-        // Gráfico 1: Nuevos Creyentes y Discipuladores
-        chartCreyDisc = new Chart(ctx1, {
+
+    // ------------------- GRÁFICO GLOBAL: promedio mensual real (agrupar por mes/año) ------------------
+    function generarPromedioMensualGlobal() {
+        if (!allRegistros.length) return [];
+        // Colección: cada entrada individual de cada persona (fecha, porcentaje)
+        const allEntries = [];
+        for (let persona of allRegistros) {
+            if (persona.historial && persona.historial.length) {
+                for (let entry of persona.historial) {
+                    if (entry.fecha && typeof entry.porcentaje === 'number') {
+                        allEntries.push({
+                            fecha: new Date(entry.fecha),
+                            porcentaje: entry.porcentaje
+                        });
+                    }
+                }
+            }
+        }
+        if (allEntries.length === 0) return [];
+        // Agrupar por año-mes (formato "YYYY-MM")
+        const grupos = new Map(); // key: "2024-03" -> { suma, count }
+        for (let e of allEntries) {
+            const year = e.fecha.getFullYear();
+            const month = String(e.fecha.getMonth() + 1).padStart(2,'0');
+            const key = `${year}-${month}`;
+            if (!grupos.has(key)) grupos.set(key, { suma: 0, count: 0 });
+            const grupo = grupos.get(key);
+            grupo.suma += e.porcentaje;
+            grupo.count++;
+        }
+        // Convertir a arrays ordenados cronológicamente
+        const sortedKeys = Array.from(grupos.keys()).sort();
+        const labels = sortedKeys.map(k => {
+            const [year, month] = k.split('-');
+            const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+            return `${meses[parseInt(month)-1]} ${year}`;
+        });
+        const promedios = sortedKeys.map(k => {
+            const g = grupos.get(k);
+            return (g.suma / g.count).toFixed(1);
+        });
+        return { labels, promedios: promedios.map(p => parseFloat(p)) };
+    }
+
+    function renderizarGraficoGlobal() {
+        const ctx = document.getElementById('globalTrendChart').getContext('2d');
+        if (globalChartInstance) globalChartInstance.destroy();
+        const dataMensual = generarPromedioMensualGlobal();
+        if (!dataMensual || dataMensual.labels.length === 0) {
+            // Mostrar gráfico vacío con mensaje
+            globalChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: { labels: ['Sin datos'], datasets: [{ label: 'Promedio mensual (%)', data: [0], borderColor: '#aaa' }] },
+                options: { responsive: true, plugins: { tooltip: { callbacks: { label: () => 'No hay suficientes registros históricos' } } } }
+            });
+            return;
+        }
+        globalChartInstance = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: meses,
-                datasets: [
-                    {
-                        label: '👥 Nuevos Creyentes',
-                        data: currentData.nuevosCreyentes,
+                labels: dataMensual.labels,
+                datasets: [{
+                    label: '📊 Progreso promedio mensual (%)',
+                    data: dataMensual.promedios,
+                    borderColor: '#1e6f5c',
+                    backgroundColor: 'rgba(30, 111, 92, 0.08)',
+                    borderWidth: 3,
+                    tension: 0.2,
+                    fill: true,
+                    pointBackgroundColor: '#0f4c5f',
+                    pointBorderColor: '#fff',
+                    pointRadius: 4,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    tooltip: { callbacks: { label: (ctx) => `${ctx.raw}% de avance promedio` } },
+                    legend: { position: 'top', labels: { color: '#0a2f44' } }
+                },
+                scales: {
+                    y: { 
+                        title: { display: true, text: 'Porcentaje promedio (%)', color: '#0a2f44' },
+                        min: 0, max: 100,
+                        ticks: { callback: (val) => val + '%' }
+                    }
+                }
+            }
+        });
+    }
+
+    // ---------- DESTRUIR TODOS LOS GRÁFICOS INDIVIDUALES ----------
+    function destruirGraficosIndividuales() {
+        if (individualCharts.length) {
+            individualCharts.forEach(chart => {
+                if (chart && typeof chart.destroy === 'function') chart.destroy();
+            });
+            individualCharts = [];
+        }
+    }
+
+    // ---------- RENDERIZAR TARJETAS CON GRÁFICOS LINEALES POR CADA REGISTRO ----------
+    function renderizarTarjetasIndividuales() {
+        const gridContainer = document.getElementById('personCardsGrid');
+        if (!gridContainer) return;
+        
+        if (allRegistros.length === 0) {
+            gridContainer.innerHTML = `<div class="no-data-message" style="grid-column:1/-1;">
+                <i class="fas fa-database"></i> No hay registros en el sistema.<br>
+                Usa la aplicación "Tabla Registro y Seguimiento" para agregar personas y registrar su progreso.
+            </div>`;
+            return;
+        }
+
+        // Construir HTML base con canvas únicos
+        let cardsHtml = '';
+        for (let persona of allRegistros) {
+            const idUnico = `chart-ind-${persona.id}`;
+            const nombreCompleto = `${persona.nombres || ''} ${persona.apellido || ''}`.trim() || "Sin nombre";
+            const progresoActual = (typeof persona.progreso === 'number') ? persona.progreso : 0;
+            const eventosCount = (persona.historial && persona.historial.length) ? persona.historial.length : 0;
+            const iglesia = persona.nombreIglesia || "—";
+            cardsHtml += `
+                <div class="person-card" data-id="${persona.id}">
+                    <div class="person-header">
+                        <div class="person-name"><i class="fas fa-user-friends"></i> ${escapeHtml(nombreCompleto)}</div>
+                        <div class="current-progress">${progresoActual}%</div>
+                    </div>
+                    <div class="person-details">
+                        <span><i class="fas fa-church"></i> ${escapeHtml(iglesia)}</span>
+                        <span><i class="fas fa-chart-line"></i> ${eventosCount} registro(s)</span>
+                    </div>
+                    <div class="chart-container-individual">
+                        <canvas id="${idUnico}" width="400" height="150" style="display: block; width:100%; height:150px;"></canvas>
+                    </div>
+                    <div class="badge-events">
+                        <i class="fas fa-history"></i> Evolución basada en ${eventosCount} puntos de seguimiento
+                    </div>
+                </div>
+            `;
+        }
+        gridContainer.innerHTML = cardsHtml;
+
+        // Después de insertar, inicializar cada gráfico individual
+        destruirGraficosIndividuales();
+        for (let persona of allRegistros) {
+            const canvasId = `chart-ind-${persona.id}`;
+            const canvasElem = document.getElementById(canvasId);
+            if (!canvasElem) continue;
+            
+            const historial = persona.historial || [];
+            if (!historial.length) {
+                // Sin historial, gráfico vacío
+                const ctx = canvasElem.getContext('2d');
+                const emptyChart = new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: ['Sin datos'], datasets: [{ label: 'Progreso', data: [0], borderColor: '#ccc' }] },
+                    options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
+                });
+                individualCharts.push(emptyChart);
+                continue;
+            }
+            
+            // Ordenar historial por fecha ascendente (ya lo hicimos, pero reforzamos)
+            const sortedHist = [...historial].sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
+            // Labels: fechas formateadas (corto) o índice + fecha
+            const labels = sortedHist.map((entry, idx) => {
+                const fecha = new Date(entry.fecha);
+                if (isNaN(fecha.getTime())) return `#${idx+1}`;
+                return `${fecha.getDate()}/${fecha.getMonth()+1}`;
+            });
+            const dataPoints = sortedHist.map(entry => entry.porcentaje);
+            
+            const ctx = canvasElem.getContext('2d');
+            const chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Progreso (%)',
+                        data: dataPoints,
                         borderColor: '#0a2f44',
                         backgroundColor: 'rgba(10, 47, 68, 0.05)',
-                        borderWidth: 3,
+                        borderWidth: 2.5,
                         tension: 0.2,
-                        fill: false,
-                        pointBackgroundColor: '#0a2f44',
-                        pointBorderColor: '#ffffff',
-                        pointRadius: 4,
-                        pointHoverRadius: 7,
-                    },
-                    {
-                        label: '🕊️ Nuevos Discipuladores',
-                        data: currentData.nuevosDiscipuladores,
-                        borderColor: '#2c7a5e',
-                        backgroundColor: 'transparent',
-                        borderWidth: 3,
-                        tension: 0.2,
-                        fill: false,
+                        fill: true,
                         pointBackgroundColor: '#2c7a5e',
                         pointBorderColor: '#ffffff',
-                        pointRadius: 4,
-                        pointHoverRadius: 7,
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    tooltip: { mode: 'index', intersect: false },
-                    legend: { position: 'top', labels: { color: '#0a2f44', font: { weight: 'bold' } } }
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                    }]
                 },
-                scales: {
-                    y: { 
-                        title: { display: true, text: 'Cantidad de personas', color: '#0a2f44' },
-                        grid: { color: '#e2e8f0' },
-                        ticks: { color: '#1e4a6b' }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.raw}% de avance`,
+                                title: (tooltipItems) => {
+                                    const idx = tooltipItems[0].dataIndex;
+                                    const entry = sortedHist[idx];
+                                    if (entry && entry.fecha) {
+                                        const fechaObj = new Date(entry.fecha);
+                                        return `📅 ${fechaObj.toLocaleDateString()} · ${ctx.chart.data.labels[idx]}`;
+                                    }
+                                    return ctx.chart.data.labels[idx];
+                                }
+                            }
+                        },
+                        legend: { display: false },
                     },
-                    x: { ticks: { color: '#0a2f44', font: { weight: '500' } }, grid: { display: false } }
-                }
-            }
-        });
-        
-        // Gráfico 2: Nivel de Aprendizaje
-        chartAprend = new Chart(ctx2, {
-            type: 'line',
-            data: {
-                labels: meses,
-                datasets: [
-                    {
-                        label: '📖 Nivel de Aprendizaje (%)',
-                        data: currentData.nivelAprendizaje,
-                        borderColor: '#1e6f5c',
-                        backgroundColor: 'rgba(30, 111, 92, 0.08)',
-                        borderWidth: 3,
-                        tension: 0.3,
-                        fill: true,
-                        pointBackgroundColor: '#1e6f5c',
-                        pointBorderColor: '#f0f4f8',
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    tooltip: { callbacks: { label: (ctx) => `${ctx.raw}% de dominio` } },
-                    legend: { labels: { color: '#0a2f44' } }
-                },
-                scales: {
-                    y: { 
-                        min: 30, max: 100,
-                        title: { display: true, text: 'Porcentaje de aprendizaje', color: '#0a2f44' },
-                        ticks: { callback: (val) => val + '%', color: '#1e4a6b' }
+                    scales: {
+                        y: { 
+                            min: 0, max: 100,
+                            title: { display: false },
+                            ticks: { stepSize: 20, callback: (val) => val + '%', font: { size: 9 } }
+                        },
+                        x: { ticks: { font: { size: 9, weight: '500' }, maxRotation: 45, autoSkip: true } }
                     },
-                    x: { ticks: { color: '#0a2f44' } }
+                    layout: { padding: { top: 5, bottom: 5, left: 5, right: 5 } }
                 }
-            }
-        });
-        
-        // Gráfico 3: Crecimiento total de miembros
-        chartGrowth = new Chart(ctx3, {
-            type: 'line',
-            data: {
-                labels: meses,
-                datasets: [
-                    {
-                        label: '🏛️ Total de Miembros Activos',
-                        data: currentData.totalMiembros,
-                        borderColor: '#0f4c5f',
-                        backgroundColor: 'rgba(15, 76, 95, 0.05)',
-                        borderWidth: 3,
-                        tension: 0.2,
-                        fill: true,
-                        pointBackgroundColor: '#0f4c5f',
-                        pointBorderColor: '#ffffff',
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    tooltip: { callbacks: { label: (ctx) => `${ctx.raw} miembros` } },
-                    legend: { labels: { color: '#0a2f44' } }
-                },
-                scales: {
-                    y: { 
-                        title: { display: true, text: 'Número de miembros', color: '#0a2f44' },
-                        grid: { color: '#e0e7ef' },
-                        ticks: { color: '#1e4a6b' }
-                    },
-                    x: { ticks: { color: '#0a2f44' } }
-                }
-            }
-        });
-        
-        // Gráfico 4: Solo Nuevos Creyentes (línea única)
-        chartNuevosCreyentesOnly = new Chart(ctx4, {
-            type: 'line',
-            data: {
-                labels: meses,
-                datasets: [
-                    {
-                        label: '✝️ Nuevos Creyentes por Mes',
-                        data: currentData.nuevosCreyentes,
-                        borderColor: '#0a2f44',
-                        backgroundColor: 'rgba(10, 47, 68, 0.1)',
-                        borderWidth: 4,
-                        tension: 0.25,
-                        fill: true,
-                        pointBackgroundColor: '#0a2f44',
-                        pointBorderColor: '#ffffff',
-                        pointRadius: 5,
-                        pointHoverRadius: 8,
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    tooltip: { callbacks: { label: (ctx) => `${ctx.raw} nuevos creyentes` } },
-                    legend: { position: 'top', labels: { color: '#0a2f44', font: { weight: 'bold' } } }
-                },
-                scales: {
-                    y: { 
-                        title: { display: true, text: 'Cantidad de nuevos creyentes', color: '#0a2f44' },
-                        grid: { color: '#e2e8f0' },
-                        ticks: { color: '#1e4a6b', stepSize: 5, beginAtZero: true }
-                    },
-                    x: { ticks: { color: '#0a2f44', font: { weight: '500' } }, grid: { display: false } }
-                }
-            }
+            });
+            individualCharts.push(chartInstance);
+        }
+    }
+
+    // Helper para escapar HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
         });
     }
-    
-    // Restaurar datos base
-    function resetToBaseData() {
-        currentData.nuevosCreyentes = [...defaultData.nuevosCreyentes];
-        currentData.nuevosDiscipuladores = [...defaultData.nuevosDiscipuladores];
-        currentData.nivelAprendizaje = [...defaultData.nivelAprendizaje];
-        currentData.totalMiembros = calcularTotalMiembros(currentData.nuevosCreyentes);
-        updateAllDashboard();
+
+    // ---------- REFRESCAR TODO EL DASHBOARD (DATOS REALES) ----------
+    function refrescarDashboardCompleto() {
+        // 1. Recargar desde localStorage
+        cargarRegistrosReales();
+        // 2. Actualizar KPIs
+        actualizarKPIs();
+        // 3. Renderizar gráfico global (promedio mensual)
+        renderizarGraficoGlobal();
+        // 4. Renderizar tarjetas individuales con gráficos lineales
+        renderizarTarjetasIndividuales();
     }
-    
-    // Simular crecimiento para un nuevo año
-    function generateRandomGrowthData() {
-        let newBelievers = [];
-        let base = 4;
-        for (let i = 0; i < 12; i++) {
-            let incremento = Math.floor(Math.random() * 7) + 2;
-            if (i >= 3 && i <= 7) incremento += Math.floor(Math.random() * 4);
-            if (i > 8) incremento += 1;
-            base = Math.min(base + incremento, 68);
-            let val = Math.floor(base + (Math.random() * 4 - 2));
-            val = Math.max(3, val);
-            newBelievers.push(val);
-        }
-        for (let i = 1; i < newBelievers.length; i++) {
-            if (newBelievers[i] < newBelievers[i-1] && (newBelievers[i-1] - newBelievers[i]) > 4) {
-                newBelievers[i] = newBelievers[i-1] - 2;
-            }
-        }
-        
-        let newDisciplers = [];
-        for (let i = 0; i < 12; i++) {
-            let ratio = 0.2 + (Math.random() * 0.18);
-            let raw = Math.floor(newBelievers[i] * ratio);
-            raw = Math.max(1, Math.min(raw, 14));
-            if (i > 0 && raw < newDisciplers[i-1] && (newDisciplers[i-1] - raw) > 3) raw = newDisciplers[i-1] - 1;
-            newDisciplers.push(raw);
-        }
-        
-        let learning = [];
-        let startLearn = 42 + Math.floor(Math.random() * 7);
-        for (let i = 0; i < 12; i++) {
-            let step = (i * 3.8) + (Math.random() * 4.5);
-            let val = Math.min(96, Math.floor(startLearn + step));
-            if (val < 38) val = 38 + i;
-            if (val > 97) val = 96;
-            learning.push(val);
-        }
-        for (let i = 1; i < learning.length; i++) {
-            if (learning[i] < learning[i-1] && (learning[i-1] - learning[i]) > 5) learning[i] = learning[i-1] - 1;
-        }
-        
-        currentData.nuevosCreyentes = newBelievers;
-        currentData.nuevosDiscipuladores = newDisciplers;
-        currentData.nivelAprendizaje = learning;
-        currentData.totalMiembros = calcularTotalMiembros(currentData.nuevosCreyentes);
-        updateAllDashboard();
-    }
-    
-    function refreshChartsOnly() {
-        updateAllDashboard();
-    }
-    
-    // Inicialización
+
+    // ---------- INICIALIZAR Y ESCUCHAR EVENTOS ----------
     document.addEventListener('DOMContentLoaded', () => {
-        currentData.totalMiembros = calcularTotalMiembros(currentData.nuevosCreyentes);
-        updateAllDashboard();
+        // Carga inicial
+        refrescarDashboardCompleto();
         
-        document.getElementById('resetDataBtn').addEventListener('click', resetToBaseData);
-        document.getElementById('randomGrowthBtn').addEventListener('click', generateRandomGrowthData);
-        document.getElementById('refreshViewBtn').addEventListener('click', refreshChartsOnly);
+        // Botón recargar datos desde localStorage (útil si se actualiza desde la otra pestaña)
+        const refreshBtn = document.getElementById('refreshRealDataBtn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', () => {
+                refrescarDashboardCompleto();
+                // Pequeño feedback visual
+                const originalText = refreshBtn.innerHTML;
+                refreshBtn.innerHTML = '<i class="fas fa-check-circle"></i> Datos sincronizados';
+                setTimeout(() => {
+                    refreshBtn.innerHTML = originalText;
+                }, 1500);
+            });
+        }
+        
+        // Opcional: escuchar cambios de almacenamiento (si se modifica desde otra pestaña)
+        window.addEventListener('storage', (event) => {
+            if (event.key === STORAGE_KEY) {
+                refrescarDashboardCompleto();
+            }
+        });
     });
 </script>
 </body>
