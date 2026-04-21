@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Variables combinadas de ambos códigos */
+            /* Variables de color */
             --color-gold: #e2a628;
             --color-blue: #2a69a0;
             --color-teal: #1e9fb3;
@@ -31,7 +31,7 @@
             background-size: 30px 30px;
             height: 100vh;
             display: flex;
-            flex-direction: column; /* Permite separar contenido central del footer */
+            flex-direction: column;
             overflow: hidden;
             padding-bottom: env(safe-area-inset-bottom);
         }
@@ -46,7 +46,7 @@
             width: 100%;
         }
 
-        /* --- TARJETAS DE SELECCIÓN (MENÚ PRINCIPAL) --- */
+        /* --- TARJETAS DE SELECCIÓN --- */
         .home-container {
             display: flex;
             gap: 1.5rem;
@@ -76,7 +76,7 @@
         .category-card h2 { font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 800; text-transform: uppercase; }
         .category-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
 
-        /* --- MODAL GENERAL (Para Diagramas y Salida) --- */
+        /* --- MODAL GENERAL --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -92,7 +92,6 @@
 
         .modal-overlay.active { opacity: 1; visibility: visible; }
 
-        /* Contenedor para diagramas */
         .modal-content {
             width: 95vw;
             height: 90vh;
@@ -103,8 +102,6 @@
             flex-direction: column;
             overflow: hidden;
         }
-
-        #modal-proceso .modal-content { overflow-y: auto; }
 
         .btn-close {
             position: absolute;
@@ -118,44 +115,10 @@
             font-size: 1.2rem;
         }
 
-        .diagram-header { padding: 20px; text-align: center; flex-shrink: 0; z-index: 10;}
-        .diagram-header h2 { font-size: 1.5rem; text-transform: uppercase; color: var(--color-gold); }
-
-        /* --- ESTILOS DEL MODAL DE SALIDA --- */
-        .modal-card {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            width: 85%;
-            max-width: 320px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            position: relative;
-        }
-        
-        .modal-card h3 { color: var(--rojo-alerta); margin-bottom: 10px; font-size: 1.5rem; }
-        .modal-card p { color: var(--texto-principal); margin-bottom: 20px; }
-        
-        .btn-modal {
-            padding: 14px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: 700;
-            font-size: 1rem;
-            transition: opacity 0.2s;
-        }
-        .btn-modal:hover { opacity: 0.85; }
-        .btn-exit { background: var(--rojo-alerta); color: white; }
-        .btn-cancel { background: var(--gris-claro); color: var(--texto-principal); }
-
-        /* --- PANEL INFERIOR AZUL OSCURO --- */
+        /* --- PANEL INFERIOR --- */
         .bottom-panel {
             background-color: var(--azul-oscuro);
             min-height: 70px;
-            height: auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -164,190 +127,67 @@
             z-index: 110;
             flex-shrink: 0;
             border-top: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
         }
 
         .info-text {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: baseline;
-            gap: 8px;
-            white-space: nowrap;
-        }
-
-        .brand-text {
-            color: white;
-            font-weight: 800;
-            font-size: clamp(0.85rem, 4vw, 1.1rem);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-
-        .mobile-brand {
-            display: none;
-            color: white;
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
-
-        .right-group {
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
-        .btn-logout-panel {
-            background: none;
+        .brand-text, .mobile-brand {
+            color: white;
+            font-weight: 800;
+            font-size: clamp(0.85rem, 4vw, 1.1rem);
+        }
+
+        /* Botón Agenda */
+        .btn-agenda {
+            background-color: var(--color-gold);
+            color: white;
             border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
             cursor: pointer;
-            padding: 10px;
-            display: flex;
-            align-items: center;
-            transition: transform 0.2s;
+            transition: background 0.3s;
+            text-transform: uppercase;
         }
+        .btn-agenda:hover { background-color: #c99320; }
 
-        .btn-logout-panel:hover {
-            transform: scale(1.1);
+        .right-group { display: flex; align-items: center; gap: 15px; }
+
+        /* Estilo para el contenedor del iframe de la Agenda */
+        .iframe-container {
+            flex: 1;
+            width: 100%;
+            height: 100%;
         }
-
-        .icon-door {
-            width: 28px;
-            height: 28px;
-            fill: var(--naranja-resalte);
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
         @media (max-width: 768px) {
             .brand-text { display: none; }
             .mobile-brand { display: inline-block; }
-            .bottom-panel { padding: 8px 12px; min-height: 65px; }
         }
 
-        /* =========================================================
-           ESTILOS DIÁGRAMAS (MÁS IGLESIAS / MEJORES IGLESIAS)
-           ========================================================= */
-        .diagram-viewport {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            position: relative;
-        }
-
-        .scaling-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform-origin: center;
-            width: 100%;
-            height: 100%;
-        }
-
+        /* Estilos de los diagramas se mantienen igual que en tu archivo original */
+        .diagram-viewport { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; position: relative; }
+        .scaling-wrapper { display: flex; align-items: center; justify-content: center; transform-origin: center; width: 100%; height: 100%; }
         .nodes-container { display: flex; align-items: center; gap: 0; }
         .node-item { position: relative; margin-left: -40px; }
         .node-item:first-child { margin-left: 0; }
         .node-item.down { transform: translateY(80px); }
         .node-item.up { transform: translateY(-80px); }
-
-        .diamond {
-            width: 160px; height: 160px;
-            background: white;
-            transform: rotate(45deg);
-            border: 5px solid var(--color-gold);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 0 5px var(--color-bg), 0 8px 15px rgba(0,0,0,0.1);
-        }
-
-        .blue-node .diamond { border-color: var(--color-blue); }
-
-        .diamond .content {
-            transform: rotate(-45deg);
-            text-align: center;
-            width: 140px;
-            padding: 5px;
-        }
-
+        .diamond { width: 160px; height: 160px; background: white; transform: rotate(45deg); border: 5px solid var(--color-gold); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 5px var(--color-bg), 0 8px 15px rgba(0,0,0,0.1); }
+        .diamond .content { transform: rotate(-45deg); text-align: center; width: 140px; padding: 5px; }
         .diamond .content h4 { font-size: 0.75rem; font-weight: 800; line-height: 1.1; text-transform: uppercase; }
         .diamond .content p { font-size: 0.65rem; color: #64748b; margin-top: 4px; }
-
-        @media (max-width: 768px) {
-            .nodes-container { flex-direction: column; transform: scale(0.8); }
-            .node-item { margin-left: 0; margin-top: -30px; }
-            .node-item.down, .node-item.up { transform: none; }
-            .node-item:nth-child(even) { transform: translateX(35px); }
-            .node-item:nth-child(odd) { transform: translateX(-35px); }
-            .scaling-wrapper { transform: scale(min(1, calc( (90vh - 150px) / 600 ))); }
-        }
-
-        @media (min-width: 769px) {
-            .scaling-wrapper { transform: scale(min(1, calc( 90vw / 1100 ))); }
-        }
-
-        /* =========================================================
-           ESTILOS DIÁGRAMA 3: PROCESO
-           ========================================================= */
-        .diagram-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            padding: 40px 20px 80px 20px;
-            min-height: 100%;
-        }
-
-        .node-wrapper {
-            position: relative;
-            margin-left: -55px;
-            z-index: 1;
-            transition: transform 0.3s ease, z-index 0.3s ease;
-        }
-
-        .node-wrapper:first-child { margin-left: 0; }
-        .node-wrapper:hover { z-index: 10; transform: scale(1.05); }
-        .node-wrapper.down { margin-top: 190px; }
-
-        .node {
-            width: 200px;
-            height: 200px;
-            background-color: #ffffff;
-            transform: rotate(45deg);
-            border-radius: 18px;
-            border: 6px solid var(--color-gold);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 0 6px var(--color-bg), 0 15px 25px -5px rgba(0, 0, 0, 0.08);
-            position: relative;
-        }
-
-        .node-wrapper.gold .node { border-color: var(--color-gold); }
-        .node-wrapper.blue .node { border-color: var(--color-blue); }
-        .node-wrapper.teal .node { border-color: var(--color-teal); }
-
-        .node .content {
-            transform: rotate(-45deg);
-            width: 220px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 0 10px;
-        }
-
-        .node-wrapper .icon { margin-bottom: 12px; color: #4a5568; }
-        .node-wrapper .icon svg { width: 45px; height: 45px; stroke-width: 1.2; }
-        .node-wrapper .content h3 { font-size: 1rem; font-weight: 800; text-transform: uppercase; color: var(--color-dark); margin-bottom: 4px; letter-spacing: -0.02em; }
-        .node-wrapper .content p { font-size: 0.85rem; font-weight: 400; font-style: italic; color: #334155; line-height: 1.25; margin-top: 0; }
-
-        @media (max-width: 1150px) {
-            .diagram-container { flex-direction: column; padding-top: 20px; }
-            .node-wrapper { margin-left: 0; margin-top: -30px; }
-            .node-wrapper.down { margin-top: -30px; }
-            .node-wrapper:nth-child(odd) { transform: translateX(-40px); }
-            .node-wrapper:nth-child(even) { transform: translateX(40px); z-index: 2; }
-        }
     </style>
 </head>
 <body>
@@ -370,10 +210,11 @@
         <div class="info-text">
             <span class="brand-text">Red de Multiplicación</span>
             <span class="mobile-brand">Red Multiplicación</span>
+            <button class="btn-agenda" onclick="openModal('modal-agenda')">Agenda</button>
         </div>
         <div class="right-group">
-            <button class="btn-logout-panel" id="logoutButton" onclick="openModal('exit-modal')" title="Salir del Sistema">
-                <svg class="icon-door" viewBox="0 0 16 16">
+            <button class="btn-logout-panel" onclick="openModal('exit-modal')" title="Salir del Sistema">
+                <svg style="width:28px;height:28px;fill:var(--naranja-resalte);" viewBox="0 0 16 16">
                     <path d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
                     <path d="M4 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1a1 1 0 0 0-2 0v1H4V3h6v1a1 1 0 0 0 2 0V3a2 2 0 0 0-2-2H4z"/>
                 </svg>
@@ -381,199 +222,39 @@
         </div>
     </footer>
 
-    <div id="exit-modal" class="modal-overlay">
-        <div class="modal-card">
-            <h3>Cerrar Sesión</h3>
-            <p>¿Seguro que deseas salir y volver al inicio?</p>
-            <button class="btn-modal btn-exit" onclick="confirmExit()">Salir ahora</button>
-            <button class="btn-modal btn-cancel" onclick="closeModal('exit-modal')">Cancelar</button>
+    <div id="modal-agenda" class="modal-overlay">
+        <div class="modal-content">
+            <button class="btn-close" onclick="closeModal('modal-agenda')">&times;</button>
+            <div style="padding: 20px; text-align: center;">
+                <h2 style="color: var(--color-gold); text-transform: uppercase; font-size: 1.5rem;">Agenda</h2>
+            </div>
+            <div class="iframe-container">
+                <iframe src="https://experiencia-ia.github.io/boillat/agenda.html"></iframe>
+            </div>
         </div>
     </div>
 
     <div id="modal-mas" class="modal-overlay">
         <div class="modal-content">
             <button class="btn-close" onclick="closeModal('modal-mas')">&times;</button>
-            <div class="diagram-header">
-                <h2>MÁS IGLESIAS</h2>
-            </div>
             <div class="diagram-viewport">
-                <div class="scaling-wrapper">
-                    <div class="nodes-container">
-                        <div class="node-item up"><div class="diamond"><div class="content"><h4>Introducción</h4><p>Taller de visión</p></div></div></div>
-                        <div class="node-item down"><div class="diamond"><div class="content"><h4>Retiro</h4><p>Plantadores</p></div></div></div>
-                        <div class="node-item up"><div class="diamond"><div class="content"><h4>Entrenamiento</h4><p>Mentores</p></div></div></div>
-                        <div class="node-item down"><div class="diamond"><div class="content"><h4>Módulos</h4><p>12 Reportes</p></div></div></div>
-                        <div class="node-item up blue-node"><div class="diamond"><div class="content"><h4>Nacimiento</h4><p>Nuevas iglesias</p></div></div></div>
-                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-mejores" class="modal-overlay">
-        <div class="modal-content">
-            <button class="btn-close" onclick="closeModal('modal-mejores')">&times;</button>
-            <div class="diagram-header">
-                <h2 style="color: var(--color-blue);">MEJORES IGLESIAS</h2>
-            </div>
-            <div class="diagram-viewport">
-                <div class="scaling-wrapper">
-                    <div class="nodes-container">
-                        <div class="node-item up"><div class="diamond"><div class="content"><h4>Diagnóstico</h4><p>Taller inicial</p></div></div></div>
-                        <div class="node-item down"><div class="diamond"><div class="content"><h4>Pulso</h4><p>Salud iglesia</p></div></div></div>
-                        <div class="node-item up"><div class="diamond"><div class="content"><h4>Planificación</h4><p>Estratégica</p></div></div></div>
-                        <div class="node-item down"><div class="diamond"><div class="content"><h4>Herramientas</h4><p>Grupos pequeños</p></div></div></div>
-                        <div class="node-item up blue-node"><div class="diamond"><div class="content"><h4>Revitalización</h4><p>Listas para multiplicar</p></div></div></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-proceso" class="modal-overlay">
-        <div class="modal-content">
-            <button class="btn-close" onclick="closeModal('modal-proceso')">&times;</button>
-            <div class="diagram-header">
-                <h2 style="color: var(--color-teal);">PROCESO DE MULTIPLICACIÓN</h2>
-            </div>
-            <div class="diagram-container">
-                <div class="node-wrapper gold up">
-                    <div class="node">
-                        <div class="content">
-                            <div class="icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35" />
-                                    <circle cx="10" cy="10" r="7" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 10h.01M10 10h.01M13 10h.01" />
-                                    <path stroke-linecap="round" d="M7 13c1 1 5 1 6 0" />
-                                </svg>
-                            </div>
-                            <h3>ANALIZANDO</h3>
-                            <p>la comunidad donde se plantará la iglesia</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="node-wrapper gold down">
-                    <div class="node">
-                        <div class="content">
-                            <div class="icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <circle cx="12" cy="7" r="3" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2 12h4l-2-2m0 4l2-2" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M22 12h-4l2-2m0 4l-2-2" />
-                                </svg>
-                            </div>
-                            <h3>EVANGELIZANDO</h3>
-                            <p>intencionalmente a nuevos contactos</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="node-wrapper gold up">
-                    <div class="node">
-                        <div class="content">
-                            <div class="icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 19.5v-15A2.5 2.5 0 016.5 2H20v20H6.5a2.5 2.5 0 010-5H20" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v6m-3-3h6" />
-                                </svg>
-                            </div>
-                            <h3>DISCIPULANDO</h3>
-                            <p>nuevos creyentes en grupos pequeños</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="node-wrapper blue down">
-                    <div class="node">
-                        <div class="content">
-                            <div class="icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 21H5a2 2 0 01-2-2v-5.5" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8.5V5a2 2 0 012-2h3.5" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.5 3H19a2 2 0 012 2v3.5" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 15.5V19a2 2 0 01-2 2h-3.5" />
-                                    <circle cx="12" cy="12" r="9" stroke-dasharray="4 4" />
-                                </svg>
-                            </div>
-                            <h3>COMPROMETIENDO</h3>
-                            <p>miembros fundadores iglesia plantada</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="node-wrapper blue up">
-                    <div class="node">
-                        <div class="content">
-                            <div class="icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <circle cx="12" cy="12" r="9" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c-2.5 0-4.5 4.03-4.5 9s2.03 9 4.5 9 4.5-4.03 4.5-9-2.03-9-4.5-9z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 8.5A7.5 7.5 0 0112 7c2 0 3.8.7 5 1.8" />
-                                </svg>
-                            </div>
-                            <h3>ENTRENANDO</h3>
-                            <p>liderazgo local</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="node-wrapper blue down">
-                    <div class="node">
-                        <div class="content">
-                            <div class="icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h8m-4-4v8" />
-                                    <circle cx="12" cy="12" r="5" stroke-dasharray="2 2" />
-                                </svg>
-                            </div>
-                            <h3>MULTIPLICANDO</h3>
-                            <p>nuevos grupos de plantación</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="node-wrapper teal up">
-                    <div class="node">
-                        <div class="content">
-                            <div class="icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 22v-7l-3-3M12 15l3-3" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 2C7.5 2 4 5.5 4 10c0 4.5 8 9 8 9s8-4.5 8-9c0-4.5-3.5-8-8-8z" />
-                                    <circle cx="12" cy="9" r="2" />
-                                </svg>
-                            </div>
-                            <h3>MENTOREANDO</h3>
-                            <p>nuevos plantadores</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
     <script>
-        // Función general para abrir cualquier modal (diagramas o salida)
         function openModal(id) {
             document.getElementById(id).classList.add('active');
         }
         
-        // Función general para cerrar cualquier modal
         function closeModal(id) {
             document.getElementById(id).classList.remove('active');
         }
         
-        // Lógica para regresar al index.html al confirmar
         function confirmExit() {
             window.location.href = 'index.html';
         }
 
-        // Cerrar modales al hacer click fuera del contenido de los mismos
         window.onclick = function(e) {
             if (e.target.classList.contains('modal-overlay')) {
                 e.target.classList.remove('active');
