@@ -46,6 +46,51 @@
             justify-content: center;
             overflow-y: auto;
             width: 100%;
+            position: relative; /* Para posicionar el iframe y el botón de cierre */
+        }
+
+        /* Estilos para el contenedor del iframe (vista externa) */
+        .iframe-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .external-iframe {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* Botón de cierre para la vista del iframe */
+        .iframe-close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: var(--azul-oscuro);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--celeste-fluo);
+            border-radius: 40px;
+            padding: 8px 16px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            z-index: 1200;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .iframe-close-btn:hover {
+            background: var(--rojo-alerta);
+            border-color: var(--rojo-alerta);
+            transform: scale(1.02);
         }
 
         /* --- TARJETAS DE SELECCIÓN (MENÚ PRINCIPAL) --- */
@@ -495,7 +540,7 @@
             }
         }
 
-        /* Toast para acciones futuras (Mapa, Agenda, Contactos) */
+        /* Toast para acciones futuras (ya no se usa para mapa/agenda, pero se mantiene por si acaso) */
         .temp-toast {
             position: fixed;
             bottom: 100px;
@@ -685,6 +730,100 @@
         
         let isMenuOpen = false;
 
+        // ---------- FUNCIONES PARA GESTIONAR VISTAS EXTERNAS (IFRAME) ----------
+        // Guarda la referencia al contenido original del main-content
+        let originalMainContent = null;
+
+        // Función para restaurar el contenido original (las tarjetas)
+        function restoreHomeContent() {
+            const mainContainer = document.querySelector('.main-content');
+            if (!mainContainer) return;
+            
+            // Si ya existe el contenedor original, lo restauramos
+            if (originalMainContent && originalMainContent.parentNode === mainContainer) {
+                // Ya está restaurado, no hacer nada
+                return;
+            }
+            
+            // Buscar si hay un iframe-container para eliminarlo
+            const iframeContainer = mainContainer.querySelector('.iframe-container');
+            if (iframeContainer) {
+                mainContainer.removeChild(iframeContainer);
+            }
+            
+            // Si no hay home-container, lo recreamos
+            let homeContainer = mainContainer.querySelector('.home-container');
+            if (!homeContainer) {
+                homeContainer = document.createElement('div');
+                homeContainer.className = 'home-container';
+                // Reconstruir las tarjetas
+                homeContainer.innerHTML = `
+                    <div class="category-card" onclick="openModal('modal-mas')">
+                        <h2>MÁS<br>IGLESIAS</h2>
+                    </div>
+                    <div class="category-card blue" onclick="openModal('modal-mejores')">
+                        <h2 style="color: var(--color-blue);">MEJORES<br>IGLESIAS</h2>
+                    </div>
+                    <div class="category-card teal" onclick="openModal('modal-proceso')">
+                        <h2 style="color: var(--color-teal);">PROCESO DE<br>MULTIPLICACIÓN</h2>
+                    </div>
+                `;
+                mainContainer.appendChild(homeContainer);
+            } else {
+                // Si existe pero está oculto o algo, nos aseguramos de mostrarlo
+                homeContainer.style.display = '';
+            }
+            originalMainContent = null; // Reset
+        }
+
+        // Función para cargar una página externa en un iframe dentro del main-content
+        function loadExternalPage(url, title) {
+            const mainContainer = document.querySelector('.main-content');
+            if (!mainContainer) return;
+            
+            // Eliminar cualquier contenido previo que no sea el home-container (iframe)
+            const existingIframe = mainContainer.querySelector('.iframe-container');
+            if (existingIframe) {
+                mainContainer.removeChild(existingIframe);
+            }
+            
+            // Ocultar el home-container si existe
+            const homeContainer = mainContainer.querySelector('.home-container');
+            if (homeContainer) {
+                homeContainer.style.display = 'none';
+            }
+            
+            // Crear el contenedor del iframe
+            const iframeContainer = document.createElement('div');
+            iframeContainer.className = 'iframe-container';
+            
+            // Crear el iframe
+            const iframe = document.createElement('iframe');
+            iframe.src = url;
+            iframe.className = 'external-iframe';
+            iframe.title = title;
+            iframe.allow = "fullscreen"; // Permitir fullscreen si la página lo necesita
+            iframe.setAttribute('loading', 'lazy');
+            
+            // Crear botón de cierre
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'iframe-close-btn';
+            closeBtn.innerHTML = '✕ Cerrar';
+            closeBtn.addEventListener('click', () => {
+                restoreHomeContent();
+            });
+            
+            iframeContainer.appendChild(iframe);
+            iframeContainer.appendChild(closeBtn);
+            mainContainer.appendChild(iframeContainer);
+            
+            // Guardar referencia del contenedor original si no existe
+            if (!originalMainContent) {
+                originalMainContent = mainContainer.cloneNode(true); // No necesario realmente, pero por si acaso
+            }
+        }
+
+        // Función para mostrar notificaciones temporales (solo para contactos)
         function showNotificationMessage(text) {
             const toast = document.getElementById('dynamicToast');
             if (!toast) return;
@@ -713,8 +852,10 @@
             else openMenu();
         }
 
+        // Manejador de clic en los items del menú (MODIFICADO para Mapa y Agenda)
         function handleMenuItemClick(action) {
             closeMenu(); // cerrar antes de ejecutar acción
+            
             switch(action) {
                 case 'mas-iglesias':
                     openModal('modal-mas');
@@ -726,10 +867,12 @@
                     openModal('modal-proceso');
                     break;
                 case 'mapa':
-                    showNotificationMessage('🗺️ Mapa - Próximamente visualización de sedes');
+                    // Cargar la página de Mapa dentro del iframe
+                    loadExternalPage('https://experiencia-ia.github.io/boillat/mapa.html', 'Mapa Departamental');
                     break;
                 case 'agenda':
-                    showNotificationMessage('📅 Agenda - Calendario de eventos próximamente');
+                    // Cargar la página de Agenda dentro del iframe
+                    loadExternalPage('https://experiencia-ia.github.io/boillat/agenda.html', 'Agenda de Actividades');
                     break;
                 case 'contactos':
                     showNotificationMessage('📞 Contactos - Red de multiplicación y asesores');
@@ -774,8 +917,7 @@
             originalOpenModal(id);
         };
         
-        // Pequeña corrección: si las tarjetas usan onclick directo, no hay problema.
-        // Verificar que los modales se abren correctamente (prueba adicional)
+        // También, si se cambia de vista y se abre un modal, aseguramos restaurar si es necesario
         console.log("Sistema listo - Botón glass en panel inferior izquierdo, menú hacia arriba, tarjetas operativas.");
     </script>
 </body>
