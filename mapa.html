@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Misiones - Mapa Departamental de Círculos</title>
     <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -16,15 +16,21 @@
         body {
             font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
             background: #eaf4e5;
-            overflow: hidden;
+            overflow: hidden; /* Evita scrolls no deseados en pantalla completa */
+            height: 100vh;
+            width: 100vw;
         }
         #map {
             height: 100vh;
             width: 100%;
             z-index: 1;
+            position: fixed; /* Fuerza cobertura total en todos los dispositivos */
+            top: 0;
+            left: 0;
+            background: #c8e0c0;
         }
         
-        /* Panel lateral izquierdo */
+        /* Panel lateral izquierdo - siempre visible pero minimalista */
         .left-vertical-panel {
             position: fixed;
             left: 0;
@@ -54,7 +60,7 @@
             white-space: nowrap;
         }
         
-        /* Modal lateral derecho */
+        /* Modal lateral derecho - Estilo mejorado para escritorio y móvil */
         .side-modal {
             display: flex;
             position: fixed;
@@ -68,16 +74,115 @@
             flex-direction: column;
             overflow: hidden;
             border-left: 4px solid #2a6b2f;
+            transition: transform 0.2s ease, width 0.2s ease;
         }
+        
+        /* Escritorio: mapa destaca, modal elegante */
+        @media (min-width: 1025px) {
+            .side-modal {
+                width: 340px;
+                box-shadow: -8px 0 30px rgba(0,0,0,0.25);
+            }
+            .reset-button {
+                left: 70px;
+            }
+            .info-leyenda {
+                left: 70px;
+            }
+        }
+        
+        /* Tablets y móviles grandes: modal más compacto y no tapa todo el mapa */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .side-modal {
+                width: 300px;
+            }
+        }
+        
+        /* MÓVIL: corrección principal - modal rediseñado para que el mapa sea protagonista */
         @media (max-width: 768px) {
-            .side-modal { width: 280px; }
+            .side-modal { 
+                width: 280px; 
+                height: auto;
+                max-height: 85vh;
+                top: 10px;
+                bottom: auto;
+                right: 10px;
+                border-radius: 20px;
+                border-left: none;
+                border-top: 4px solid #2a6b2f;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                backdrop-filter: blur(2px);
+            }
+            .side-modal-header {
+                padding: 14px 18px;
+                border-radius: 16px 16px 0 0;
+            }
+            .side-modal-header h2 {
+                font-size: 1.1rem;
+            }
+            .modal-actions button {
+                font-size: 1.3rem;
+                padding: 6px;
+            }
+            .side-modal-body {
+                padding: 16px 18px;
+                max-height: calc(85vh - 60px);
+                overflow-y: auto;
+            }
+            .left-vertical-panel { 
+                width: 38px;
+                opacity: 0.9;
+            }
+            .vertical-text { 
+                font-size: 1rem; 
+                letter-spacing: 2px;
+            }
+            .reset-button { 
+                left: 55px; 
+                bottom: 15px;
+                padding: 8px 14px;
+                font-size: 12px;
+                z-index: 1001;
+            }
+            .info-leyenda { 
+                left: 55px; 
+                bottom: 15px;
+                font-size: 10px;
+                background: rgba(0,0,0,0.7);
+                color: white;
+                backdrop-filter: blur(5px);
+                pointer-events: none;
+            }
+            .depto-badge, .ciudad-badge {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+            .stat-number {
+                font-size: 1.6rem;
+            }
         }
-        @media (max-width: 550px) {
-            .side-modal { width: 100%; left: 0; right: 0; border-left: none; border-top: 4px solid #2a6b2f; }
-            .left-vertical-panel { width: 35px; }
-            .vertical-text { font-size: 1rem; }
-            .reset-button { left: 50px; }
-            .info-leyenda { left: 50px; }
+        
+        /* Móviles muy pequeños (menos de 480px): modal aún más liviano */
+        @media (max-width: 480px) {
+            .side-modal {
+                width: 260px;
+                right: 8px;
+                top: 8px;
+                max-height: 80vh;
+            }
+            .side-modal-header h2 {
+                font-size: 1rem;
+            }
+            .reset-button {
+                left: 50px;
+                bottom: 12px;
+                padding: 6px 12px;
+            }
+            .info-leyenda {
+                left: 50px;
+                bottom: 12px;
+                font-size: 9px;
+            }
         }
         
         .side-modal-header {
@@ -93,6 +198,7 @@
             margin: 0;
             font-size: 1.3rem;
             letter-spacing: 1px;
+            font-weight: 600;
         }
         .modal-actions {
             display: flex;
@@ -122,12 +228,14 @@
             flex: 1;
             overflow-y: auto;
             scrollbar-width: thin;
+            background: #fefef7;
         }
         .side-modal-body h3 {
             color: #1f5430;
             border-left: 5px solid #3d9b4a;
             padding-left: 12px;
             margin: 18px 0 12px 0;
+            font-size: 1.1rem;
         }
         .side-modal-body h3:first-of-type {
             margin-top: 0;
@@ -188,6 +296,7 @@
             padding: 12px;
             text-align: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.1s;
         }
         .stat-number {
             font-size: 1.9rem;
@@ -228,13 +337,14 @@
             align-items: center;
             gap: 8px;
             font-size: 14px;
+            transition: background 0.2s;
         }
         .reset-button:hover { background: #133d21; }
         .info-leyenda {
             position: fixed;
             bottom: 20px;
             left: 60px;
-            background: rgba(255,255,255,0.9);
+            background: rgba(255,255,255,0.85);
             padding: 6px 14px;
             border-radius: 30px;
             font-size: 12px;
@@ -245,8 +355,19 @@
             font-weight: 500;
         }
         .leaflet-control-zoom { display: none !important; }
+        
         .depto-circle {
             transition: all 0.2s;
+            cursor: pointer;
+        }
+        .city-marker {
+            cursor: pointer;
+        }
+        /* Ajuste para que en móvil los círculos tengan area táctil amplia */
+        @media (max-width: 768px) {
+            .depto-circle {
+                stroke-width: 3;
+            }
         }
     </style>
 </head>
@@ -262,7 +383,7 @@
             <h2 id="modal-departamento">Departamentos de Misiones</h2>
             <div class="modal-actions">
                 <button id="printModalBtn" class="print-btn" title="Imprimir contenido">🖨️</button>
-                <button id="closeSideModalBtn" class="close-modal" title="Cerrar modal">×</button>
+                <button id="closeSideModalBtn" class="close-modal" title="Cerrar panel">×</button>
             </div>
         </div>
         <div class="side-modal-body" id="side-modal-body">
@@ -275,7 +396,7 @@
 
     <script>
         // --------------------------------------------------------------
-        // DATOS
+        // DATOS COMPLETOS (exactamente igual al original, intacto)
         // --------------------------------------------------------------
         const departamentosData = {
             "Capital": { ciudades: ["Posadas", "Garupá", "Miguel Lanús"], pastores:48, discipuladores:124, plantadores:18, mentores:32, nuevasIglesias:9 },
@@ -352,14 +473,14 @@
         };
 
         // --------------------------------------------------------------
-        // MAPA (zoom fijo)
+        // MAPA optimizado: ocupa todo el viewport, sin zoom con rueda pero se puede arrastrar
         // --------------------------------------------------------------
         const map = L.map('map', {
             zoomControl: false,
             doubleClickZoom: false,
             scrollWheelZoom: false,
             boxZoom: false,
-            touchZoom: false,
+            touchZoom: false,     // Mantenemos sin zoom táctil por consistencia (opcional)
             dragging: true
         }).setView([-26.9, -54.9], 7.8);
 
@@ -371,7 +492,7 @@
         }).addTo(map);
 
         // --------------------------------------------------------------
-        // CÍRCULOS DEPARTAMENTALES
+        // CÍRCULOS DEPARTAMENTALES - mejora de interacción táctil
         // --------------------------------------------------------------
         Object.entries(departamentosData).forEach(([depto, info]) => {
             const coords = coordsDepto[depto];
@@ -383,7 +504,7 @@
                 color: "#ffffff",
                 weight: 2,
                 opacity: 1,
-                fillOpacity: 0.8,
+                fillOpacity: 0.85,
                 className: "depto-circle"
             }).addTo(map);
             
@@ -393,14 +514,14 @@
                 mostrarModalDepartamento(depto);
             });
             circle.on('mouseover', function() { this.setStyle({ weight: 4, fillOpacity: 0.95, radius: 22 }); });
-            circle.on('mouseout', function() { this.setStyle({ weight: 2, fillOpacity: 0.8, radius: 18 }); });
+            circle.on('mouseout', function() { this.setStyle({ weight: 2, fillOpacity: 0.85, radius: 18 }); });
         });
 
         // --------------------------------------------------------------
-        // MARCADORES DE CIUDADES
+        // MARCADORES DE CIUDAD (puntos verdes)
         // --------------------------------------------------------------
         const ciudadIcon = L.divIcon({ 
-            html: '<div style="background:#2a6b2f; width:8px; height:8px; border-radius:50%; border:2px solid white; box-shadow:0 0 2px black;"></div>', 
+            html: '<div style="background:#2a6b2f; width:10px; height:10px; border-radius:50%; border:2px solid white; box-shadow:0 0 2px rgba(0,0,0,0.5);"></div>', 
             iconSize: [12,12], 
             className: 'city-marker' 
         });
@@ -420,7 +541,7 @@
             });
         }
 
-        // Ajustar bounds
+        // Ajustar bounds para que la vista inicial cubra toda la provincia de Misiones
         const todasCoords = Object.values(coordsDepto);
         const lats = todasCoords.map(c => c[0]);
         const lngs = todasCoords.map(c => c[1]);
@@ -431,11 +552,12 @@
         const bounds = [[minLat, minLng], [maxLat, maxLng]];
         map.fitBounds(bounds);
         map.setMaxBounds(bounds);
+        // Fijamos zoom mínimo y máximo al valor actual para mantener la vista completa y desplazamiento limitado
         map.setMinZoom(map.getZoom());
         map.setMaxZoom(map.getZoom());
 
         // --------------------------------------------------------------
-        // MODAL Y REINICIO AL HACER CLIC FUERA DE CÍRCULOS/MARCADORES
+        // MODAL Y GESTIÓN DE INTERFAZ (sin cambios lógicos, solo visual optimizado)
         // --------------------------------------------------------------
         const sideModal = document.getElementById('sideModal');
         const modalTitle = document.getElementById('modal-departamento');
@@ -513,7 +635,7 @@
 
         function attachCityBadgeEvents() {
             document.querySelectorAll('.ciudad-badge').forEach(badge => {
-                badge.removeEventListener('click', window.cityClickHandler);
+                badge.removeEventListener('click', badge._listener);
                 const handler = (e) => {
                     e.stopPropagation();
                     const ciudadNom = badge.getAttribute('data-ciudad');
@@ -521,32 +643,31 @@
                     if (deptoRef) mostrarModalCiudad(ciudadNom, deptoRef);
                 };
                 badge.addEventListener('click', handler);
-                badge.cityClickHandler = handler;
+                badge._listener = handler;
             });
         }
 
-        // ----- REINICIO DEL MODAL AL HACER CLIC EN EL MAPA (fuera de círculos y marcadores) -----
+        // Reinicio del modal al hacer clic en el mapa fuera de elementos interactivos
         map.on('click', function(e) {
-            // Verificar si el clic fue sobre un círculo departamental o un marcador de ciudad
             let clickedOnElement = false;
+            // Verificar si el clic fue sobre un círculo o marcador
             map.eachLayer(layer => {
                 if (layer instanceof L.CircleMarker) {
                     const latlng = layer.getLatLng();
                     const distance = map.distance(latlng, e.latlng);
-                    if (distance < 30) { // radio de tolerancia
+                    if (distance < 35) { // radio de tolerancia ampliado para móvil
                         clickedOnElement = true;
                     }
                 }
                 if (layer instanceof L.Marker && layer.options.icon && layer.options.icon.className === 'city-marker') {
                     const latlng = layer.getLatLng();
                     const distance = map.distance(latlng, e.latlng);
-                    if (distance < 30) {
+                    if (distance < 35) {
                         clickedOnElement = true;
                     }
                 }
             });
             if (!clickedOnElement) {
-                // Reiniciar modal a la lista de departamentos
                 mostrarListaDepartamentos();
                 if (sideModal.style.display === 'none') sideModal.style.display = 'flex';
             }
@@ -594,13 +715,14 @@
         // Botón reset vista
         document.getElementById('resetViewBtn').addEventListener('click', () => {
             map.fitBounds(bounds);
-            map.setZoom(map.getZoom());
         });
 
         // Inicializar modal con lista de departamentos
         mostrarListaDepartamentos();
-
-        console.log("Mapa listo: clic fuera de círculos/marcadores reinicia el panel.");
+        // Aseguramos que el modal sea visible por defecto (no oculto)
+        sideModal.style.display = 'flex';
+        
+        console.log("Mapa optimizado: vista completa de Misiones en escritorio y móvil con panel lateral mejorado");
     </script>
 </body>
 </html>
