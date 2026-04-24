@@ -485,6 +485,8 @@
                     <div class="menu-item" data-action="mas-iglesias"><span class="menu-icon">⛪</span> Mas Iglesias</div>
                     <div class="menu-item" data-action="mejores-iglesias"><span class="menu-icon">⭐</span> Mejores Iglesias</div>
                     <div class="menu-item" data-action="procesos"><span class="menu-icon">🔄</span> Procesos</div>
+                    <!-- Nuevo ítem: Perfiles -->
+                    <div class="menu-item" data-action="perfiles"><span class="menu-icon">👥</span> Perfiles</div>
                     <div class="menu-item" data-action="mapa"><span class="menu-icon">🗺️</span> Mapa</div>
                     <div class="menu-item" data-action="agenda"><span class="menu-icon">📅</span> Agenda</div>
                     <div class="menu-item" data-action="contactos"><span class="menu-icon">📞</span> Contactos</div>
@@ -666,6 +668,7 @@
                 case 'mas-iglesias': openModal('modal-mas'); break;
                 case 'mejores-iglesias': openModal('modal-mejores'); break;
                 case 'procesos': openModal('modal-proceso'); break;
+                case 'perfiles': loadExternalPage('https://experiencia-ia.github.io/masiglesia/perfiles.html', 'Perfiles · Gestión de líderes'); break;
                 case 'mapa': loadExternalPage('https://experiencia-ia.github.io/boillat/mapa.html', 'Mapa Departamental'); break;
                 case 'agenda': loadExternalPage('https://experiencia-ia.github.io/boillat/agenda.html', 'Agenda de Actividades'); break;
                 case 'contactos': showNotificationMessage('📞 Contactos - Red de multiplicación y asesores'); break;
