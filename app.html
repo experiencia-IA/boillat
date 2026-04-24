@@ -671,7 +671,7 @@
                 case 'perfiles': loadExternalPage('https://experiencia-ia.github.io/masiglesia/perfiles.html', 'Perfiles · Gestión de líderes'); break;
                 case 'mapa': loadExternalPage('https://experiencia-ia.github.io/boillat/mapa.html', 'Mapa Departamental'); break;
                 case 'agenda': loadExternalPage('https://experiencia-ia.github.io/boillat/agenda.html', 'Agenda de Actividades'); break;
-                case 'contactos': showNotificationMessage('📞 Contactos - Red de multiplicación y asesores'); break;
+                case 'contactos': loadExternalPage('https://experiencia-ia.github.io/masiglesia/contactos.html', 'Contactos · Red de multiplicación y asesores'); break;
             }
         }
         function bindMenuItems() {
@@ -699,15 +699,12 @@
             bottomPanel.addEventListener('click', function(event) {
                 // Evitar recargar si se hizo clic en el botón de logout o en el botón circular del menú
                 let target = event.target;
-                // Verificar si el clic fue sobre el botón de logout o sus hijos
                 const logoutBtn = document.getElementById('logoutButton');
                 const glassBtn = document.getElementById('glassMenuButton');
                 if (logoutBtn && logoutBtn.contains(target)) return;
                 if (glassBtn && glassBtn.contains(target)) return;
-                // También evitar si el clic es sobre algún item del menú (aunque el menú ya se cierra, por seguridad)
                 if (target.closest && target.closest('.menu-item')) return;
                 if (target.closest && target.closest('.glass-nav-menu')) return;
-                // Recargar la página completa
                 window.location.reload();
             });
         }
