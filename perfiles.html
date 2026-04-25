@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Perfiles · Más Iglesias (Argentina)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: #f4f7fc;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 30px 30px;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .app-container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            border: 1px solid #eef2f6;
+        }
+        .hero {
+            background: linear-gradient(135deg, #0e4b3a 0%, #1f7a5c 100%);
+            padding: 1.5rem 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .hero h1 { font-size: 1.7rem; font-weight: 800; display: flex; align-items: center; gap: 12px; }
+        .hero h1 span { background: #e2a628; font-size: 0.8rem; padding: 4px 12px; border-radius: 60px; color: #0a2a3b; }
+        
+        .hero-actions { display: flex; gap: 12px; }
+        .btn-nuevo { background: #e2a628; border: none; padding: 10px 24px; border-radius: 60px; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .print-btn { background: #2c4b60; color: white; border: none; padding: 10px 20px; border-radius: 60px; font-weight: 600; cursor: pointer; }
+
+        /* NOTIFICACIÓN FLOTANTE (TOAST) */
+        #errorToast {
+            position: fixed; top: 20px; right: 20px;
+            background: #ef4444; color: white;
+            padding: 12px 24px; border-radius: 12px;
+            font-weight: 700; font-size: 0.9rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+            z-index: 3000; display: none;
+            animation: slideIn 0.3s ease-out;
+            border: 2px solid #dc2626;
+        }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        .filters-panel {
+            padding: 20px 28px 0 28px;
+            display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end;
+            border-bottom: 1px solid #ecf3f9;
+        }
+        .filter-group { flex: 1; min-width: 170px; display: flex; flex-direction: column; gap: 6px; }
+        .filter-group label { font-weight: 700; font-size: 0.7rem; text-transform: uppercase; color: #4b6b7f; }
+        .filter-group input, .filter-group select { padding: 10px 14px; border-radius: 20px; border: 1.5px solid #e2edf2; }
+
+        .pagination-bar-top {
+            display: flex; justify-content: space-between; align-items: center;
+            margin: 20px 28px 12px 28px;
+        }
+        .page-btn { background: #f1f5f9; border: none; padding: 8px 16px; border-radius: 30px; font-weight: 600; cursor: pointer; }
+        .page-btn.active { background: #e2a628; color: #1e2a36; }
+
+        .table-wrapper { overflow-x: auto; width: 100%; border-top: 1px solid #ecf3f9; }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 1000px; }
+        .data-table th { background: #fafcfd; padding: 14px 10px; text-align: left; font-weight: 800; border-bottom: 2px solid #e6edf4; }
+        .data-table td { padding: 12px 10px; border-bottom: 1px solid #eff3f8; }
+        .badge-perfil { background: #e0f2fe; padding: 4px 12px; border-radius: 30px; font-size: 0.75rem; font-weight: 700; }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 32, 56, 0.9); display: flex; align-items: center; justify-content: center;
+            z-index: 2000; opacity: 0; visibility: hidden; transition: 0.25s;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-container { background: white; width: 95%; max-width: 1100px; max-height: 90vh; border-radius: 1.5rem; overflow-y: auto; }
+        .modal-header { background: #0e4b3a; color: white; padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
+        .modal-body { padding: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+        .section-header { background: #f8fafc; padding: 10px 15px; border-radius: 10px; font-weight: 800; color: #0e4b3a; font-size: 0.85rem; border-left: 4px solid #e2a628; }
+        .modal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+        .modal-field { display: flex; flex-direction: column; gap: 6px; }
+        .modal-field.full { grid-column: 1 / -1; }
+        .modal-field label { font-weight: 700; font-size: 0.7rem; text-transform: uppercase; color: #4b6b7f; }
+        .modal-field input, .modal-field select, .modal-field textarea { padding: 10px; border-radius: 12px; border: 1.5px solid #e2edf2; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; padding: 1.5rem; border-top: 1px solid #eee; position: sticky; bottom: 0; background: white; }
+
+        @media print { .hero-actions, .filters-panel, .pagination-bar-top, .acciones { display: none !important; } }
+    </style>
+</head>
+<body>
+
+<div id="errorToast">⚠️ Faltan campos obligatorios</div>
+
+<div class="app-container">
+    <div class="hero">
+        <h1>📋 REGISTRO DE PERFILES <span>ARGENTINA</span></h1>
+        <div class="hero-actions">
+            <button class="print-btn" onclick="window.print()">🖨️ Imprimir Listado</button>
+            <button class="btn-nuevo" id="openModalBtn">+ Nuevo Perfil</button>
+        </div>
+    </div>
+
+    <div class="filters-panel">
+        <div class="filter-group"><label>🔍 Buscar (Nombre/DNI/Tel)</label><input type="text" id="searchInput" placeholder="Escriba aquí..."></div>
+        <div class="filter-group"><label>📂 Perfil</label><select id="perfilFilter"><option value="">Todos</option><option value="Plantador">Plantador</option><option value="Pastor">Pastor</option><option value="Mentor">Mentor</option></select></div>
+        <div class="filter-group"><label>🏠 Ciudad</label><input type="text" id="ciudadFilter" placeholder="Filtrar ciudad"></div>
+    </div>
+
+    <div class="pagination-bar-top">
+        <div id="pageInfoText"></div>
+        <div class="pagination-controls" id="pageNumbers"></div>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 15%;">Apellidos</th>
+                    <th style="width: 15%;">Nombre</th>
+                    <th style="width: 12%;">DNI</th>
+                    <th style="width: 12%;">Teléfono</th>
+                    <th style="width: 15%;">Perfil</th>
+                    <th style="width: 15%;">Ciudad</th>
+                    <th style="width: 16%;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="participantModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3 id="modalTitle">Nuevo Registro</h3>
+            <button onclick="cerrarModal()" style="background:none; border:none; color:white; font-size:2rem; cursor:pointer;">&times;</button>
+        </div>
+        <div class="modal-body" id="modalFieldsContainer"></div>
+        <div class="modal-actions">
+            <button class="page-btn" onclick="cerrarModal()">Cancelar</button>
+            <button class="btn-nuevo" id="saveModalBtn">Guardar Registro</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const CONFIG_CAMPOS = [
+        { section: "I. INFORMACIÓN PERSONAL" },
+        { key: "foto", label: "Fotografía", type: "file" },
+        { key: "perfil", label: "Perfil del plantador", type: "select", options: ["Plantador", "Pastor", "Mentor", "Multiplicador"], required: true },
+        { key: "apellidos", label: "Apellidos", type: "text", required: true },
+        { key: "nombre", label: "Nombre", type: "text", required: true },
+        { key: "dni", label: "DNI", type: "text", required: true },
+        { key: "telefono", label: "Teléfono", type: "text" },
+        { key: "email", label: "Correo electrónico", type: "text" },
+        { key: "fecha_nac", label: "Fecha de nacimiento", type: "date" },
+        { key: "edad", label: "Edad", type: "number" },
+        { key: "sexo", label: "Sexo", type: "select", options: ["Masculino", "Femenino"] },
+        { key: "estado_civil", label: "Estado civil", type: "select", options: ["Soltero", "Casado", "Divorciado", "Viudo"] },
+        { key: "dir_domicilio", label: "Dirección domiciliaria", type: "text", full: true },
+        { key: "ciudad_per", label: "Ciudad", type: "text" },
+        { section: "II. ÁREA DE PLANTACIÓN" },
+        { key: "ni_nombre", label: "Nombre de la nueva iglesia", type: "text" },
+        { key: "ni_ciudad", label: "Ciudad", type: "text" },
+        { section: "III. TESTIMONIO" },
+        { key: "t_llamado", label: "¿Cómo fue su llamado?", type: "textarea", full: true }
+    ];
+
+    let participantes = JSON.parse(localStorage.getItem('db_argentina_final') || '[]');
+    let editandoId = null;
+    let paginaActual = 1;
+    const REG_X_PAG = 15;
+
+    function mostrarToast(mensaje) {
+        const toast = document.getElementById('errorToast');
+        toast.innerText = mensaje;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    function renderizarForm(data = null, readOnly = false) {
+        const container = document.getElementById('modalFieldsContainer');
+        container.innerHTML = '';
+        let currentGrid = null;
+        CONFIG_CAMPOS.forEach(c => {
+            if(c.section) {
+                const h = document.createElement('div'); h.className = 'section-header'; h.innerText = c.section;
+                container.appendChild(h);
+                currentGrid = document.createElement('div'); currentGrid.className = 'modal-grid';
+                container.appendChild(currentGrid); return;
+            }
+            const field = document.createElement('div');
+            field.className = c.full || c.type === 'file' ? 'modal-field full' : 'modal-field';
+            field.innerHTML = `<label>${c.label}${c.required?' *':''}</label>`;
+            let input = document.createElement(c.type === 'select' ? 'select' : (c.type === 'textarea' ? 'textarea' : 'input'));
+            if(c.type === 'select') input.innerHTML = '<option value="">...</option>' + c.options.map(o => `<option value="${o}">${o}</option>`).join('');
+            if(c.type !== 'select' && c.type !== 'textarea') input.type = c.type;
+            input.id = 'in_' + c.key;
+            if(data) input.value = data[c.key] || '';
+            if(readOnly) input.disabled = true;
+            field.appendChild(input);
+            currentGrid.appendChild(field);
+        });
+    }
+
+    function renderizarTabla() {
+        const busq = document.getElementById('searchInput').value.toLowerCase();
+        const perf = document.getElementById('perfilFilter').value;
+        const ciud = document.getElementById('ciudadFilter').value.toLowerCase();
+
+        const filtrados = participantes.filter(p => 
+            ((p.apellidos+' '+p.nombre).toLowerCase().includes(busq) || (p.dni || '').includes(busq) || (p.telefono || '').includes(busq)) &&
+            (perf === '' || p.perfil === perf) &&
+            (p.ciudad_per || '').toLowerCase().includes(ciud)
+        );
+
+        const inicio = (paginaActual - 1) * REG_X_PAG;
+        const slice = filtrados.slice(inicio, inicio + REG_X_PAG);
+
+        document.getElementById('pageInfoText').innerText = `Total: ${filtrados.length} registros`;
+        document.getElementById('tablaBody').innerHTML = slice.map(p => `
+            <tr>
+                <td><strong>${p.apellidos}</strong></td>
+                <td>${p.nombre}</td>
+                <td>${p.dni || '—'}</td>
+                <td>${p.telefono || '—'}</td>
+                <td><span class="badge-perfil">${p.perfil}</span></td>
+                <td>${p.ciudad_per || '—'}</td>
+                <td class="acciones">
+                    <button class="page-btn" onclick="ver(${p.id})">👁️</button>
+                    <button class="page-btn" onclick="editar(${p.id})">✏️</button>
+                </td>
+            </tr>
+        `).join('') || '<tr><td colspan="7" style="text-align:center; padding:2rem;">No hay registros</td></tr>';
+
+        const totalPag = Math.ceil(filtrados.length / REG_X_PAG) || 1;
+        let pNums = '';
+        for(let i=1; i<=totalPag; i++) pNums += `<button class="page-btn ${i===paginaActual?'active':''}" onclick="irAPag(${i})">${i}</button>`;
+        document.getElementById('pageNumbers').innerHTML = pNums;
+    }
+
+    function irAPag(p) { paginaActual = p; renderizarTabla(); }
+
+    document.getElementById('saveModalBtn').onclick = () => {
+        const nuevo = { id: editandoId || Date.now() };
+        let faltanCampos = false;
+        CONFIG_CAMPOS.forEach(c => {
+            if(c.section || c.type === 'file') return;
+            const val = document.getElementById('in_'+c.key).value;
+            if(c.required && !val) faltanCampos = true;
+            nuevo[c.key] = val;
+        });
+
+        if(faltanCampos) return mostrarToast("⚠️ Complete los campos obligatorios");
+
+        if(editandoId) participantes[participantes.findIndex(x=>x.id===editandoId)] = nuevo;
+        else participantes.unshift(nuevo);
+
+        localStorage.setItem('db_argentina_final', JSON.stringify(participantes));
+        cerrarModal(); renderizarTabla();
+    };
+
+    window.ver = (id) => {
+        renderizarForm(participantes.find(x=>x.id===id), true);
+        document.getElementById('modalTitle').innerText = "Ficha del Perfil";
+        document.getElementById('saveModalBtn').style.display = 'none';
+        document.getElementById('participantModal').classList.add('active');
+    };
+
+    window.editar = (id) => {
+        editandoId = id;
+        renderizarForm(participantes.find(x=>x.id===id));
+        document.getElementById('modalTitle').innerText = "Editar Registro";
+        document.getElementById('saveModalBtn').style.display = 'block';
+        document.getElementById('participantModal').classList.add('active');
+    };
+
+    document.getElementById('openModalBtn').onclick = () => {
+        editandoId = null; renderizarForm();
+        document.getElementById('modalTitle').innerText = "Nuevo Registro";
+        document.getElementById('saveModalBtn').style.display = 'block';
+        document.getElementById('participantModal').classList.add('active');
+    };
+
+    function cerrarModal() { document.getElementById('participantModal').classList.remove('active'); }
+    document.getElementById('searchInput').oninput = () => { paginaActual = 1; renderizarTabla(); };
+    document.getElementById('perfilFilter').onchange = () => { paginaActual = 1; renderizarTabla(); };
+    document.getElementById('ciudadFilter').oninput = () => { paginaActual = 1; renderizarTabla(); };
+
+    renderizarTabla();
+</script>
+</body>
+</html>
