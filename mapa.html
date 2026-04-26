@@ -18,20 +18,24 @@
             --gm-bg: #ffffff;
             --gm-text: #202124;
             --gm-text-secondary: #70757a;
-            --gm-blue-dark: #0d47a1;
+            --gm-blue-dark: #00008B;
             --gm-blue-shade: #1a73e8;
             --gm-border: #dadce0;
             --gm-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            --gm-accent: #1a73e8;
         }
 
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Roboto', sans-serif; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: 'Roboto', sans-serif; background: #e5e3df; }
 
-        #map { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 1; background: #e5e3df; }
+        .main-container { display: flex; height: 100vh; width: 100vw; position: relative; }
+
+        #map { flex: 1; height: 100%; z-index: 1; }
 
         #side-panel {
-            position: absolute; top: 0; left: 0; width: 408px; height: 100vh;
+            width: 408px; height: 100vh;
             background: var(--gm-bg); z-index: 1000; box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             display: flex; flex-direction: column;
+            position: relative;
         }
 
         .right-strip {
@@ -46,60 +50,76 @@
             color: var(--gm-blue-dark); letter-spacing: 4px; text-transform: uppercase;
         }
 
-        .search-container { padding: 8px 16px; background: var(--gm-bg); }
+        .search-container { padding: 16px; background: var(--gm-bg); border-bottom: 1px solid var(--gm-border); }
         .search-bar {
             display: flex; align-items: center; background: var(--gm-bg);
             border-radius: 24px; box-shadow: var(--gm-shadow);
-            padding: 0 16px; height: 48px; margin-top: 8px;
+            padding: 0 16px; height: 48px;
         }
-        .search-bar input { border: none; outline: none; flex: 1; font-size: 16px; margin-left: 12px; }
+        .search-bar input { border: none; outline: none; flex: 1; font-size: 16px; margin-left: 12px; width: 100%; }
 
         #panel-content { flex: 1; overflow-y: auto; }
 
         .city-item { display: flex; align-items: center; padding: 12px 24px; cursor: pointer; border-bottom: 1px solid #f1f3f4; }
         .city-item:hover { background: #f8f9fa; }
 
-        /* Detalle y Botones */
-        .detail-header { height: 140px; background: linear-gradient(135deg, #0d47a1 0%, #1976d2 100%); position: relative; }
+        .detail-header { height: 140px; background: linear-gradient(135deg, #00008B 0%, #1976d2 100%); position: relative; transition: background 0.3s; }
+        .detail-header.editing { background: linear-gradient(135deg, #4285f4 0%, #34a853 100%); }
+        
         .header-actions { position: absolute; top: 16px; width: calc(100% - 32px); left: 16px; display: flex; justify-content: space-between; }
         .circle-btn { background: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--gm-shadow); color: var(--gm-blue-dark); border: none; }
+        .circle-btn.save-btn { color: #34a853; }
         
         .detail-body { padding: 24px; }
-        .detail-title { font-family: 'Google Sans', sans-serif; font-size: 24px; margin-bottom: 4px; }
+        .detail-title { font-family: 'Google Sans', sans-serif; font-size: 24px; margin-bottom: 4px; font-weight: 500; }
         .stats-grid { display: flex; flex-direction: column; gap: 4px; margin-top: 15px; }
         .stat-row { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #f8f9fa; }
         .stat-row .material-icons-outlined { color: var(--gm-blue-shade); margin-right: 16px; font-size: 20px; }
         .stat-label { flex: 1; font-size: 14px; }
         .stat-value { font-weight: 700; color: var(--gm-blue-dark); }
 
-        .map-controls { position: absolute; bottom: 24px; right: 60px; z-index: 1000; }
-        .fab { width: 40px; height: 40px; background: white; border-radius: 8px; box-shadow: var(--gm-shadow); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        /* Estilos para inputs de edición */
+        .edit-input {
+            width: 70px;
+            padding: 5px 8px;
+            border: 1px solid var(--gm-border);
+            border-radius: 4px;
+            font-weight: 700;
+            color: var(--gm-blue-dark);
+            text-align: right;
+            font-family: 'Roboto', sans-serif;
+        }
+        .edit-input:focus { outline: 2px solid var(--gm-blue-shade); border-color: transparent; }
+
+        .map-controls { position: absolute; bottom: 24px; right: 60px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; }
+        .fab { width: 40px; height: 40px; background: white; border-radius: 8px; box-shadow: var(--gm-shadow); display: flex; align-items: center; justify-content: center; cursor: pointer; color: #5f6368; }
 
         @media (max-width: 768px) {
-            #side-panel { width: 100vw; height: 45vh; top: auto; bottom: 0; }
-            .map-controls { bottom: calc(45vh + 16px); right: 40px; }
+            .main-container { flex-direction: column; }
+            #side-panel { width: 100%; height: 45vh; order: 2; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+            #map { height: 55vh; width: 100%; order: 1; }
+            .right-strip { display: none; }
+            .map-controls { bottom: calc(45vh + 16px); right: 16px; }
+            .search-container { padding: 8px 16px; }
         }
 
-        /* Estilos para impresión */
-        @media print {
-            .print-only { display: block !important; font-family: sans-serif; padding: 40px; }
-            .no-print { display: none !important; }
-        }
+        @media print { .no-print { display: none !important; } }
     </style>
 </head>
 <body>
 
-    <div id="map" class="no-print"></div>
-
-    <div id="side-panel" class="no-print">
-        <div class="search-container">
-            <div class="search-bar">
-                <span class="material-icons-outlined">menu</span>
-                <input type="text" id="city-search" placeholder="Buscar ciudad..." oninput="filterCities(this.value)">
-                <span class="material-icons-outlined" style="color:var(--gm-blue-shade); cursor:pointer;" onclick="resetSearch()">close</span>
+    <div class="main-container">
+        <div id="side-panel" class="no-print">
+            <div class="search-container">
+                <div class="search-bar">
+                    <span class="material-icons-outlined">menu</span>
+                    <input type="text" id="city-search" placeholder="Buscar ciudad en Misiones..." oninput="filterCities(this.value)">
+                    <span class="material-icons-outlined" style="color:var(--gm-blue-shade); cursor:pointer;" onclick="resetSearch()">close</span>
+                </div>
             </div>
+            <div id="panel-content"></div>
         </div>
-        <div id="panel-content"></div>
+        <div id="map" class="no-print"></div>
     </div>
 
     <div class="right-strip no-print">
@@ -111,7 +131,8 @@
     </div>
 
     <script>
-        const misionesCities = [
+        // Datos de ciudades (se mantienen en memoria durante la sesión)
+        let misionesCities = [
             { name: "Posadas", dept: "Capital", coords: [-27.367, -55.896], pastores: 52, multiplicadores: 21, discipuladores: 180, plantadores: 14, mentores: 18, nuevosCreyentes: 600, nuevasIglesias: 9 },
             { name: "Garupá", dept: "Capital", coords: [-27.483, -55.833], pastores: 18, multiplicadores: 7, discipuladores: 55, plantadores: 4, mentores: 6, nuevosCreyentes: 210, nuevasIglesias: 3 },
             { name: "Puerto Iguazú", dept: "Iguazú", coords: [-25.599, -54.573], pastores: 25, multiplicadores: 10, discipuladores: 82, plantadores: 6, mentores: 8, nuevosCreyentes: 280, nuevasIglesias: 5 },
@@ -131,35 +152,47 @@
         ];
 
         const bounds = [[-28.15, -56.3], [-25.5, -53.4]];
-        const map = L.map('map', { zoomControl: false, maxBounds: bounds, minZoom: 7.5 }).fitBounds(bounds);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
+        const map = L.map('map', { zoomControl: false, maxBounds: bounds, minZoom: 7 }).fitBounds(bounds);
+        
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
 
-        // Capa de Frontera y Sombreado
-        fetch('https://raw.githubusercontent.com/mgfranco/geojson-argentina/master/provincias/misiones.json')
-            .then(res => res.json())
-            .then(data => {
-                L.geoJSON(data, {
-                    style: { color: "#0d47a1", weight: 6, fillColor: "#1a73e8", fillOpacity: 0.18 }
-                }).addTo(map);
-            });
+        function cargarFronteraMisiones() {
+            const url = "https://nominatim.openstreetmap.org/search?q=Misiones+Argentina&format=json&polygon_geojson=1";
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const misionesData = data.find(item => item.type === "administrative");
+                    if (misionesData && misionesData.geojson) {
+                        L.geoJSON(misionesData.geojson, {
+                            style: { color: "#00008B", weight: 5, opacity: 1, fillOpacity: 0 },
+                            interactive: false
+                        }).addTo(map);
+                    }
+                })
+                .catch(err => console.error("Error cargando frontera:", err));
+        }
+
+        cargarFronteraMisiones();
 
         const panel = document.getElementById('panel-content');
         const searchInput = document.getElementById('city-search');
 
         misionesCities.forEach(city => {
-            L.circleMarker(city.coords, { radius: 6, fillColor: "#EA4335", color: "#fff", weight: 2, fillOpacity: 1 })
+            L.circleMarker(city.coords, { radius: 7, fillColor: "#EA4335", color: "#fff", weight: 2, fillOpacity: 1 })
             .addTo(map).on('click', () => showDetail(city));
         });
 
         function renderList(list) {
-            let html = `<div style="padding:16px 24px; font-size:12px; color:var(--gm-text-secondary); font-weight:700;">CIUDADES EN MISIONES</div>`;
+            let html = `<div style="padding:16px 24px; font-size:12px; color:var(--gm-text-secondary); font-weight:700; text-transform:uppercase;">Resultados en Misiones</div>`;
             list.sort((a,b) => a.name.localeCompare(b.name)).forEach(city => {
                 html += `
                     <div class="city-item" onclick="showDetailByName('${city.name}')">
-                        <span class="material-icons-outlined" style="margin-right:15px; color:#70757a">place</span>
+                        <span class="material-icons-outlined" style="margin-right:15px; color:#70757a">location_on</span>
                         <div>
-                            <div class="city-name">${city.name}</div>
-                            <div class="city-dept">Depto. ${city.dept}</div>
+                            <div style="font-weight:500; color:var(--gm-text);">${city.name}</div>
+                            <div style="font-size:13px; color:var(--gm-text-secondary);">Depto. ${city.dept}</div>
                         </div>
                     </div>`;
             });
@@ -168,19 +201,22 @@
 
         function showDetail(city) {
             const isMobile = window.innerWidth <= 768;
-            map.flyTo(city.coords, 12, { paddingTopLeft: isMobile ? [0, window.innerHeight * 0.45] : [408, 0] });
+            map.flyTo(city.coords, 11, { paddingBottomRight: isMobile ? [0, 0] : [0, 0], duration: 1.5 });
             
             panel.innerHTML = `
                 <div class="detail-header">
                     <div class="header-actions">
                         <button class="circle-btn" onclick="renderList(misionesCities)"><span class="material-icons-outlined">arrow_back</span></button>
-                        <button class="circle-btn" onclick="printResults('${city.name}')"><span class="material-icons-outlined">print</span></button>
+                        <div style="display:flex; gap:8px;">
+                            <button class="circle-btn" title="Editar datos" onclick="editDetail('${city.name}')"><span class="material-icons-outlined">edit</span></button>
+                            <button class="circle-btn" title="Imprimir" onclick="printResults('${city.name}')"><span class="material-icons-outlined">print</span></button>
+                        </div>
                     </div>
                 </div>
                 <div class="detail-body">
                     <div class="detail-title">${city.name}</div>
                     <div style="color:var(--gm-text-secondary); font-size:14px; margin-bottom:15px;">Misiones, Argentina</div>
-                    <div class="stats-grid" id="stats-to-print">
+                    <div class="stats-grid">
                         ${stat('person', 'Pastores', city.pastores)}
                         ${stat('hub', 'Multiplicadores', city.multiplicadores)}
                         ${stat('groups', 'Discipuladores', city.discipuladores)}
@@ -192,11 +228,60 @@
                 </div>`;
         }
 
+        // Función para cambiar a modo edición
+        function editDetail(cityName) {
+            const city = misionesCities.find(c => c.name === cityName);
+            panel.innerHTML = `
+                <div class="detail-header editing">
+                    <div class="header-actions">
+                        <button class="circle-btn" onclick="showDetailByName('${city.name}')"><span class="material-icons-outlined">close</span></button>
+                        <button class="circle-btn save-btn" title="Guardar cambios" onclick="saveChanges('${city.name}')"><span class="material-icons-outlined">check</span></button>
+                    </div>
+                </div>
+                <div class="detail-body">
+                    <div class="detail-title">Editando: ${city.name}</div>
+                    <div style="color:var(--gm-text-secondary); font-size:14px; margin-bottom:15px;">Modifique los valores numéricos</div>
+                    <div class="stats-grid">
+                        ${statEdit('person', 'Pastores', city.pastores, 'pastores')}
+                        ${statEdit('hub', 'Multiplicadores', city.multiplicadores, 'multiplicadores')}
+                        ${statEdit('groups', 'Discipuladores', city.discipuladores, 'discipuladores')}
+                        ${statEdit('agriculture', 'Plantadores', city.plantadores, 'plantadores')}
+                        ${statEdit('psychology', 'Mentores', city.mentores, 'mentores')}
+                        ${statEdit('volunteer_activism', 'Nuevos Creyentes', city.nuevosCreyentes, 'nuevosCreyentes')}
+                        ${statEdit('church', 'Nuevas Iglesias', city.nuevasIglesias, 'nuevasIglesias')}
+                    </div>
+                </div>`;
+        }
+
+        // Función para guardar cambios
+        function saveChanges(cityName) {
+            const city = misionesCities.find(c => c.name === cityName);
+            if (city) {
+                city.pastores = parseInt(document.getElementById('edit-pastores').value) || 0;
+                city.multiplicadores = parseInt(document.getElementById('edit-multiplicadores').value) || 0;
+                city.discipuladores = parseInt(document.getElementById('edit-discipuladores').value) || 0;
+                city.plantadores = parseInt(document.getElementById('edit-plantadores').value) || 0;
+                city.mentores = parseInt(document.getElementById('edit-mentores').value) || 0;
+                city.nuevosCreyentes = parseInt(document.getElementById('edit-nuevosCreyentes').value) || 0;
+                city.nuevasIglesias = parseInt(document.getElementById('edit-nuevasIglesias').value) || 0;
+                
+                showDetail(city); // Volver a la vista normal
+            }
+        }
+
         function stat(icon, label, val) {
             return `<div class="stat-row">
                 <span class="material-icons-outlined">${icon}</span>
                 <span class="stat-label">${label}</span>
                 <span class="stat-value">${val}</span>
+            </div>`;
+        }
+
+        function statEdit(icon, label, val, id) {
+            return `<div class="stat-row">
+                <span class="material-icons-outlined">${icon}</span>
+                <span class="stat-label">${label}</span>
+                <input type="number" class="edit-input" id="edit-${id}" value="${val}">
             </div>`;
         }
 
@@ -209,14 +294,14 @@
                     <title>Reporte - ${city.name}</title>
                     <style>
                         body { font-family: sans-serif; padding: 40px; color: #333; }
-                        h1 { color: #0d47a1; border-bottom: 2px solid #0d47a1; padding-bottom: 10px; }
-                        .stat { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 1.2em; }
-                        .val { font-weight: bold; color: #0d47a1; }
-                        .footer { margin-top: 50px; font-size: 0.8em; color: #777; text-align: center; }
+                        h1 { color: #00008B; border-bottom: 2px solid #00008B; padding-bottom: 10px; }
+                        .stat { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 1.1em; }
+                        .val { font-weight: bold; color: #00008B; }
+                        .footer { margin-top: 50px; font-size: 0.8em; color: #777; text-align: center; border-top: 1px solid #eee; padding-top: 20px; }
                     </style>
                 </head>
                 <body>
-                    <p>PROVINCIA DE MISIONES - ARGENTINA</p>
+                    <p>REPORTE ESTRATÉGICO - MISIONES</p>
                     <h1>${city.name} (Depto. ${city.dept})</h1>
                     <div class="stat"><span>Pastores</span> <span class="val">${city.pastores}</span></div>
                     <div class="stat"><span>Multiplicadores</span> <span class="val">${city.multiplicadores}</span></div>
@@ -225,12 +310,12 @@
                     <div class="stat"><span>Mentores</span> <span class="val">${city.mentores}</span></div>
                     <div class="stat"><span>Nuevos Creyentes</span> <span class="val">${city.nuevosCreyentes}</span></div>
                     <div class="stat"><span>Nuevas Iglesias</span> <span class="val">${city.nuevasIglesias}</span></div>
-                    <div class="footer">Documento generado el ${new Date().toLocaleDateString()}</div>
+                    <div class="footer">Generado el ${new Date().toLocaleDateString()}</div>
                 </body>
                 </html>
             `);
             printWindow.document.close();
-            printWindow.print();
+            setTimeout(() => { printWindow.print(); }, 500);
         }
 
         function filterCities(q) {
@@ -247,6 +332,7 @@
         function resetView() { map.flyToBounds(bounds); }
 
         renderList(misionesCities);
+        window.addEventListener('resize', () => { map.invalidateSize(); });
     </script>
 </body>
 </html>
