@@ -485,11 +485,11 @@
                     <div class="menu-item" data-action="mas-iglesias"><span class="menu-icon">⛪</span> Mas Iglesias</div>
                     <div class="menu-item" data-action="mejores-iglesias"><span class="menu-icon">⭐</span> Mejores Iglesias</div>
                     <div class="menu-item" data-action="procesos"><span class="menu-icon">🔄</span> Procesos</div>
-                    <!-- Nuevo ítem: Perfiles -->
                     <div class="menu-item" data-action="perfiles"><span class="menu-icon">👥</span> Perfiles</div>
                     <div class="menu-item" data-action="mapa"><span class="menu-icon">🗺️</span> Mapa</div>
                     <div class="menu-item" data-action="agenda"><span class="menu-icon">📅</span> Agenda</div>
                     <div class="menu-item" data-action="contactos"><span class="menu-icon">📞</span> Contactos</div>
+                    <div class="menu-item" data-action="biblia"><span class="menu-icon">📖</span> Santa Biblia RV60</div>
                 </div>
                 <button class="float-glass-btn" id="glassMenuButton" aria-label="Menú">
                     <div class="menu-hamburger-icon"><span></span><span></span><span></span></div>
@@ -510,7 +510,6 @@
         </div>
     </footer>
 
-    <!-- MODALES -->
     <div id="exit-modal" class="modal-overlay">
         <div class="modal-card">
             <h3>Cerrar Sesión</h3>
@@ -672,6 +671,7 @@
                 case 'mapa': loadExternalPage('https://experiencia-ia.github.io/boillat/mapa.html', 'Mapa Departamental'); break;
                 case 'agenda': loadExternalPage('https://experiencia-ia.github.io/boillat/agenda.html', 'Agenda de Actividades'); break;
                 case 'contactos': loadExternalPage('https://experiencia-ia.github.io/masiglesia/contactos.html', 'Contactos · Red de multiplicación y asesores'); break;
+                case 'biblia': loadExternalPage('https://experiencia-ia.github.io/versiones-biblia/bibliaRV60.html', 'Santa Biblia RV60'); break;
             }
         }
         function bindMenuItems() {
