@@ -269,6 +269,27 @@
             }
         }
 
+        /* MEJORA PARA MÓVIL: las tres tarjetas visibles en vertical (Proceso igual que las demás) */
+        @media (max-width: 680px) {
+            .home-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 1.25rem;
+                padding: 1.5rem 1rem;
+            }
+            .category-card {
+                min-width: unset;
+                width: 100%;
+                max-width: 380px;
+                padding: 2rem 0.75rem;
+                margin: 0 auto;
+                box-sizing: border-box;
+            }
+            .category-card h2 {
+                font-size: 1.35rem;
+            }
+        }
+
         /* Diagramas responsivos (estilos previos) */
         .diagram-viewport {
             flex: 1;
@@ -334,6 +355,7 @@
             .scaling-wrapper { transform: scale(min(1, calc( 90vw / 1100 ))); }
         }
 
+        /* PROCESO DE MULTIPLICACIÓN: estilos generales para desktop */
         .diagram-container {
             display: flex;
             align-items: center;
@@ -341,6 +363,7 @@
             position: relative;
             padding: 40px 20px 80px 20px;
             min-height: 100%;
+            flex-wrap: wrap;
         }
         .node-wrapper {
             position: relative;
@@ -361,7 +384,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 0 6px var(--color-bg), 0 15px 25px -5px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 0 0 6px var(--color-bg), 0 15px 25px -5px rgba(0,0,0,0.08);
         }
         .node-wrapper.gold .node { border-color: var(--color-gold); }
         .node-wrapper.blue .node { border-color: var(--color-blue); }
@@ -379,12 +402,86 @@
         .node-wrapper .icon svg { width: 45px; height: 45px; stroke-width: 1.2; }
         .node-wrapper .content h3 { font-size: 1rem; font-weight: 800; text-transform: uppercase; color: var(--color-dark); margin-bottom: 4px; }
         .node-wrapper .content p { font-size: 0.85rem; font-weight: 400; font-style: italic; color: #334155; }
-        @media (max-width: 1150px) {
+
+        /* Ajuste del diagrama de proceso en pantallas medianas (tablets) */
+        @media (max-width: 1150px) and (min-width: 769px) {
             .diagram-container { flex-direction: column; padding-top: 20px; }
             .node-wrapper { margin-left: 0; margin-top: -30px; }
             .node-wrapper.down { margin-top: -30px; }
             .node-wrapper:nth-child(odd) { transform: translateX(-40px); }
             .node-wrapper:nth-child(even) { transform: translateX(40px); z-index: 2; }
+        }
+
+        /* === CORRECCIÓN DEFINITIVA MÓVIL: PROCESO SE VE COMPLETO SIN SCROLL === */
+        @media (max-width: 768px) {
+            /* El modal-content puede tener scroll, pero aseguramos que el diagrama se empaquete y todo sea visible sin desborde vertical excesivo */
+            #modal-proceso .modal-content {
+                overflow-y: auto;   /* permitimos scroll si es necesario, pero el contenido se adapta */
+            }
+            #modal-proceso .diagram-container {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 12px !important;
+                padding: 16px 12px 24px !important;
+                margin: 0 auto;
+                transform: none !important;
+            }
+            #modal-proceso .node-wrapper {
+                all: revert;
+                position: relative;
+                margin: 0 !important;
+                transform: none !important;
+                width: auto;
+                flex: 0 0 auto;
+                display: inline-flex;
+                justify-content: center;
+            }
+            /* Tamaño reducido para que quepan 7 elementos en pantalla (aprox 2-3 filas) */
+            #modal-proceso .node {
+                width: 108px !important;
+                height: 108px !important;
+                border-width: 3px;
+                margin: 0;
+            }
+            #modal-proceso .node .content {
+                width: 100px !important;
+                transform: rotate(-45deg);
+                padding: 0 4px;
+            }
+            #modal-proceso .node-wrapper .icon svg {
+                width: 24px !important;
+                height: 24px !important;
+            }
+            #modal-proceso .node-wrapper .content h3 {
+                font-size: 0.55rem !important;
+                margin-bottom: 2px;
+                line-height: 1.1;
+            }
+            #modal-proceso .node-wrapper .content p {
+                font-size: 0.45rem !important;
+                line-height: 1.1;
+                padding: 0 2px;
+            }
+            /* Eliminamos cualquier desplazamiento horizontal o vertical forzado */
+            #modal-proceso .node-wrapper.down,
+            #modal-proceso .node-wrapper.up {
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
+            }
+            #modal-proceso .node-wrapper:nth-child(odd),
+            #modal-proceso .node-wrapper:nth-child(even) {
+                transform: none !important;
+            }
+            /* Ajuste del header para no ocupar mucho espacio */
+            #modal-proceso .diagram-header {
+                padding: 8px 8px 4px;
+            }
+            #modal-proceso .diagram-header h2 {
+                font-size: 1.1rem;
+            }
         }
 
         /* Menú flotante */
@@ -553,7 +650,7 @@
         </div>
     </footer>
 
-    <!-- modales igual que antes -->
+    <!-- MODALES -->
     <div id="exit-modal" class="modal-overlay">
         <div class="modal-card">
             <h3>Cerrar Sesión</h3>
@@ -628,7 +725,7 @@
     <div id="dynamicToast" class="temp-toast"></div>
 
     <script>
-        // Funciones modales y gestión de iframe
+        // Funciones modales y gestión de iframe (código intacto)
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         function confirmExit() { window.location.href = 'index.html'; }
@@ -691,7 +788,7 @@
             });
         }
 
-        // Menú flotante
+        // Menú flotante (íntegro)
         const menuBtn = document.getElementById('glassMenuButton');
         const menuPanel = document.getElementById('glassNavMenu');
         const menuWrapper = document.getElementById('glassMenuWrapper');
