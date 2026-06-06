@@ -67,6 +67,7 @@
         .action-buttons {
             display: flex;
             gap: 12px;
+            flex-wrap: wrap;
         }
         .btn-primary-action {
             background: #2563eb;
@@ -291,6 +292,7 @@
             display: flex;
             gap: 8px;
             align-items: center;
+            flex-wrap: wrap;
         }
         .pagination-btn {
             background: #f1f5f9;
@@ -471,6 +473,8 @@
             <div class="welcome-highlight">Hola, bienvenido al sistema de gestión.</div>
             <div class="action-buttons">
                 <button class="btn-primary-action" id="nuevoRegistroBtn">Nuevo Registro</button>
+                <button class="btn-primary-action" id="mapaBtn">Mapa</button>
+                <button class="btn-primary-action" id="agendaBtn">Agenda</button>
                 <button class="btn-logout" id="salirBtn">Salir</button>
             </div>
         </div>
@@ -617,7 +621,7 @@
                         <td>${escapeHtml(p.perfil)}</td>
                         <td>${escapeHtml(p.observaciones ? p.observaciones.substring(0, 55) : '')}${p.observaciones && p.observaciones.length > 55 ? '…' : ''}</td>
                         <td>${telefonoMostrar ? `<a href="tel:${encodeURIComponent(telefonoMostrar)}" class="phone-link" onclick="event.stopPropagation()">${escapeHtml(telefonoMostrar)}</a>` : ''}</td>
-                    </table>`;
+                    </tr>`;
         });
         tbody.innerHTML = html;
         document.getElementById('contadorRegistros').innerText = `Total registros: ${currentFilteredData.length}`;
@@ -823,6 +827,15 @@
         document.getElementById('imprimirFiltradaBtn').addEventListener('click', () => imprimirDatos(currentFilteredData));
         document.getElementById('salirBtn').addEventListener('click', () => window.location.href = 'index.html');
         document.getElementById('nuevoRegistroBtn').addEventListener('click', () => document.getElementById('nuevoModal').classList.add('active'));
+        
+        // Los botones Mapa y Agenda ahora abren en la misma pestaña (dentro de la app)
+        document.getElementById('mapaBtn').addEventListener('click', () => {
+            window.location.href = 'https://experiencia-ia.github.io/boillat/mapa';
+        });
+        document.getElementById('agendaBtn').addEventListener('click', () => {
+            window.location.href = 'https://experiencia-ia.github.io/boillat/agenda';
+        });
+        
         document.getElementById('closeNuevoModalBtn').addEventListener('click', () => cerrarModal('nuevoModal'));
         document.getElementById('cancelarNuevoBtn').addEventListener('click', () => cerrarModal('nuevoModal'));
         document.getElementById('nuevoForm').addEventListener('submit', agregarNuevoRegistro);
