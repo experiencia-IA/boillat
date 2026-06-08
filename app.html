@@ -800,12 +800,17 @@
     </div>
 </div>
 
-<!-- Modales (sin cambios) -->
+<!-- Modal Nuevo/Editar -->
 <div id="nuevoModal" class="modal-overlay"><div class="modal-container"><div class="modal-header"><h3 id="modalNuevoTitle">Nuevo Registro</h3><button class="close-modal" id="closeNuevoModalBtn">&times;</button></div><div class="modal-body"><div class="tabs-container"><ul class="tabs-list"><li><button type="button" class="tab-btn active" data-tab="tab1">Datos Personales</button></li><li><button type="button" class="tab-btn" data-tab="tab2">Datos Iglesia</button></li><li><button type="button" class="tab-btn" data-tab="tab3">Escuela/Etapas</button></li><li><button type="button" class="tab-btn" data-tab="tab4">Módulos</button></li><li><button type="button" class="tab-btn" data-tab="tab5">Observaciones</button></li></ul></div><form id="nuevoForm"><div id="tab1" class="tab-pane active-pane"><div class="form-group"><label>Apellido *</label><input type="text" id="nuevoApellido" required></div><div class="form-group"><label>Nombre *</label><input type="text" id="nuevoNombre" required></div><div class="form-group"><label>Edad *</label><input type="number" id="nuevoEdad" required></div><div class="form-group"><label>Teléfono (Argentina +54)</label><div class="phone-prefix"><span>+54</span><input type="tel" id="nuevoTelefono" placeholder="Ej: 9 11 1234 5678" maxlength="15"></div><small style="color:#5b6e8c">Solo números, máx 15 dígitos.</small></div><div class="form-group"><label>Domicilio</label><input type="text" id="nuevoDomicilio"></div><div class="form-group"><label>Ciudad *</label><input type="text" id="nuevoCiudad" required></div><div class="form-group"><label>Perfil</label><select id="nuevoPerfil"><option value="">Seleccione</option><option>Posible Plantador</option><option>Plantador</option><option>Lider emergente</option><option>Mentor</option><option>Multiplicador</option></select></div><div class="form-group"><label>Redes</label><select id="nuevoRedes"><option value="">Seleccione</option><option>Posible Plantador</option><option>Introduccion</option><option>Retiro</option><option>Presentacion de Modulo</option></select></div></div><div id="tab2" class="tab-pane"><div class="form-group"><label>Iglesia *</label><input type="text" id="nuevoIglesia" required></div><div class="form-group"><label>Es Pastor</label><select id="nuevoEsPastor"><option>No</option><option>Si</option></select></div><div class="form-group"><label>Presidente Consejo</label><select id="nuevoEsPresidente"><option>No</option><option>Si</option></select></div><div class="form-group"><label>Denominación</label><input type="text" id="nuevoDenominacion"></div></div><div id="tab3" class="tab-pane"><div class="form-group"><label>Escuelas o Etapas</label><select id="nuevoEscuelasEtapas"><option value="">Seleccione</option><option>Sensibilizacion</option><option>Acompañar</option><option>Celebrar</option></select></div></div><div id="tab4" class="tab-pane"><div class="form-group"><label>Módulos cumplidos (texto libre)</label><input type="text" id="nuevoModulos" placeholder="Ej: Discipulado, Evangelismo"></div><div class="modulo-subsection"><h4>📘 Plan Bernabé-Mentoreo (5 módulos)</h4><div class="modulo-grid" id="modulosBernabeGrid"></div></div><div class="modulo-subsection"><h4>⛪ Iglesia de Impacto (7 módulos)</h4><div class="modulo-grid" id="modulosImpactoGrid"></div></div><div class="modulo-subsection"><h4>🌱 Plantación de Iglesias (15 módulos)</h4><div class="modulo-grid" id="modulosPlantacionGrid"></div></div></div><div id="tab5" class="tab-pane"><div class="form-group"><label>Observaciones</label><textarea id="nuevoObservaciones" rows="3"></textarea></div><div class="form-group"><label>Estado actual</label><select id="nuevoEstado"><option>Pendiente</option><option>En proceso</option><option>Cumplido</option></select></div></div><div class="form-actions"><button type="button" class="btn-primary-outline" id="cancelarNuevoBtn">Cancelar</button><button type="submit" class="btn-primary" id="guardarNuevoBtn">Guardar</button></div></form></div></div></div>
 
+<!-- Modal Detalle -->
 <div id="detailModal" class="modal-overlay"><div class="modal-container"><div class="modal-header"><h3>Detalle del Registro</h3><button class="close-modal" id="closeModalBtn">&times;</button></div><div class="modal-body" id="modalBodyContent"></div></div></div>
 
+<!-- Modal Confirmación Eliminación -->
 <div id="confirmDeleteModal" class="confirm-modal-overlay"><div class="confirm-modal"><div class="confirm-header">⚠️ Confirmar eliminación</div><div class="confirm-body">¿Estás seguro de eliminar este registro? Esta acción no se puede deshacer.</div><div class="confirm-buttons"><button id="confirmDeleteYes" class="confirm-btn-yes">Eliminar</button><button id="confirmDeleteNo" class="confirm-btn-no">Cancelar</button></div></div></div>
+
+<!-- Modal Confirmación Salida -->
+<div id="confirmLogoutModal" class="confirm-modal-overlay"><div class="confirm-modal"><div class="confirm-header">🚪 Cerrar sesión</div><div class="confirm-body">¿Estás seguro de que deseas salir de la aplicación?</div><div class="confirm-buttons"><button id="confirmLogoutYes" class="confirm-btn-yes">Salir</button><button id="confirmLogoutNo" class="confirm-btn-no">Cancelar</button></div></div></div>
 
 <script>
     let personas = [];
@@ -1041,12 +1046,9 @@
             embedContainer.style.display = 'flex';
             embedIframe.src = url;
             embedTitle.innerText = titulo;
-            // Ocultar el panel de filtros y el botón de filtros (si existe)
             if (filtersCard) filtersCard.style.display = 'none';
             if (filtersToggle) filtersToggle.style.display = 'none';
-            // Cambiar título principal
             if (mainTitle) mainTitle.innerText = titulo;
-            // Cambiar layout del grid a una sola columna para que el embed ocupe todo el ancho
             if (dashboardGrid) dashboardGrid.classList.add('embed-fullwidth');
         }
     }
@@ -1064,16 +1066,10 @@
             embedContainer.style.display = 'none';
             tablaContainer.style.display = 'block';
             embedIframe.src = 'about:blank';
-            // Mostrar filtros nuevamente
             if (filtersCard) filtersCard.style.display = 'block';
-            // Para el botón de filtros, no lo forzamos a 'block' para que el CSS de escritorio lo oculte automáticamente.
-            // Simplemente removemos el estilo inline para que prevalezca la hoja de estilos.
             if (filtersToggle) filtersToggle.style.display = '';
-            // Restaurar título
             if (mainTitle) mainTitle.innerText = 'Tabla de Registro';
-            // Restaurar layout del grid a dos columnas
             if (dashboardGrid) dashboardGrid.classList.remove('embed-fullwidth');
-            // Forzar reasignación del filtro al grid por si estaba en modo móvil
             const mobileContainer = document.getElementById('mobileFiltersContainer');
             const desktopCard = document.getElementById('desktopFiltersCard');
             if (mobileContainer && desktopCard && mobileContainer.contains(desktopCard)) {
@@ -1088,7 +1084,6 @@
     function initTabs(){ document.querySelectorAll('.tab-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ const tabId=btn.getAttribute('data-tab'); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active-pane')); document.getElementById(tabId).classList.add('active-pane'); }); }); }
     
     function init(){
-        // NO se agregan datos ficticios. La tabla comienza vacía.
         actualizarSelectoresFiltros();
         updateFilteredData();
         initTabs();
@@ -1102,7 +1097,35 @@
         document.getElementById('limpiarFiltrosBtn').addEventListener('click',()=>{ document.getElementById('filtroGeneral').value=''; document.getElementById('filtroPerfil').value=''; document.getElementById('filtroEstadoModulo').value=''; document.getElementById('filtroPlanModulos').value=''; document.getElementById('filtroIglesia').value=''; document.getElementById('filtroCiudad').value=''; document.getElementById('filtroEstado').value=''; updateFilteredData(); });
         document.getElementById('imprimirCompletaBtn').addEventListener('click',()=>imprimirDatos(getSortedData(personas)));
         document.getElementById('imprimirFiltradaBtn').addEventListener('click',()=>imprimirDatos(currentFilteredData));
-        document.getElementById('salirBtn').addEventListener('click',()=>window.location.href='index.html');
+        
+        // --- Botón Salir con modal personalizado ---
+        const salirBtn = document.getElementById('salirBtn');
+        const confirmLogoutModal = document.getElementById('confirmLogoutModal');
+        const confirmLogoutYes = document.getElementById('confirmLogoutYes');
+        const confirmLogoutNo = document.getElementById('confirmLogoutNo');
+        
+        if(salirBtn) {
+            salirBtn.addEventListener('click', () => {
+                if(confirmLogoutModal) confirmLogoutModal.classList.add('active');
+            });
+        }
+        if(confirmLogoutYes) {
+            confirmLogoutYes.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+        }
+        if(confirmLogoutNo) {
+            confirmLogoutNo.addEventListener('click', () => {
+                if(confirmLogoutModal) confirmLogoutModal.classList.remove('active');
+            });
+        }
+        // Cerrar modal si se hace clic fuera del contenido
+        if(confirmLogoutModal) {
+            confirmLogoutModal.addEventListener('click', (e) => {
+                if(e.target === confirmLogoutModal) confirmLogoutModal.classList.remove('active');
+            });
+        }
+        
         document.getElementById('nuevoRegistroBtn').addEventListener('click',()=>{ editModeId=null; document.getElementById('modalNuevoTitle').innerText='Nuevo Registro'; document.getElementById('nuevoForm').reset(); construirModulosForm(); document.getElementById('nuevoEsPastor').value='No'; document.getElementById('nuevoEsPresidente').value='No'; document.getElementById('nuevoTelefono').value=''; document.getElementById('nuevoModal').classList.add('active'); });
         
         const mapaBtn = document.getElementById('mapaBtn');
