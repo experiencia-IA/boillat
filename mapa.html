@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Misiones - Mapa Estratégico Político</title>
+    <title>Mapa Estratégico - Datos desde Registros</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,18 +58,30 @@
         }
         .search-bar input { border: none; outline: none; flex: 1; font-size: 16px; margin-left: 12px; width: 100%; }
 
+        .refresh-btn {
+            margin: 12px 16px;
+            background: var(--gm-blue-shade);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
         #panel-content { flex: 1; overflow-y: auto; }
 
         .city-item { display: flex; align-items: center; padding: 12px 24px; cursor: pointer; border-bottom: 1px solid #f1f3f4; }
         .city-item:hover { background: #f8f9fa; }
 
-        .detail-header { height: 140px; background: linear-gradient(135deg, #00008B 0%, #1976d2 100%); position: relative; transition: background 0.3s; }
-        .detail-header.editing { background: linear-gradient(135deg, #4285f4 0%, #34a853 100%); }
-        
+        .detail-header { height: 140px; background: linear-gradient(135deg, #00008B 0%, #1976d2 100%); position: relative; }
         .header-actions { position: absolute; top: 16px; width: calc(100% - 32px); left: 16px; display: flex; justify-content: space-between; }
         .circle-btn { background: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--gm-shadow); color: var(--gm-blue-dark); border: none; }
-        .circle-btn.save-btn { color: #34a853; }
-        
+
         .detail-body { padding: 24px; }
         .detail-title { font-family: 'Google Sans', sans-serif; font-size: 24px; margin-bottom: 4px; font-weight: 500; }
         .stats-grid { display: flex; flex-direction: column; gap: 4px; margin-top: 15px; }
@@ -77,19 +89,6 @@
         .stat-row .material-icons-outlined { color: var(--gm-blue-shade); margin-right: 16px; font-size: 20px; }
         .stat-label { flex: 1; font-size: 14px; }
         .stat-value { font-weight: 700; color: var(--gm-blue-dark); }
-
-        /* Estilos para inputs de edición */
-        .edit-input {
-            width: 70px;
-            padding: 5px 8px;
-            border: 1px solid var(--gm-border);
-            border-radius: 4px;
-            font-weight: 700;
-            color: var(--gm-blue-dark);
-            text-align: right;
-            font-family: 'Roboto', sans-serif;
-        }
-        .edit-input:focus { outline: 2px solid var(--gm-blue-shade); border-color: transparent; }
 
         .map-controls { position: absolute; bottom: 24px; right: 60px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; }
         .fab { width: 40px; height: 40px; background: white; border-radius: 8px; box-shadow: var(--gm-shadow); display: flex; align-items: center; justify-content: center; cursor: pointer; color: #5f6368; }
@@ -102,61 +101,71 @@
             .map-controls { bottom: calc(45vh + 16px); right: 16px; }
             .search-container { padding: 8px 16px; }
         }
-
-        @media print { .no-print { display: none !important; } }
     </style>
 </head>
 <body>
 
     <div class="main-container">
-        <div id="side-panel" class="no-print">
+        <div id="side-panel">
             <div class="search-container">
                 <div class="search-bar">
                     <span class="material-icons-outlined">menu</span>
-                    <input type="text" id="city-search" placeholder="Buscar ciudad en Misiones..." oninput="filterCities(this.value)">
+                    <input type="text" id="city-search" placeholder="Buscar ciudad..." oninput="filterCities(this.value)">
                     <span class="material-icons-outlined" style="color:var(--gm-blue-shade); cursor:pointer;" onclick="resetSearch()">close</span>
                 </div>
             </div>
+            <button class="refresh-btn" onclick="cargarDatosDesdeApp()">
+                <span class="material-icons-outlined">refresh</span> Actualizar datos
+            </button>
             <div id="panel-content"></div>
         </div>
-        <div id="map" class="no-print"></div>
+        <div id="map"></div>
     </div>
 
-    <div class="right-strip no-print">
+    <div class="right-strip">
         <div class="vertical-text">Misiones - Argentina</div>
     </div>
 
-    <div class="map-controls no-print">
+    <div class="map-controls">
         <div class="fab" onclick="resetView()"><span class="material-icons-outlined">my_location</span></div>
     </div>
 
     <script>
-        // Datos de ciudades (se mantienen en memoria durante la sesión)
-        let misionesCities = [
-            { name: "Posadas", dept: "Capital", coords: [-27.367, -55.896], pastores: 52, multiplicadores: 21, discipuladores: 180, plantadores: 14, mentores: 18, nuevosCreyentes: 600, nuevasIglesias: 9 },
-            { name: "Garupá", dept: "Capital", coords: [-27.483, -55.833], pastores: 18, multiplicadores: 7, discipuladores: 55, plantadores: 4, mentores: 6, nuevosCreyentes: 210, nuevasIglesias: 3 },
-            { name: "Puerto Iguazú", dept: "Iguazú", coords: [-25.599, -54.573], pastores: 25, multiplicadores: 10, discipuladores: 82, plantadores: 6, mentores: 8, nuevosCreyentes: 280, nuevasIglesias: 5 },
-            { name: "Wanda", dept: "Iguazú", coords: [-25.967, -54.567], pastores: 9, multiplicadores: 3, discipuladores: 32, plantadores: 2, mentores: 3, nuevosCreyentes: 90, nuevasIglesias: 1 },
-            { name: "Eldorado", dept: "Eldorado", coords: [-26.400, -54.617], pastores: 31, multiplicadores: 12, discipuladores: 98, plantadores: 7, mentores: 9, nuevosCreyentes: 340, nuevasIglesias: 6 },
-            { name: "Oberá", dept: "Oberá", coords: [-27.485, -55.120], pastores: 38, multiplicadores: 15, discipuladores: 125, plantadores: 9, mentores: 11, nuevosCreyentes: 450, nuevasIglesias: 7 },
-            { name: "San Vicente", dept: "Guaraní", coords: [-27.017, -54.467], pastores: 19, multiplicadores: 8, discipuladores: 62, plantadores: 5, mentores: 7, nuevosCreyentes: 190, nuevasIglesias: 3 },
-            { name: "El Soberbio", dept: "Guaraní", coords: [-27.298, -54.197], pastores: 14, multiplicadores: 6, discipuladores: 45, plantadores: 3, mentores: 5, nuevosCreyentes: 140, nuevasIglesias: 2 },
-            { name: "Aristóbulo del Valle", dept: "Cainguás", coords: [-27.094, -54.894], pastores: 16, multiplicadores: 6, discipuladores: 58, plantadores: 4, mentores: 5, nuevosCreyentes: 170, nuevasIglesias: 2 },
-            { name: "Bernardo de Irigoyen", dept: "Gral. Belgrano", coords: [-26.255, -53.645], pastores: 13, multiplicadores: 5, discipuladores: 42, plantadores: 3, mentores: 5, nuevosCreyentes: 135, nuevasIglesias: 2 },
-            { name: "Andresito", dept: "Gral. Belgrano", coords: [-25.672, -54.045], pastores: 15, multiplicadores: 6, discipuladores: 48, plantadores: 4, mentores: 6, nuevosCreyentes: 160, nuevasIglesias: 2 },
-            { name: "Apóstoles", dept: "Apóstoles", coords: [-27.915, -55.755], pastores: 18, multiplicadores: 7, discipuladores: 65, plantadores: 4, mentores: 6, nuevosCreyentes: 200, nuevasIglesias: 3 },
-            { name: "San Pedro", dept: "San Pedro", coords: [-26.623, -54.108], pastores: 15, multiplicadores: 6, discipuladores: 50, plantadores: 4, mentores: 5, nuevosCreyentes: 155, nuevasIglesias: 2 },
-            { name: "Montecarlo", dept: "Montecarlo", coords: [-26.567, -54.750], pastores: 17, multiplicadores: 7, discipuladores: 58, plantadores: 4, mentores: 6, nuevosCreyentes: 170, nuevasIglesias: 2 },
-            { name: "Jardín América", dept: "San Ignacio", coords: [-27.042, -55.228], pastores: 15, multiplicadores: 6, discipuladores: 52, plantadores: 3, mentores: 5, nuevosCreyentes: 160, nuevasIglesias: 2 },
-            { name: "Leandro N. Alem", dept: "L. N. Alem", coords: [-27.603, -55.323], pastores: 22, multiplicadores: 9, discipuladores: 78, plantadores: 5, mentores: 7, nuevosCreyentes: 230, nuevasIglesias: 4 }
-        ];
+        // Diccionario de coordenadas para ciudades de Misiones (puedes ampliarlo)
+        const coordenadasCiudades = {
+            "Posadas": [-27.367, -55.896],
+            "Garupá": [-27.483, -55.833],
+            "Puerto Iguazú": [-25.599, -54.573],
+            "Wanda": [-25.967, -54.567],
+            "Eldorado": [-26.400, -54.617],
+            "Oberá": [-27.485, -55.120],
+            "San Vicente": [-27.017, -54.467],
+            "El Soberbio": [-27.298, -54.197],
+            "Aristóbulo del Valle": [-27.094, -54.894],
+            "Bernardo de Irigoyen": [-26.255, -53.645],
+            "Andresito": [-25.672, -54.045],
+            "Apóstoles": [-27.915, -55.755],
+            "San Pedro": [-26.623, -54.108],
+            "Montecarlo": [-26.567, -54.750],
+            "Jardín América": [-27.042, -55.228],
+            "Leandro N. Alem": [-27.603, -55.323]
+        };
 
+        let map;
+        let markersLayer = L.layerGroup(); // para agrupar marcadores
+        let ciudadesData = []; // { ciudad, total, perfiles: { ... }, coordenadas }
+
+        // Límites de Misiones
         const bounds = [[-28.15, -56.3], [-25.5, -53.4]];
-        const map = L.map('map', { zoomControl: false, maxBounds: bounds, minZoom: 7 }).fitBounds(bounds);
-        
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
+
+        function initMap() {
+            map = L.map('map', { zoomControl: false, maxBounds: bounds, minZoom: 7 }).fitBounds(bounds);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+            cargarFronteraMisiones();
+            markersLayer.addTo(map);
+        }
 
         function cargarFronteraMisiones() {
             const url = "https://nominatim.openstreetmap.org/search?q=Misiones+Argentina&format=json&polygon_geojson=1";
@@ -174,165 +183,196 @@
                 .catch(err => console.error("Error cargando frontera:", err));
         }
 
-        cargarFronteraMisiones();
+        // Cargar datos desde localStorage (app_personas)
+        function cargarDatosDesdeApp() {
+            const stored = localStorage.getItem('app_personas');
+            if (!stored) {
+                alert("No hay registros en la aplicación. Agrega datos desde el sistema de gestión.");
+                renderList([]);
+                return;
+            }
+            let personas;
+            try {
+                personas = JSON.parse(stored);
+            } catch(e) {
+                console.error(e);
+                return;
+            }
+            if (!personas.length) {
+                renderList([]);
+                return;
+            }
 
-        const panel = document.getElementById('panel-content');
-        const searchInput = document.getElementById('city-search');
+            // Agrupar por ciudad
+            const grupos = new Map(); // ciudad -> { total, perfiles: { key: count } }
+            for (let p of personas) {
+                const ciudad = p.ciudad;
+                if (!ciudad) continue;
+                if (!grupos.has(ciudad)) {
+                    grupos.set(ciudad, { total: 0, perfiles: {} });
+                }
+                const grupo = grupos.get(ciudad);
+                grupo.total++;
+                const perfil = p.perfil || "Sin perfil";
+                grupo.perfiles[perfil] = (grupo.perfiles[perfil] || 0) + 1;
+            }
 
-        misionesCities.forEach(city => {
-            L.circleMarker(city.coords, { radius: 7, fillColor: "#EA4335", color: "#fff", weight: 2, fillOpacity: 1 })
-            .addTo(map).on('click', () => showDetail(city));
-        });
+            // Convertir a array y añadir coordenadas si existen
+            ciudadesData = [];
+            for (let [ciudad, data] of grupos.entries()) {
+                const coords = coordenadasCiudades[ciudad] || null;
+                ciudadesData.push({
+                    ciudad: ciudad,
+                    total: data.total,
+                    perfiles: data.perfiles,
+                    coordenadas: coords
+                });
+            }
+            ciudadesData.sort((a,b) => a.ciudad.localeCompare(b.ciudad));
 
-        function renderList(list) {
-            let html = `<div style="padding:16px 24px; font-size:12px; color:var(--gm-text-secondary); font-weight:700; text-transform:uppercase;">Resultados en Misiones</div>`;
-            list.sort((a,b) => a.name.localeCompare(b.name)).forEach(city => {
+            // Actualizar marcadores
+            markersLayer.clearLayers();
+            for (let c of ciudadesData) {
+                if (c.coordenadas) {
+                    const marker = L.circleMarker(c.coordenadas, {
+                        radius: 7,
+                        fillColor: "#EA4335",
+                        color: "#fff",
+                        weight: 2,
+                        fillOpacity: 1
+                    }).addTo(markersLayer);
+                    marker.bindPopup(`<b>${c.ciudad}</b><br>Total: ${c.total} registros`);
+                    marker.on('click', () => showDetail(c.ciudad));
+                }
+            }
+
+            renderList(ciudadesData);
+        }
+
+        function renderList(ciudades) {
+            let html = `<div style="padding:16px 24px; font-size:12px; color:var(--gm-text-secondary); font-weight:700; text-transform:uppercase;">Ciudades con registros (${ciudades.length})</div>`;
+            if (ciudades.length === 0) {
+                html += `<div style="padding:24px; text-align:center; color:#777;">No hay datos. Agrega registros desde la aplicación principal y presiona "Actualizar datos".</div>`;
+                document.getElementById('panel-content').innerHTML = html;
+                return;
+            }
+            ciudades.forEach(city => {
                 html += `
-                    <div class="city-item" onclick="showDetailByName('${city.name}')">
+                    <div class="city-item" onclick="showDetail('${city.ciudad}')">
                         <span class="material-icons-outlined" style="margin-right:15px; color:#70757a">location_on</span>
                         <div>
-                            <div style="font-weight:500; color:var(--gm-text);">${city.name}</div>
-                            <div style="font-size:13px; color:var(--gm-text-secondary);">Depto. ${city.dept}</div>
+                            <div style="font-weight:500; color:var(--gm-text);">${city.ciudad}</div>
+                            <div style="font-size:13px; color:var(--gm-text-secondary);">Total: ${city.total} registros</div>
                         </div>
                     </div>`;
             });
-            panel.innerHTML = html;
+            document.getElementById('panel-content').innerHTML = html;
         }
 
-        function showDetail(city) {
-            const isMobile = window.innerWidth <= 768;
-            map.flyTo(city.coords, 11, { paddingBottomRight: isMobile ? [0, 0] : [0, 0], duration: 1.5 });
-            
-            panel.innerHTML = `
+        function showDetail(ciudadNombre) {
+            const ciudad = ciudadesData.find(c => c.ciudad === ciudadNombre);
+            if (!ciudad) return;
+
+            // Volar a coordenadas si existen
+            if (ciudad.coordenadas) {
+                map.flyTo(ciudad.coordenadas, 11, { duration: 1.5 });
+            } else {
+                map.flyToBounds(bounds);
+            }
+
+            // Construir estadísticas de perfiles
+            let perfilesHtml = '';
+            const orden = ["Posible Plantador", "Plantador", "Lider emergente", "Mentor", "Multiplicador", "Sin perfil"];
+            for (let per of orden) {
+                const cantidad = ciudad.perfiles[per] || 0;
+                if (cantidad > 0) {
+                    let icono = 'person';
+                    if (per === "Plantador") icono = 'agriculture';
+                    else if (per === "Mentor") icono = 'psychology';
+                    else if (per === "Multiplicador") icono = 'hub';
+                    else if (per === "Lider emergente") icono = 'groups';
+                    perfilesHtml += `
+                        <div class="stat-row">
+                            <span class="material-icons-outlined">${icono}</span>
+                            <span class="stat-label">${per}</span>
+                            <span class="stat-value">${cantidad}</span>
+                        </div>`;
+                }
+            }
+            if (perfilesHtml === '') perfilesHtml = '<div class="stat-row">Sin perfiles registrados</div>';
+
+            const panelContent = document.getElementById('panel-content');
+            panelContent.innerHTML = `
                 <div class="detail-header">
                     <div class="header-actions">
-                        <button class="circle-btn" onclick="renderList(misionesCities)"><span class="material-icons-outlined">arrow_back</span></button>
-                        <div style="display:flex; gap:8px;">
-                            <button class="circle-btn" title="Editar datos" onclick="editDetail('${city.name}')"><span class="material-icons-outlined">edit</span></button>
-                            <button class="circle-btn" title="Imprimir" onclick="printResults('${city.name}')"><span class="material-icons-outlined">print</span></button>
-                        </div>
+                        <button class="circle-btn" onclick="cargarDatosDesdeApp()"><span class="material-icons-outlined">arrow_back</span></button>
+                        <button class="circle-btn" title="Imprimir reporte" onclick="printReport('${ciudad.ciudad}')"><span class="material-icons-outlined">print</span></button>
                     </div>
                 </div>
                 <div class="detail-body">
-                    <div class="detail-title">${city.name}</div>
+                    <div class="detail-title">${ciudad.ciudad}</div>
                     <div style="color:var(--gm-text-secondary); font-size:14px; margin-bottom:15px;">Misiones, Argentina</div>
                     <div class="stats-grid">
-                        ${stat('person', 'Pastores', city.pastores)}
-                        ${stat('hub', 'Multiplicadores', city.multiplicadores)}
-                        ${stat('groups', 'Discipuladores', city.discipuladores)}
-                        ${stat('agriculture', 'Plantadores', city.plantadores)}
-                        ${stat('psychology', 'Mentores', city.mentores)}
-                        ${stat('volunteer_activism', 'Nuevos Creyentes', city.nuevosCreyentes)}
-                        ${stat('church', 'Nuevas Iglesias', city.nuevasIglesias)}
+                        <div class="stat-row">
+                            <span class="material-icons-outlined">groups</span>
+                            <span class="stat-label">Total de personas</span>
+                            <span class="stat-value">${ciudad.total}</span>
+                        </div>
+                        ${perfilesHtml}
                     </div>
                 </div>`;
         }
 
-        // Función para cambiar a modo edición
-        function editDetail(cityName) {
-            const city = misionesCities.find(c => c.name === cityName);
-            panel.innerHTML = `
-                <div class="detail-header editing">
-                    <div class="header-actions">
-                        <button class="circle-btn" onclick="showDetailByName('${city.name}')"><span class="material-icons-outlined">close</span></button>
-                        <button class="circle-btn save-btn" title="Guardar cambios" onclick="saveChanges('${city.name}')"><span class="material-icons-outlined">check</span></button>
-                    </div>
-                </div>
-                <div class="detail-body">
-                    <div class="detail-title">Editando: ${city.name}</div>
-                    <div style="color:var(--gm-text-secondary); font-size:14px; margin-bottom:15px;">Modifique los valores numéricos</div>
-                    <div class="stats-grid">
-                        ${statEdit('person', 'Pastores', city.pastores, 'pastores')}
-                        ${statEdit('hub', 'Multiplicadores', city.multiplicadores, 'multiplicadores')}
-                        ${statEdit('groups', 'Discipuladores', city.discipuladores, 'discipuladores')}
-                        ${statEdit('agriculture', 'Plantadores', city.plantadores, 'plantadores')}
-                        ${statEdit('psychology', 'Mentores', city.mentores, 'mentores')}
-                        ${statEdit('volunteer_activism', 'Nuevos Creyentes', city.nuevosCreyentes, 'nuevosCreyentes')}
-                        ${statEdit('church', 'Nuevas Iglesias', city.nuevasIglesias, 'nuevasIglesias')}
-                    </div>
-                </div>`;
-        }
-
-        // Función para guardar cambios
-        function saveChanges(cityName) {
-            const city = misionesCities.find(c => c.name === cityName);
-            if (city) {
-                city.pastores = parseInt(document.getElementById('edit-pastores').value) || 0;
-                city.multiplicadores = parseInt(document.getElementById('edit-multiplicadores').value) || 0;
-                city.discipuladores = parseInt(document.getElementById('edit-discipuladores').value) || 0;
-                city.plantadores = parseInt(document.getElementById('edit-plantadores').value) || 0;
-                city.mentores = parseInt(document.getElementById('edit-mentores').value) || 0;
-                city.nuevosCreyentes = parseInt(document.getElementById('edit-nuevosCreyentes').value) || 0;
-                city.nuevasIglesias = parseInt(document.getElementById('edit-nuevasIglesias').value) || 0;
-                
-                showDetail(city); // Volver a la vista normal
+        function printReport(ciudadNombre) {
+            const ciudad = ciudadesData.find(c => c.ciudad === ciudadNombre);
+            if (!ciudad) return;
+            let perfilesTexto = '';
+            for (let [perfil, cant] of Object.entries(ciudad.perfiles)) {
+                perfilesTexto += `<div><strong>${perfil}:</strong> ${cant}</div>`;
             }
-        }
-
-        function stat(icon, label, val) {
-            return `<div class="stat-row">
-                <span class="material-icons-outlined">${icon}</span>
-                <span class="stat-label">${label}</span>
-                <span class="stat-value">${val}</span>
-            </div>`;
-        }
-
-        function statEdit(icon, label, val, id) {
-            return `<div class="stat-row">
-                <span class="material-icons-outlined">${icon}</span>
-                <span class="stat-label">${label}</span>
-                <input type="number" class="edit-input" id="edit-${id}" value="${val}">
-            </div>`;
-        }
-
-        function printResults(cityName) {
-            const city = misionesCities.find(c => c.name === cityName);
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
+            const win = window.open('', '_blank');
+            win.document.write(`
                 <html>
                 <head>
-                    <title>Reporte - ${city.name}</title>
+                    <title>Reporte - ${ciudad.ciudad}</title>
                     <style>
-                        body { font-family: sans-serif; padding: 40px; color: #333; }
+                        body { font-family: sans-serif; padding: 40px; }
                         h1 { color: #00008B; border-bottom: 2px solid #00008B; padding-bottom: 10px; }
-                        .stat { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 1.1em; }
-                        .val { font-weight: bold; color: #00008B; }
-                        .footer { margin-top: 50px; font-size: 0.8em; color: #777; text-align: center; border-top: 1px solid #eee; padding-top: 20px; }
+                        .stat { margin: 10px 0; padding: 8px 0; border-bottom: 1px solid #eee; }
+                        .footer { margin-top: 40px; font-size: 0.8em; color: #777; text-align: center; }
                     </style>
                 </head>
                 <body>
-                    <p>REPORTE ESTRATÉGICO - MISIONES</p>
-                    <h1>${city.name} (Depto. ${city.dept})</h1>
-                    <div class="stat"><span>Pastores</span> <span class="val">${city.pastores}</span></div>
-                    <div class="stat"><span>Multiplicadores</span> <span class="val">${city.multiplicadores}</span></div>
-                    <div class="stat"><span>Discipuladores</span> <span class="val">${city.discipuladores}</span></div>
-                    <div class="stat"><span>Plantadores</span> <span class="val">${city.plantadores}</span></div>
-                    <div class="stat"><span>Mentores</span> <span class="val">${city.mentores}</span></div>
-                    <div class="stat"><span>Nuevos Creyentes</span> <span class="val">${city.nuevosCreyentes}</span></div>
-                    <div class="stat"><span>Nuevas Iglesias</span> <span class="val">${city.nuevasIglesias}</span></div>
-                    <div class="footer">Generado el ${new Date().toLocaleDateString()}</div>
+                    <h1>${ciudad.ciudad} - Misiones</h1>
+                    <p><strong>Total de registros:</strong> ${ciudad.total}</p>
+                    <h3>Clasificación por perfil</h3>
+                    ${perfilesTexto}
+                    <div class="footer">Generado desde Mapa Estratégico · ${new Date().toLocaleString()}</div>
                 </body>
                 </html>
             `);
-            printWindow.document.close();
-            setTimeout(() => { printWindow.print(); }, 500);
+            win.document.close();
+            win.print();
         }
 
-        function filterCities(q) {
-            const filtered = misionesCities.filter(c => c.name.toLowerCase().includes(q.toLowerCase()));
+        function filterCities(query) {
+            const filtered = ciudadesData.filter(c => c.ciudad.toLowerCase().includes(query.toLowerCase()));
             renderList(filtered);
         }
 
-        function showDetailByName(name) {
-            const city = misionesCities.find(c => c.name === name);
-            if(city) showDetail(city);
+        function resetSearch() {
+            document.getElementById('city-search').value = '';
+            renderList(ciudadesData);
         }
 
-        function resetSearch() { searchInput.value = ''; renderList(misionesCities); resetView(); }
-        function resetView() { map.flyToBounds(bounds); }
+        function resetView() {
+            map.flyToBounds(bounds);
+        }
 
-        renderList(misionesCities);
-        window.addEventListener('resize', () => { map.invalidateSize(); });
+        // Inicializar
+        initMap();
+        cargarDatosDesdeApp();
+        window.addEventListener('resize', () => { if (map) map.invalidateSize(); });
     </script>
 </body>
 </html>
