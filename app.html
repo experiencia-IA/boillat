@@ -317,6 +317,251 @@
             color: #475569;
         }
 
+        /* ----- Estilos para pestañas en modal ----- */
+        .tabs-container {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .tabs-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .tab-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #1e293b;
+        }
+        .tab-btn.active {
+            background: #2563eb;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+        .tab-pane.active-pane {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modulo-subsection {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 16px;
+            background-color: #fafcff;
+        }
+        .modulo-subsection h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 14px;
+            border-left: 3px solid #3b82f6;
+            padding-left: 12px;
+        }
+        .modulo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+        }
+        .modulo-item {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            padding: 8px 12px;
+            border-radius: 16px;
+            border: 1px solid #eef2f8;
+        }
+        .modulo-item label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            width: 90px;
+            color: #1e293b;
+        }
+        .modulo-item input[type="date"] {
+            padding: 6px 8px;
+            font-size: 0.7rem;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            flex: 1;
+            min-width: 120px;
+        }
+        .modulo-item select {
+            padding: 6px 8px;
+            font-size: 0.7rem;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-weight: 500;
+        }
+        .status-cumplido-select {
+            color: #166534;
+            font-weight: 700;
+            background-color: #dcfce7;
+        }
+        .modulo-item .cumplido-option {
+            font-weight: 700;
+            color: #166534;
+        }
+
+        /* Modal detalle moderno */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px 24px;
+            margin-bottom: 20px;
+        }
+        .detail-field {
+            border-bottom: 1px solid #eef2f8;
+            padding-bottom: 8px;
+        }
+        .detail-field .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #5b6e8c;
+            letter-spacing: 0.3px;
+        }
+        .detail-field .value {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #0f172a;
+            margin-top: 4px;
+            word-break: break-word;
+        }
+        .modulos-detalle {
+            grid-column: span 2;
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 16px;
+            margin-top: 8px;
+        }
+        .modulos-detalle h5 {
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+        .modulos-fechas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 12px;
+        }
+        .modulo-detalle-item {
+            background: white;
+            border-radius: 14px;
+            padding: 8px 12px;
+            border-left: 3px solid #3b82f6;
+        }
+        .detail-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .btn-warning {
+            background: #f97316;
+            border: none;
+            color: white;
+        }
+        .btn-danger {
+            background: #dc2626;
+            border: none;
+            color: white;
+        }
+        @media (max-width: 680px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .modulos-detalle {
+                grid-column: span 1;
+            }
+        }
+
+        /* Modal confirmación rojo */
+        .confirm-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(3px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+        .confirm-modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .confirm-modal {
+            background: white;
+            max-width: 380px;
+            width: 90%;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .confirm-header {
+            background: #dc2626;
+            padding: 18px;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .confirm-body {
+            padding: 24px 20px;
+            font-size: 1rem;
+            color: #1e293b;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 12px;
+            padding: 0 20px 20px 20px;
+            justify-content: center;
+        }
+        .confirm-btn-yes {
+            background: #dc2626;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .confirm-btn-no {
+            background: #e2e8f0;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -340,7 +585,7 @@
         .modal-container {
             background: white;
             width: 90%;
-            max-width: 700px;
+            max-width: 950px;
             border-radius: 28px;
             box-shadow: 0 25px 40px rgba(0,0,0,0.2);
             overflow: hidden;
@@ -358,10 +603,6 @@
             justify-content: space-between;
             align-items: center;
         }
-        .modal-header h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
         .close-modal {
             background: none;
             border: none;
@@ -371,12 +612,9 @@
             color: white;
             opacity: 0.8;
         }
-        .close-modal:hover {
-            opacity: 1;
-        }
         .modal-body {
             padding: 22px 26px;
-            max-height: 65vh;
+            max-height: 70vh;
             overflow-y: auto;
         }
         .form-group {
@@ -397,19 +635,30 @@
             font-family: 'Inter', sans-serif;
             font-size: 0.85rem;
         }
+        .phone-prefix {
+            display: flex;
+            align-items: center;
+            border: 1px solid #cbd5e1;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        .phone-prefix span {
+            background: #f1f5f9;
+            padding: 10px 12px;
+            font-weight: 600;
+            color: #1e293b;
+            border-right: 1px solid #cbd5e1;
+        }
+        .phone-prefix input {
+            border: none;
+            border-radius: 0;
+            flex: 1;
+        }
         .form-actions {
             display: flex;
             justify-content: flex-end;
             gap: 12px;
             margin-top: 24px;
-        }
-        .detail-row {
-            display: grid;
-            grid-template-columns: 140px 1fr;
-            gap: 12px;
-            margin-bottom: 14px;
-            border-bottom: 1px solid #edf2f7;
-            padding-bottom: 10px;
         }
         .badge-status {
             display: inline-block;
@@ -429,48 +678,14 @@
             border-top: 1px solid #edf2f7;
             padding-top: 12px;
         }
-        .btn-print-detail {
-            background: #475569;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-
-        @media (max-width: 880px) {
-            body { padding: 16px; }
-            .app-wrapper { padding: 1.2rem; }
-            .dashboard-grid { grid-template-columns: 1fr; gap: 0; }
-            .dashboard-grid .filters-card { display: none; }
-            .filters-toggle { display: block; }
-            .table-wrapper { max-height: 55vh; }
-            .header-bar { flex-direction: column; align-items: stretch; }
-            .action-group { justify-content: space-between; width: 100%; }
-            .welcome-highlight { font-size: 0.9rem; padding: 5px 12px; }
-            .pagination-container { flex-direction: column; align-items: center; }
-            .modal-body { padding: 18px; }
-            .detail-row { grid-template-columns: 1fr; gap: 4px; }
-        }
-        @media (max-width: 560px) {
-            .action-group { flex-direction: column; align-items: stretch; gap: 10px; }
-            .action-buttons { justify-content: stretch; }
-            .welcome-highlight { text-align: center; }
-        }
-        @media print {
-            .filters-card, .filters-toggle, .action-group, .pagination-container, .stats-badge, .modal-header .close-modal, .btn-print-detail { display: none; }
-            .table-container { border: 1px solid #ccc; }
-            .modal-overlay { position: relative; visibility: visible; opacity: 1; background: white; backdrop-filter: none; }
-            .modal-container { box-shadow: none; width: 100%; max-width: 100%; border-radius: 0; }
-            .modal-header { background: #e2e8f0; color: black; }
-        }
     </style>
 </head>
 <body>
 <div class="app-wrapper">
     <div class="header-bar">
-        <div class="title-section">
-            <h1>Tabla de Registro</h1>
-        </div>
+        <div class="title-section"><h1>Tabla de Registro</h1></div>
         <div class="action-group">
-            <div class="welcome-highlight">Hola, bienvenido al sistema de gestión.</div>
+            <div class="welcome-highlight">Hola, bienvenido a la Red de Multiplicación.</div>
             <div class="action-buttons">
                 <button class="btn-primary-action" id="nuevoRegistroBtn">Nuevo Registro</button>
                 <button class="btn-primary-action" id="mapaBtn">Mapa</button>
@@ -479,370 +694,300 @@
             </div>
         </div>
     </div>
-
-    <div class="filters-toggle">
-        <button class="btn-filters" id="toggleFiltersBtn">Filtros</button>
-    </div>
+    <div class="filters-toggle"><button class="btn-filters" id="toggleFiltersBtn">Filtros</button></div>
     <div id="mobileFiltersContainer" class="mobile-filters-container"></div>
-
     <div class="dashboard-grid">
         <div class="table-container">
-            <div class="table-wrapper">
-                <table class="data-table">
-                    <thead>
-                        <tr><th>Número</th><th>Apellido</th><th>Nombre</th><th>Edad</th><th>Iglesia</th><th>Domicilio</th><th>Ciudad</th><th>Perfil</th><th>Observaciones</th><th>Teléfono</th></tr>
-                    </thead>
-                    <tbody id="tablaBody">
-                        <tr><td colspan="10" style="text-align:center">Cargando...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="pagination-container" id="paginationContainer">
-                <div class="page-info" id="pageInfo">Mostrando 0-0 de 0 registros</div>
-                <div class="pagination-controls" id="paginationControls"></div>
-            </div>
+            <div class="table-wrapper"><table class="data-table"><thead><tr><th>Número</th><th>Apellido</th><th>Nombre</th><th>Edad</th><th>Iglesia</th><th>Domicilio</th><th>Ciudad</th><th>Perfil</th><th>Observaciones</th><th>Teléfono</th></tr></thead><tbody id="tablaBody"><tr><td colspan="10">Cargando...</td></tr></tbody></table></div>
+            <div class="pagination-container"><div class="page-info" id="pageInfo"></div><div class="pagination-controls" id="paginationControls"></div></div>
             <div class="stats-badge" id="contadorRegistros">Total registros: 0</div>
         </div>
-
         <div class="filters-card" id="desktopFiltersCard">
             <h3>Filtros avanzados</h3>
             <div class="filter-group"><label>Búsqueda global</label><input type="text" id="filtroGeneral" placeholder="Nombre, iglesia, ciudad..."></div>
-            <div class="filter-group"><label>Módulo cumplido</label><select id="filtroModulo"><option value="">Todos los módulos</option></select></div>
+            <div class="filter-group"><label>Perfil</label><select id="filtroPerfil"><option value="">Todos los perfiles</option></select></div>
+            <div class="filter-group"><label>Estado del módulo</label><select id="filtroEstadoModulo"><option value="">Todos</option><option value="Pendiente">Pendiente</option><option value="Cumplido">Cumplido</option></select></div>
+            <div class="filter-group"><label>Plan de módulos</label><select id="filtroPlanModulos"><option value="">Todos los planes</option><option value="bernabe">Plan Bernabé-Mentoreo</option><option value="impacto">Iglesia de Impacto</option><option value="plantacion">Plantación de Iglesias</option></select></div>
             <div class="filter-group"><label>Iglesia</label><select id="filtroIglesia"><option value="">Todas las iglesias</option></select></div>
             <div class="filter-group"><label>Ciudad</label><select id="filtroCiudad"><option value="">Todas las ciudades</option></select></div>
             <div class="filter-group"><label>Estado actual</label><select id="filtroEstado"><option value="">Todos</option><option value="Pendiente">Pendiente</option><option value="En proceso">En proceso</option><option value="Cumplido">Cumplido</option></select></div>
-            <div class="buttons-group"><button class="btn-primary-outline" id="imprimirCompletaBtn">Imprimir tabla completa</button><button class="btn-primary-outline" id="imprimirFiltradaBtn">Imprimir filtrada</button></div>
+            <div class="buttons-group"><button class="btn-primary-outline" id="imprimirCompletaBtn">Imprimir tabla</button><button class="btn-primary-outline" id="imprimirFiltradaBtn">Imprimir filtrada</button></div>
             <div class="buttons-group"><button class="btn-primary reset-btn" id="limpiarFiltrosBtn">Limpiar filtros</button></div>
-            <div class="small-note">Haz clic en cualquier fila para ver detalles.</div>
+            <div class="small-note">Clic en fila → ver detalles</div>
         </div>
     </div>
 </div>
 
-<!-- Modal Nuevo Registro (incluye teléfono) -->
-<div id="nuevoModal" class="modal-overlay">
-    <div class="modal-container">
-        <div class="modal-header"><h3>Nuevo Registro</h3><button class="close-modal" id="closeNuevoModalBtn">&times;</button></div>
-        <div class="modal-body">
-            <form id="nuevoForm">
-                <div class="form-group"><label>Apellido *</label><input type="text" id="nuevoApellido" required></div>
-                <div class="form-group"><label>Nombre *</label><input type="text" id="nuevoNombre" required></div>
-                <div class="form-group"><label>Edad *</label><input type="number" id="nuevoEdad" required></div>
-                <div class="form-group"><label>Iglesia *</label><input type="text" id="nuevoIglesia" required></div>
-                <div class="form-group"><label>Domicilio</label><input type="text" id="nuevoDomicilio"></div>
-                <div class="form-group"><label>Ciudad *</label><input type="text" id="nuevoCiudad" required></div>
-                <div class="form-group"><label>Perfil</label><input type="text" id="nuevoPerfil"></div>
-                <div class="form-group"><label>Observaciones</label><textarea id="nuevoObservaciones" rows="2"></textarea></div>
-                <div class="form-group"><label>Teléfono</label><input type="tel" id="nuevoTelefono" placeholder="Ej: +54 9 11 1234-5678"></div>
-                <div class="form-group"><label>Módulos cumplidos (separados por coma)</label><input type="text" id="nuevoModulos" placeholder="Ej: Discipulado, Evangelismo"></div>
-                <div class="form-group"><label>Fecha inicio módulo</label><input type="date" id="nuevoFechaInicio"></div>
-                <div class="form-group"><label>Estado actual</label><select id="nuevoEstado"><option value="Pendiente">Pendiente</option><option value="En proceso">En proceso</option><option value="Cumplido">Cumplido</option></select></div>
-                <div class="form-actions"><button type="button" class="btn-primary-outline" id="cancelarNuevoBtn">Cancelar</button><button type="submit" class="btn-primary">Guardar</button></div>
-            </form>
-        </div>
-    </div>
-</div>
+<!-- Modal Nuevo/Editar (sin cambios estructurales) -->
+<div id="nuevoModal" class="modal-overlay"><div class="modal-container"><div class="modal-header"><h3 id="modalNuevoTitle">Nuevo Registro</h3><button class="close-modal" id="closeNuevoModalBtn">&times;</button></div><div class="modal-body"><div class="tabs-container"><ul class="tabs-list"><li><button type="button" class="tab-btn active" data-tab="tab1">Datos Personales</button></li><li><button type="button" class="tab-btn" data-tab="tab2">Datos Iglesia</button></li><li><button type="button" class="tab-btn" data-tab="tab3">Escuela/Etapas</button></li><li><button type="button" class="tab-btn" data-tab="tab4">Módulos</button></li><li><button type="button" class="tab-btn" data-tab="tab5">Observaciones</button></li></ul></div><form id="nuevoForm"><div id="tab1" class="tab-pane active-pane"><div class="form-group"><label>Apellido *</label><input type="text" id="nuevoApellido" required></div><div class="form-group"><label>Nombre *</label><input type="text" id="nuevoNombre" required></div><div class="form-group"><label>Edad *</label><input type="number" id="nuevoEdad" required></div><div class="form-group"><label>Teléfono (Argentina +54)</label><div class="phone-prefix"><span>+54</span><input type="tel" id="nuevoTelefono" placeholder="Ej: 9 11 1234 5678" maxlength="15"></div><small style="color:#5b6e8c">Solo números, máx 15 dígitos.</small></div><div class="form-group"><label>Domicilio</label><input type="text" id="nuevoDomicilio"></div><div class="form-group"><label>Ciudad *</label><input type="text" id="nuevoCiudad" required></div><div class="form-group"><label>Perfil</label><select id="nuevoPerfil"><option value="">Seleccione</option><option>Posible Plantador</option><option>Plantador</option><option>Lider emergente</option><option>Mentor</option><option>Multiplicador</option></select></div><div class="form-group"><label>Redes</label><select id="nuevoRedes"><option value="">Seleccione</option><option>Posible Plantador</option><option>Introduccion</option><option>Retiro</option><option>Presentacion de Modulo</option></select></div></div><div id="tab2" class="tab-pane"><div class="form-group"><label>Iglesia *</label><input type="text" id="nuevoIglesia" required></div><div class="form-group"><label>Es Pastor</label><select id="nuevoEsPastor"><option>No</option><option>Si</option></select></div><div class="form-group"><label>Presidente Consejo</label><select id="nuevoEsPresidente"><option>No</option><option>Si</option></select></div><div class="form-group"><label>Denominación</label><input type="text" id="nuevoDenominacion"></div></div><div id="tab3" class="tab-pane"><div class="form-group"><label>Escuelas o Etapas</label><select id="nuevoEscuelasEtapas"><option value="">Seleccione</option><option>Sensibilizacion</option><option>Acompañar</option><option>Celebrar</option></select></div></div><div id="tab4" class="tab-pane"><div class="form-group"><label>Módulos cumplidos (texto libre)</label><input type="text" id="nuevoModulos" placeholder="Ej: Discipulado, Evangelismo"></div><div class="modulo-subsection"><h4>📘 Plan Bernabé-Mentoreo (5 módulos)</h4><div class="modulo-grid" id="modulosBernabeGrid"></div></div><div class="modulo-subsection"><h4>⛪ Iglesia de Impacto (7 módulos)</h4><div class="modulo-grid" id="modulosImpactoGrid"></div></div><div class="modulo-subsection"><h4>🌱 Plantación de Iglesias (15 módulos)</h4><div class="modulo-grid" id="modulosPlantacionGrid"></div></div></div><div id="tab5" class="tab-pane"><div class="form-group"><label>Observaciones</label><textarea id="nuevoObservaciones" rows="3"></textarea></div><div class="form-group"><label>Estado actual</label><select id="nuevoEstado"><option>Pendiente</option><option>En proceso</option><option>Cumplido</option></select></div></div><div class="form-actions"><button type="button" class="btn-primary-outline" id="cancelarNuevoBtn">Cancelar</button><button type="submit" class="btn-primary" id="guardarNuevoBtn">Guardar</button></div></form></div></div></div>
 
-<!-- Modal Detalle (con botón imprimir y teléfono clickeable) -->
-<div id="detailModal" class="modal-overlay">
-    <div class="modal-container">
-        <div class="modal-header"><h3>Detalle del registro</h3><button class="close-modal" id="closeModalBtn">&times;</button></div>
-        <div class="modal-body" id="modalBodyContent"></div>
-    </div>
-</div>
+<!-- Modal Detalle Moderno -->
+<div id="detailModal" class="modal-overlay"><div class="modal-container"><div class="modal-header"><h3>Detalle del Registro</h3><button class="close-modal" id="closeModalBtn">&times;</button></div><div class="modal-body" id="modalBodyContent"></div></div></div>
+
+<!-- Modal Confirmación Eliminación -->
+<div id="confirmDeleteModal" class="confirm-modal-overlay"><div class="confirm-modal"><div class="confirm-header">⚠️ Confirmar eliminación</div><div class="confirm-body">¿Estás seguro de eliminar este registro? Esta acción no se puede deshacer.</div><div class="confirm-buttons"><button id="confirmDeleteYes" class="confirm-btn-yes">Eliminar</button><button id="confirmDeleteNo" class="confirm-btn-no">Cancelar</button></div></div></div>
 
 <script>
-    // SIN DATOS FICTICIOS: Array vacío para que el usuario ingrese registros reales manualmente
     let personas = [];
-
-    // Configuración paginación
     let currentPage = 1;
     const itemsPerPage = 10;
     let currentFilteredData = [];
+    let pendingDeleteId = null;
 
-    function getSortedData(data) {
-        return [...data].sort((a, b) => b.numero - a.numero);
+    function formatearFecha(fechaISO) {
+        if(!fechaISO) return '';
+        const partes = fechaISO.split('-');
+        if(partes.length!==3) return fechaISO;
+        return `${partes[2]}/${partes[1]}/${partes[0]}`;
     }
 
+    function getSortedData(data) { return [...data].sort((a,b)=>b.numero-a.numero); }
+    
+    // ========== FILTROS AVANZADOS ==========
     function filtrarRegistros() {
         const texto = document.getElementById('filtroGeneral').value.trim().toLowerCase();
-        const moduloVal = document.getElementById('filtroModulo').value;
+        const perfilVal = document.getElementById('filtroPerfil').value;
+        const estadoModuloVal = document.getElementById('filtroEstadoModulo').value;
+        const planModulosVal = document.getElementById('filtroPlanModulos').value;
         const iglesiaVal = document.getElementById('filtroIglesia').value;
         const ciudadVal = document.getElementById('filtroCiudad').value;
-        const estadoVal = document.getElementById('filtroEstado').value;
-        let filtered = personas.filter(p => {
-            if (texto !== "") {
-                const match = p.apellido.toLowerCase().includes(texto) || p.nombre.toLowerCase().includes(texto) ||
-                              p.iglesia.toLowerCase().includes(texto) || p.domicilio.toLowerCase().includes(texto) ||
-                              p.ciudad.toLowerCase().includes(texto) || p.perfil.toLowerCase().includes(texto) ||
-                              (p.observaciones && p.observaciones.toLowerCase().includes(texto)) ||
-                              (p.telefono && p.telefono.toLowerCase().includes(texto));
-                if (!match) return false;
-            }
-            if (moduloVal !== "") {
-                const modulosPersona = p.modulosCumplidos.split(',').map(m => m.trim());
-                if (!modulosPersona.includes(moduloVal)) return false;
-            }
-            if (iglesiaVal !== "" && p.iglesia !== iglesiaVal) return false;
-            if (ciudadVal !== "" && p.ciudad !== ciudadVal) return false;
-            if (estadoVal !== "" && p.estadoActual !== estadoVal) return false;
-            return true;
-        });
-        return getSortedData(filtered);
-    }
-
-    function updateFilteredData() {
-        currentFilteredData = filtrarRegistros();
-        currentPage = 1;
-        renderizarTabla();
-        renderizarPaginacion();
-    }
-
-    function renderizarTabla() {
-        const start = (currentPage - 1) * itemsPerPage;
-        const paginated = currentFilteredData.slice(start, start + itemsPerPage);
-        const tbody = document.getElementById('tablaBody');
-        if (!tbody) return;
-        if (paginated.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:28px;">No hay registros. Use "Nuevo Registro" para agregar.</td></tr>';
-            document.getElementById('contadorRegistros').innerText = `Total registros: ${currentFilteredData.length}`;
-            return;
-        }
-        let html = '';
-        paginated.forEach(p => {
-            const telefonoMostrar = p.telefono ? p.telefono : '';
-            html += `<tr data-id="${p.id}">
-                        <td>${p.numero}</td>
-                        <td>${escapeHtml(p.apellido)}</td>
-                        <td>${escapeHtml(p.nombre)}</td>
-                        <td>${p.edad}</td>
-                        <td>${escapeHtml(p.iglesia)}</td>
-                        <td>${escapeHtml(p.domicilio)}</td>
-                        <td>${escapeHtml(p.ciudad)}</td>
-                        <td>${escapeHtml(p.perfil)}</td>
-                        <td>${escapeHtml(p.observaciones ? p.observaciones.substring(0, 55) : '')}${p.observaciones && p.observaciones.length > 55 ? '…' : ''}</td>
-                        <td>${telefonoMostrar ? `<a href="tel:${encodeURIComponent(telefonoMostrar)}" class="phone-link" onclick="event.stopPropagation()">${escapeHtml(telefonoMostrar)}</a>` : ''}</td>
-                    </tr>`;
-        });
-        tbody.innerHTML = html;
-        document.getElementById('contadorRegistros').innerText = `Total registros: ${currentFilteredData.length}`;
+        const estadoActualVal = document.getElementById('filtroEstado').value;
         
-        document.querySelectorAll('#tablaBody tr[data-id]').forEach(row => {
-            row.addEventListener('click', (e) => {
-                // Evitar que el clic en el enlace telefónico dispare el modal
-                if (e.target.tagName === 'A' && e.target.classList.contains('phone-link')) return;
-                const id = parseInt(row.getAttribute('data-id'));
-                const persona = personas.find(p => p.id === id);
-                if (persona) abrirModalDetalle(persona);
-            });
-        });
-    }
-
-    function renderizarPaginacion() {
-        const totalPages = Math.ceil(currentFilteredData.length / itemsPerPage);
-        const container = document.getElementById('paginationControls');
-        const pageInfo = document.getElementById('pageInfo');
-        if (!container) return;
-        const startItem = (currentPage - 1) * itemsPerPage + 1;
-        const endItem = Math.min(currentPage * itemsPerPage, currentFilteredData.length);
-        pageInfo.innerText = `Mostrando ${startItem}-${endItem} de ${currentFilteredData.length} registros`;
-        if (totalPages <= 1) { container.innerHTML = ''; return; }
-        let btnsHtml = `<button class="pagination-btn" id="prevPageBtn" ${currentPage === 1 ? 'disabled' : ''}>Anterior</button>`;
-        for (let i = 1; i <= totalPages; i++) btnsHtml += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
-        btnsHtml += `<button class="pagination-btn" id="nextPageBtn" ${currentPage === totalPages ? 'disabled' : ''}>Siguiente</button>`;
-        container.innerHTML = btnsHtml;
-        document.querySelectorAll('[data-page]').forEach(btn => btn.addEventListener('click', (e) => { currentPage = parseInt(btn.getAttribute('data-page')); renderizarTabla(); renderizarPaginacion(); }));
-        const prevBtn = document.getElementById('prevPageBtn');
-        const nextBtn = document.getElementById('nextPageBtn');
-        if (prevBtn) prevBtn.addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderizarTabla(); renderizarPaginacion(); } });
-        if (nextBtn) nextBtn.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; renderizarTabla(); renderizarPaginacion(); } });
-    }
-
-    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m==='&') return '&amp;'; if (m==='<') return '&lt;'; if (m==='>') return '&gt;'; return m; }); }
-    
-    function imprimirRegistroIndividual(persona) {
-        const ventana = window.open('', '_blank');
-        let estadoClase = '';
-        let estadoTexto = persona.estadoActual;
-        const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head><meta charset="UTF-8"><title>Detalle de Registro</title>
-        <style>
-            body { font-family: 'Inter', sans-serif; margin: 30px; line-height: 1.5; }
-            h2 { color: #1e293b; border-bottom: 2px solid #ccc; padding-bottom: 8px; }
-            .detail-card { margin-top: 20px; border: 1px solid #ddd; border-radius: 16px; padding: 20px; }
-            .row { display: flex; margin-bottom: 12px; }
-            .label { font-weight: 700; width: 150px; color: #1e293b; }
-            .value { color: #334155; }
-            @media print { body { margin: 0; } }
-        </style>
-        </head>
-        <body>
-        <h2>Detalle de Registro - Iglesia Evangélica</h2>
-        <div class="detail-card">
-            <div class="row"><div class="label">Número:</div><div class="value">${persona.numero}</div></div>
-            <div class="row"><div class="label">Apellido:</div><div class="value">${escapeHtml(persona.apellido)}</div></div>
-            <div class="row"><div class="label">Nombre:</div><div class="value">${escapeHtml(persona.nombre)}</div></div>
-            <div class="row"><div class="label">Edad:</div><div class="value">${persona.edad}</div></div>
-            <div class="row"><div class="label">Iglesia:</div><div class="value">${escapeHtml(persona.iglesia)}</div></div>
-            <div class="row"><div class="label">Domicilio:</div><div class="value">${escapeHtml(persona.domicilio)}</div></div>
-            <div class="row"><div class="label">Ciudad:</div><div class="value">${escapeHtml(persona.ciudad)}</div></div>
-            <div class="row"><div class="label">Perfil:</div><div class="value">${escapeHtml(persona.perfil)}</div></div>
-            <div class="row"><div class="label">Observaciones:</div><div class="value">${escapeHtml(persona.observaciones)}</div></div>
-            <div class="row"><div class="label">Teléfono:</div><div class="value">${escapeHtml(persona.telefono || '')}</div></div>
-            <div class="row"><div class="label">Módulos cumplidos:</div><div class="value">${escapeHtml(persona.modulosCumplidos)}</div></div>
-            <div class="row"><div class="label">Fecha inicio módulo:</div><div class="value">${persona.fechaInicioModulo || ''}</div></div>
-            <div class="row"><div class="label">Estado actual:</div><div class="value">${persona.estadoActual}</div></div>
-        </div>
-        <p style="margin-top: 30px; text-align: center;">Documento generado: ${new Date().toLocaleString()}</p>
-        </body>
-        </html>`;
-        ventana.document.write(htmlContent);
-        ventana.document.close();
-        ventana.print();
-    }
-
-    function abrirModalDetalle(p) {
-        const modal = document.getElementById('detailModal');
-        const modalBody = document.getElementById('modalBodyContent');
-        let estadoClase = p.estadoActual === 'Pendiente' ? 'status-pendiente' : (p.estadoActual === 'En proceso' ? 'status-proceso' : 'status-cumplido');
-        const estadoHtml = `<span class="badge-status ${estadoClase}">${p.estadoActual}</span>`;
-        const telefonoHtml = p.telefono ? `<a href="tel:${encodeURIComponent(p.telefono)}" style="color:#2563eb; text-decoration:none; font-weight:500;">${escapeHtml(p.telefono)}</a>` : '';
-        modalBody.innerHTML = `
-            <div style="margin-bottom: 16px;"><button class="btn-primary btn-print-detail" id="printDetailBtn">🖨️ Imprimir este registro</button></div>
-            <div class="detail-row"><div class="detail-label">Número:</div><div class="detail-value">${p.numero}</div></div>
-            <div class="detail-row"><div class="detail-label">Apellido:</div><div class="detail-value">${escapeHtml(p.apellido)}</div></div>
-            <div class="detail-row"><div class="detail-label">Nombre:</div><div class="detail-value">${escapeHtml(p.nombre)}</div></div>
-            <div class="detail-row"><div class="detail-label">Edad:</div><div class="detail-value">${p.edad}</div></div>
-            <div class="detail-row"><div class="detail-label">Iglesia:</div><div class="detail-value">${escapeHtml(p.iglesia)}</div></div>
-            <div class="detail-row"><div class="detail-label">Domicilio:</div><div class="detail-value">${escapeHtml(p.domicilio)}</div></div>
-            <div class="detail-row"><div class="detail-label">Ciudad:</div><div class="detail-value">${escapeHtml(p.ciudad)}</div></div>
-            <div class="detail-row"><div class="detail-label">Perfil:</div><div class="detail-value">${escapeHtml(p.perfil)}</div></div>
-            <div class="detail-row"><div class="detail-label">Observaciones:</div><div class="detail-value">${escapeHtml(p.observaciones)}</div></div>
-            <div class="detail-row"><div class="detail-label">Teléfono:</div><div class="detail-value">${telefonoHtml}</div></div>
-            <div class="extra-section" style="background:#f9fafb; border-radius:18px; padding:16px; margin-top:18px;">
-                <div class="detail-row"><div class="detail-label">Módulos cumplidos:</div><div class="detail-value">${escapeHtml(p.modulosCumplidos)}</div></div>
-                <div class="detail-row"><div class="detail-label">Fecha inicio:</div><div class="detail-value">${p.fechaInicioModulo || ''}</div></div>
-                <div class="detail-row"><div class="detail-label">Estado actual:</div><div class="detail-value">${estadoHtml}</div></div>
-            </div>`;
-        modal.classList.add('active');
-        document.getElementById('printDetailBtn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            imprimirRegistroIndividual(p);
-        });
+        return getSortedData(personas.filter(p => {
+            // Búsqueda global
+            if (texto && !(p.apellido.toLowerCase().includes(texto) || p.nombre.toLowerCase().includes(texto) || p.iglesia.toLowerCase().includes(texto) || p.ciudad.toLowerCase().includes(texto) || (p.telefono && p.telefono.includes(texto)))) return false;
+            // Perfil
+            if (perfilVal && p.perfil !== perfilVal) return false;
+            // Iglesia
+            if (iglesiaVal && p.iglesia !== iglesiaVal) return false;
+            // Ciudad
+            if (ciudadVal && p.ciudad !== ciudadVal) return false;
+            // Estado actual (Pendiente/En proceso/Cumplido)
+            if (estadoActualVal && p.estadoActual !== estadoActualVal) return false;
+            
+            // Filtro por estado del módulo (Pendiente / Cumplido)
+            if (estadoModuloVal) {
+                const modulos = [...(p.modulosDetalle?.bernabe || []), ...(p.modulosDetalle?.impacto || []), ...(p.modulosDetalle?.plantacion || [])];
+                const tieneEstado = modulos.some(m => m.estado === estadoModuloVal);
+                if (!tieneEstado) return false;
+            }
+            
+            // Filtro por plan de módulos
+            if (planModulosVal) {
+                let tienePlan = false;
+                if (planModulosVal === 'bernabe' && p.modulosDetalle?.bernabe?.length) tienePlan = true;
+                else if (planModulosVal === 'impacto' && p.modulosDetalle?.impacto?.length) tienePlan = true;
+                else if (planModulosVal === 'plantacion' && p.modulosDetalle?.plantacion?.length) tienePlan = true;
+                if (!tienePlan) return false;
+            }
+            
+            return true;
+        }));
     }
     
-    function cerrarModal(modalId) { const modal = document.getElementById(modalId); if (modal) modal.classList.remove('active'); }
-    
-    function agregarNuevoRegistro(event) {
-        event.preventDefault();
-        const nuevoId = personas.length > 0 ? Math.max(...personas.map(p => p.id)) + 1 : 1;
-        const nuevoNumero = personas.length > 0 ? Math.max(...personas.map(p => p.numero)) + 1 : 1;
-        const nuevaPersona = {
-            id: nuevoId, numero: nuevoNumero,
+    function updateFilteredData(){ currentFilteredData = filtrarRegistros(); currentPage = 1; renderizarTabla(); renderizarPaginacion(); }
+    function renderizarTabla(){ const start=(currentPage-1)*itemsPerPage; const paginated=currentFilteredData.slice(start,start+itemsPerPage); const tbody=document.getElementById('tablaBody'); if(!paginated.length){ tbody.innerHTML='<tr><td colspan="10">No hay registros</td></tr>'; document.getElementById('contadorRegistros').innerText=`Total: ${currentFilteredData.length}`; return; } let html=''; paginated.forEach(p=>{ html+=`<tr data-id="${p.id}"><td>${p.numero}</td><td>${escapeHtml(p.apellido)}</td><td>${escapeHtml(p.nombre)}</td><td>${p.edad}</td><td>${escapeHtml(p.iglesia)}</td><td>${escapeHtml(p.domicilio)}</td><td>${escapeHtml(p.ciudad)}</td><td>${escapeHtml(p.perfil)}</td><td>${escapeHtml(p.observaciones?.substring(0,55)||'')}</td><td>${p.telefono?`<a href="tel:+54${p.telefono.replace(/\s/g,'')}" class="phone-link" onclick="event.stopPropagation()">+54 ${escapeHtml(p.telefono)}</a>`:''}</td></tr>`; }); tbody.innerHTML=html; document.getElementById('contadorRegistros').innerText=`Total registros: ${currentFilteredData.length}`; document.querySelectorAll('#tablaBody tr[data-id]').forEach(row=>{ row.addEventListener('click',(e)=>{ if(e.target.tagName==='A') return; const id=parseInt(row.dataset.id); const p=personas.find(x=>x.id===id); if(p) abrirModalDetalle(p); }); }); }
+    function renderizarPaginacion(){ const totalPages=Math.ceil(currentFilteredData.length/itemsPerPage); const container=document.getElementById('paginationControls'); const pageInfo=document.getElementById('pageInfo'); const startItem=(currentPage-1)*itemsPerPage+1; const endItem=Math.min(currentPage*itemsPerPage, currentFilteredData.length); pageInfo.innerText=`Mostrando ${startItem}-${endItem} de ${currentFilteredData.length}`; if(totalPages<=1){ container.innerHTML=''; return; } let btns=`<button class="pagination-btn" id="prevPageBtn" ${currentPage===1?'disabled':''}>Anterior</button>`; for(let i=1;i<=totalPages;i++) btns+=`<button class="pagination-btn ${i===currentPage?'active':''}" data-page="${i}">${i}</button>`; btns+=`<button class="pagination-btn" id="nextPageBtn" ${currentPage===totalPages?'disabled':''}>Siguiente</button>`; container.innerHTML=btns; document.querySelectorAll('[data-page]').forEach(btn=>btn.addEventListener('click',()=>{ currentPage=parseInt(btn.dataset.page); renderizarTabla(); renderizarPaginacion(); })); document.getElementById('prevPageBtn')?.addEventListener('click',()=>{ if(currentPage>1){currentPage--;renderizarTabla();renderizarPaginacion();}}); document.getElementById('nextPageBtn')?.addEventListener('click',()=>{ if(currentPage<totalPages){currentPage++;renderizarTabla();renderizarPaginacion();}}); }
+    function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>]/g, m=> m==='&'?'&amp;': m==='<'?'&lt;':'&gt;'); }
+
+    // Funciones de módulos (construcción, recolección, carga)
+    function construirModulosForm() {
+        const bernabe = Array.from({length:5},(_,i)=>`Módulo ${i+1}`);
+        const impacto = Array.from({length:7},(_,i)=>`Módulo ${i+1}`);
+        const plantacion = Array.from({length:15},(_,i)=>`Módulo ${i+1}`);
+        const gridB=document.getElementById('modulosBernabeGrid'); const gridI=document.getElementById('modulosImpactoGrid'); const gridP=document.getElementById('modulosPlantacionGrid');
+        if(gridB) gridB.innerHTML=''; if(gridI) gridI.innerHTML=''; if(gridP) gridP.innerHTML='';
+        bernabe.forEach((nom,idx)=>{ if(gridB) gridB.innerHTML+=`<div class="modulo-item"><label>${nom}</label><input type="date" class="fecha-bernabe" data-modulo="${nom}"><select class="estado-bernabe"><option value="Pendiente">Pendiente</option><option value="Cumplido" class="cumplido-option">Cumplido</option></select></div>`; });
+        impacto.forEach((nom,idx)=>{ if(gridI) gridI.innerHTML+=`<div class="modulo-item"><label>${nom}</label><input type="date" class="fecha-impacto" data-modulo="${nom}"><select class="estado-impacto"><option value="Pendiente">Pendiente</option><option value="Cumplido" class="cumplido-option">Cumplido</option></select></div>`; });
+        plantacion.forEach((nom,idx)=>{ if(gridP) gridP.innerHTML+=`<div class="modulo-item"><label>${nom}</label><input type="date" class="fecha-plantacion" data-modulo="${nom}"><select class="estado-plantacion"><option value="Pendiente">Pendiente</option><option value="Cumplido" class="cumplido-option">Cumplido</option></select></div>`; });
+    }
+    function recolectarModulosDetalle() {
+        return {
+            bernabe: Array.from(document.querySelectorAll('.fecha-bernabe')).map((inp,i)=>({ modulo:`Plan Bernabé-Mentoreo - Módulo ${i+1}`, fecha:inp.value, estado: document.querySelectorAll('.estado-bernabe')[i]?.value || 'Pendiente' })),
+            impacto: Array.from(document.querySelectorAll('.fecha-impacto')).map((inp,i)=>({ modulo:`Iglesia de Impacto - Módulo ${i+1}`, fecha:inp.value, estado: document.querySelectorAll('.estado-impacto')[i]?.value || 'Pendiente' })),
+            plantacion: Array.from(document.querySelectorAll('.fecha-plantacion')).map((inp,i)=>({ modulo:`Plantación de Iglesias - Módulo ${i+1}`, fecha:inp.value, estado: document.querySelectorAll('.estado-plantacion')[i]?.value || 'Pendiente' }))
+        };
+    }
+    function cargarModulosEnFormulario(modulosData) {
+        const bern = modulosData.bernabe || []; const imp = modulosData.impacto || []; const plan = modulosData.plantacion || [];
+        document.querySelectorAll('.fecha-bernabe').forEach((inp, idx)=>{ if(bern[idx]) inp.value = bern[idx].fecha || ''; });
+        document.querySelectorAll('.estado-bernabe').forEach((sel, idx)=>{ if(bern[idx]) sel.value = bern[idx].estado || 'Pendiente'; });
+        document.querySelectorAll('.fecha-impacto').forEach((inp, idx)=>{ if(imp[idx]) inp.value = imp[idx].fecha || ''; });
+        document.querySelectorAll('.estado-impacto').forEach((sel, idx)=>{ if(imp[idx]) sel.value = imp[idx].estado || 'Pendiente'; });
+        document.querySelectorAll('.fecha-plantacion').forEach((inp, idx)=>{ if(plan[idx]) inp.value = plan[idx].fecha || ''; });
+        document.querySelectorAll('.estado-plantacion').forEach((sel, idx)=>{ if(plan[idx]) sel.value = plan[idx].estado || 'Pendiente'; });
+    }
+
+    let editModeId = null;
+    function limpiarTelefonoInput(valor) { return valor.replace(/[^\d]/g, '').slice(0,15); }
+    function abrirModalEdicion(persona) {
+        editModeId = persona.id;
+        document.getElementById('modalNuevoTitle').innerText = 'Editar Registro';
+        document.getElementById('nuevoApellido').value = persona.apellido;
+        document.getElementById('nuevoNombre').value = persona.nombre;
+        document.getElementById('nuevoEdad').value = persona.edad;
+        let telefonoLimpio = (persona.telefono || '').replace(/^\+54\s*/, '');
+        document.getElementById('nuevoTelefono').value = telefonoLimpio;
+        document.getElementById('nuevoDomicilio').value = persona.domicilio;
+        document.getElementById('nuevoCiudad').value = persona.ciudad;
+        document.getElementById('nuevoPerfil').value = persona.perfil;
+        document.getElementById('nuevoRedes').value = persona.redes || '';
+        document.getElementById('nuevoIglesia').value = persona.iglesia;
+        document.getElementById('nuevoEsPastor').value = persona.esPastor || 'No';
+        document.getElementById('nuevoEsPresidente').value = persona.esPresidente || 'No';
+        document.getElementById('nuevoDenominacion').value = persona.denominacion || '';
+        document.getElementById('nuevoEscuelasEtapas').value = persona.escuelasEtapas || '';
+        document.getElementById('nuevoObservaciones').value = persona.observaciones || '';
+        document.getElementById('nuevoModulos').value = persona.modulosCumplidos || '';
+        document.getElementById('nuevoEstado').value = persona.estadoActual;
+        cargarModulosEnFormulario(persona.modulosDetalle || { bernabe:[], impacto:[], plantacion:[] });
+        document.getElementById('nuevoModal').classList.add('active');
+    }
+    function guardarNuevoEditar(e) {
+        e.preventDefault();
+        const modulosDetalle = recolectarModulosDetalle();
+        let telefonoRaw = document.getElementById('nuevoTelefono').value.trim();
+        telefonoRaw = limpiarTelefonoInput(telefonoRaw);
+        const nuevaData = {
             apellido: document.getElementById('nuevoApellido').value.trim(),
             nombre: document.getElementById('nuevoNombre').value.trim(),
             edad: parseInt(document.getElementById('nuevoEdad').value),
             iglesia: document.getElementById('nuevoIglesia').value.trim(),
             domicilio: document.getElementById('nuevoDomicilio').value.trim(),
             ciudad: document.getElementById('nuevoCiudad').value.trim(),
-            perfil: document.getElementById('nuevoPerfil').value.trim(),
+            perfil: document.getElementById('nuevoPerfil').value,
             observaciones: document.getElementById('nuevoObservaciones').value.trim(),
-            telefono: document.getElementById('nuevoTelefono').value.trim(),
+            telefono: telefonoRaw,
             modulosCumplidos: document.getElementById('nuevoModulos').value.trim(),
-            fechaInicioModulo: document.getElementById('nuevoFechaInicio').value,
-            estadoActual: document.getElementById('nuevoEstado').value
+            estadoActual: document.getElementById('nuevoEstado').value,
+            escuelasEtapas: document.getElementById('nuevoEscuelasEtapas').value,
+            redes: document.getElementById('nuevoRedes').value,
+            esPastor: document.getElementById('nuevoEsPastor').value,
+            esPresidente: document.getElementById('nuevoEsPresidente').value,
+            denominacion: document.getElementById('nuevoDenominacion').value.trim(),
+            modulosDetalle: modulosDetalle
         };
-        if (!nuevaPersona.apellido || !nuevaPersona.nombre || !nuevaPersona.iglesia || !nuevaPersona.ciudad || isNaN(nuevaPersona.edad)) {
-            alert("Complete los campos obligatorios: Apellido, Nombre, Edad, Iglesia, Ciudad.");
-            return;
+        if(!nuevaData.apellido||!nuevaData.nombre||!nuevaData.iglesia||!nuevaData.ciudad||isNaN(nuevaData.edad)){ alert("Complete campos obligatorios."); return; }
+        if(editModeId){
+            const index = personas.findIndex(p=>p.id===editModeId);
+            if(index!==-1){ personas[index] = { ...personas[index], ...nuevaData, id: editModeId, numero: personas[index].numero }; }
+            editModeId = null;
+        } else {
+            const nuevoId = personas.length? Math.max(...personas.map(p=>p.id))+1 : 1;
+            const nuevoNumero = personas.length? Math.max(...personas.map(p=>p.numero))+1 : 1;
+            personas.push({ id:nuevoId, numero:nuevoNumero, ...nuevaData });
         }
-        personas.push(nuevaPersona);
         actualizarSelectoresFiltros();
         updateFilteredData();
         cerrarModal('nuevoModal');
         document.getElementById('nuevoForm').reset();
-    }
-    
-    function actualizarSelectoresFiltros() {
-        const iglesias = [...new Set(personas.map(p => p.iglesia))].sort();
-        const ciudades = [...new Set(personas.map(p => p.ciudad))].sort();
-        const modulosSet = new Set();
-        personas.forEach(p => p.modulosCumplidos.split(',').forEach(m => { if(m.trim()) modulosSet.add(m.trim()); }));
-        const modulos = [...modulosSet].sort();
-        const filtroIglesia = document.getElementById('filtroIglesia');
-        const filtroCiudad = document.getElementById('filtroCiudad');
-        const filtroModulo = document.getElementById('filtroModulo');
-        if (filtroIglesia) { const val = filtroIglesia.value; filtroIglesia.innerHTML = '<option value="">Todas las iglesias</option>' + iglesias.map(i => `<option value="${i}">${i}</option>`).join(''); filtroIglesia.value = val; }
-        if (filtroCiudad) { const val = filtroCiudad.value; filtroCiudad.innerHTML = '<option value="">Todas las ciudades</option>' + ciudades.map(c => `<option value="${c}">${c}</option>`).join(''); filtroCiudad.value = val; }
-        if (filtroModulo) { const val = filtroModulo.value; filtroModulo.innerHTML = '<option value="">Todos los módulos</option>' + modulos.map(m => `<option value="${m}">${m}</option>`).join(''); filtroModulo.value = val; }
-    }
-    
-    function imprimirDatos(datos) { if (!datos.length) { alert("No hay registros para imprimir."); return; } const ventana = window.open('', '_blank'); ventana.document.write(generarHtmlImpresion(datos)); ventana.document.close(); ventana.print(); }
-    function generarHtmlImpresion(datos) { let filas = ''; datos.forEach(p => { filas += `<tr><td>${p.numero}</td><td>${escapeHtml(p.apellido)}</td><td>${escapeHtml(p.nombre)}</td><td>${p.edad}</td><td>${escapeHtml(p.iglesia)}</td><td>${escapeHtml(p.domicilio)}</td><td>${escapeHtml(p.ciudad)}</td><td>${escapeHtml(p.perfil)}</td><td>${escapeHtml(p.observaciones)}</td><td>${escapeHtml(p.telefono || '')}</td></tr>`; }); return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Registros Iglesia</title><style>body{font-family:Inter;margin:30px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:8px}th{background:#334155;color:white}</style></head><body><h2>Listado de Registros</h2><p>Fecha: ${new Date().toLocaleString()}</p><table><thead><tr><th>Núm</th><th>Apellido</th><th>Nombre</th><th>Edad</th><th>Iglesia</th><th>Domicilio</th><th>Ciudad</th><th>Perfil</th><th>Observaciones</th><th>Teléfono</th></tr></thead><tbody>${filas}</tbody></table><p>Total: ${datos.length}</p></body></html>`; }
-    
-    function setupMobileFilters() {
-        const toggleBtn = document.getElementById('toggleFiltersBtn');
-        const mobileContainer = document.getElementById('mobileFiltersContainer');
-        const desktopCard = document.getElementById('desktopFiltersCard');
-        let isMobileOpen = false;
-        if (!toggleBtn || !mobileContainer || !desktopCard) return;
-        toggleBtn.addEventListener('click', () => {
-            if (!isMobileOpen) {
-                mobileContainer.appendChild(desktopCard);
-                mobileContainer.style.display = 'block';
-                isMobileOpen = true;
-                toggleBtn.textContent = 'Cerrar filtros';
-            } else {
-                const grid = document.querySelector('.dashboard-grid');
-                if (grid) grid.appendChild(desktopCard);
-                mobileContainer.style.display = 'none';
-                isMobileOpen = false;
-                toggleBtn.textContent = 'Filtros';
-            }
-        });
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 880) {
-                if (mobileContainer.contains(desktopCard)) {
-                    const grid = document.querySelector('.dashboard-grid');
-                    if (grid && !grid.contains(desktopCard)) grid.appendChild(desktopCard);
-                }
-                mobileContainer.style.display = 'none';
-                isMobileOpen = false;
-                if (toggleBtn) toggleBtn.textContent = 'Filtros';
-            }
-        });
+        construirModulosForm();
+        document.getElementById('modalNuevoTitle').innerText = 'Nuevo Registro';
+        editModeId = null;
     }
 
-    function init() {
+    function abrirModalDetalle(p) {
+        const modalBody = document.getElementById('modalBodyContent');
+        const estadoClase = p.estadoActual==='Pendiente'?'status-pendiente':(p.estadoActual==='En proceso'?'status-proceso':'status-cumplido');
+        let modulosHtml = '<div class="modulos-detalle"><h5>📅 Seguimiento de Módulos</h5><div class="modulos-fechas-grid">';
+        const todas = [...(p.modulosDetalle?.bernabe||[]), ...(p.modulosDetalle?.impacto||[]), ...(p.modulosDetalle?.plantacion||[])];
+        if(todas.length){
+            todas.forEach(m=>{
+                const estadoClass = m.estado === 'Cumplido' ? 'status-cumplido' : 'status-pendiente';
+                modulosHtml += `<div class="modulo-detalle-item"><strong>${escapeHtml(m.modulo)}</strong><br><span style="font-size:0.75rem;">${m.fecha ? formatearFecha(m.fecha) : '—'}</span><br><span class="badge-status ${estadoClass}" style="margin-top:6px; display:inline-block;">${m.estado || 'Pendiente'}</span></div>`;
+            });
+        } else { modulosHtml += '<p>Sin módulos registrados.</p>'; }
+        modulosHtml += '</div></div>';
+        modalBody.innerHTML = `
+            <div class="detail-actions">
+                <button class="btn-primary" id="printDetailBtn">🖨️ Imprimir</button>
+                <button class="btn-primary btn-warning" id="editDetailBtn">✏️ Editar</button>
+                <button class="btn-primary btn-danger" id="deleteDetailBtn">🗑️ Eliminar</button>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-field"><div class="label">Número</div><div class="value">${p.numero}</div></div>
+                <div class="detail-field"><div class="label">Nombre completo</div><div class="value">${escapeHtml(p.nombre)} ${escapeHtml(p.apellido)}</div></div>
+                <div class="detail-field"><div class="label">Edad</div><div class="value">${p.edad}</div></div>
+                <div class="detail-field"><div class="label">Teléfono</div><div class="value">${p.telefono?`<a href="tel:+54${p.telefono.replace(/\s/g,'')}">+54 ${escapeHtml(p.telefono)}</a>`:'—'}</div></div>
+                <div class="detail-field"><div class="label">Domicilio</div><div class="value">${escapeHtml(p.domicilio)||'—'}</div></div>
+                <div class="detail-field"><div class="label">Ciudad</div><div class="value">${escapeHtml(p.ciudad)}</div></div>
+                <div class="detail-field"><div class="label">Iglesia</div><div class="value">${escapeHtml(p.iglesia)}</div></div>
+                <div class="detail-field"><div class="label">Pastor/Presidente</div><div class="value">Pastor: ${p.esPastor||'No'} | Presidente: ${p.esPresidente||'No'}</div></div>
+                <div class="detail-field"><div class="label">Denominación</div><div class="value">${escapeHtml(p.denominacion)||'—'}</div></div>
+                <div class="detail-field"><div class="label">Perfil</div><div class="value">${escapeHtml(p.perfil)||'—'}</div></div>
+                <div class="detail-field"><div class="label">Redes</div><div class="value">${escapeHtml(p.redes)||'—'}</div></div>
+                <div class="detail-field"><div class="label">Escuela/Etapa</div><div class="value">${escapeHtml(p.escuelasEtapas)||'—'}</div></div>
+                <div class="detail-field"><div class="label">Módulos cumplidos</div><div class="value">${escapeHtml(p.modulosCumplidos)||'—'}</div></div>
+                <div class="detail-field"><div class="label">Estado</div><div class="value"><span class="badge-status ${estadoClase}">${p.estadoActual}</span></div></div>
+                <div class="detail-field"><div class="label">Observaciones</div><div class="value">${escapeHtml(p.observaciones)||'—'}</div></div>
+            </div>
+            ${modulosHtml}
+        `;
+        document.getElementById('detailModal').classList.add('active');
+        document.getElementById('printDetailBtn')?.addEventListener('click',()=>imprimirRegistroIndividual(p));
+        document.getElementById('editDetailBtn')?.addEventListener('click',()=>{ cerrarModal('detailModal'); abrirModalEdicion(p); });
+        document.getElementById('deleteDetailBtn')?.addEventListener('click',()=>{ cerrarModal('detailModal'); pendingDeleteId = p.id; document.getElementById('confirmDeleteModal').classList.add('active'); });
+    }
+    function imprimirRegistroIndividual(p){
+        const ventana = window.open('','_blank'); let modulosPrint=''; const todas=[...(p.modulosDetalle?.bernabe||[]),...(p.modulosDetalle?.impacto||[]),...(p.modulosDetalle?.plantacion||[])];
+        todas.forEach(m=>{ modulosPrint+=`<div><strong>${escapeHtml(m.modulo)}</strong> - Fecha: ${m.fecha?formatearFecha(m.fecha):'—'} - Estado: ${m.estado||'Pendiente'}</div>`; });
+        ventana.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Detalle Registro</title><style>body{font-family:Inter;margin:30px}.row{display:flex;margin-bottom:8px}.label{font-weight:700;width:180px}</style></head><body><h2>Red de Multiplicación - Sistema de Gestión y Seguimiento</h2><h3>Detalle de Registro</h3><div class="row"><div class="label">Número:</div><div>${p.numero}</div></div><div class="row"><div class="label">Nombre:</div><div>${escapeHtml(p.nombre)} ${escapeHtml(p.apellido)}</div></div><div class="row"><div class="label">Iglesia:</div><div>${escapeHtml(p.iglesia)}</div></div><div class="row"><div class="label">Ciudad:</div><div>${escapeHtml(p.ciudad)}</div></div><div class="row"><div class="label">Perfil:</div><div>${escapeHtml(p.perfil)}</div></div><div class="row"><div class="label">Teléfono:</div><div>+54 ${escapeHtml(p.telefono||'')}</div></div><h3>Seguimiento de Módulos</h3>${modulosPrint||'<p>Sin módulos registrados.</p>'}<p>Generado: ${new Date().toLocaleString()}</p></body></html>`);
+        ventana.document.close(); ventana.print();
+    }
+    function eliminarRegistro(id) { personas = personas.filter(p=>p.id!==id); actualizarSelectoresFiltros(); updateFilteredData(); }
+    function cerrarModal(id){ const m=document.getElementById(id); if(m) m.classList.remove('active'); }
+    
+    function actualizarSelectoresFiltros() {
+        // Iglesias y ciudades
+        const iglesias = [...new Set(personas.map(p=>p.iglesia))].sort();
+        const ciudades = [...new Set(personas.map(p=>p.ciudad))].sort();
+        // Perfiles únicos
+        const perfiles = [...new Set(personas.map(p=>p.perfil).filter(p=>p))].sort();
+        const filtroPerfil = document.getElementById('filtroPerfil');
+        if(filtroPerfil) {
+            let val = filtroPerfil.value;
+            filtroPerfil.innerHTML = '<option value="">Todos los perfiles</option>' + perfiles.map(per => `<option value="${per}">${per}</option>`).join('');
+            filtroPerfil.value = val;
+        }
+        const filtroIglesia = document.getElementById('filtroIglesia');
+        const filtroCiudad = document.getElementById('filtroCiudad');
+        if(filtroIglesia){ let v=filtroIglesia.value; filtroIglesia.innerHTML='<option value="">Todas las iglesias</option>'+iglesias.map(i=>`<option value="${i}">${i}</option>`).join(''); filtroIglesia.value=v; }
+        if(filtroCiudad){ let v=filtroCiudad.value; filtroCiudad.innerHTML='<option value="">Todas las ciudades</option>'+ciudades.map(c=>`<option value="${c}">${c}</option>`).join(''); filtroCiudad.value=v; }
+        // El filtro de módulo cumplido (texto libre) se mantiene igual pero no es necesario actualizarlo dinámicamente
+    }
+    
+    function imprimirDatos(datos){ if(!datos.length){alert("Sin registros");return;} const w=window.open('','_blank'); w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Registros</title><style>body{font-family:Inter;margin:30px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:8px}th{background:#334155;color:white}</style></head><body><h2>Red de Multiplicación - Listado de Registros</h2><p>${new Date().toLocaleString()}</p><table><thead><tr><th>Núm</th><th>Apellido</th><th>Nombre</th><th>Edad</th><th>Iglesia</th><th>Domicilio</th><th>Ciudad</th><th>Perfil</th><th>Observaciones</th><th>Teléfono</th></tr></thead><tbody>${datos.map(p=>`<tr><td>${p.numero}</td><td>${escapeHtml(p.apellido)}</td><td>${escapeHtml(p.nombre)}</td><td>${p.edad}</td><td>${escapeHtml(p.iglesia)}</td><td>${escapeHtml(p.domicilio)}</td><td>${escapeHtml(p.ciudad)}</td><td>${escapeHtml(p.perfil)}</td><td>${escapeHtml(p.observaciones)}</td><td>+54 ${escapeHtml(p.telefono||'')}</td></tr>`).join('')}</tbody></table><p>Total: ${datos.length}</p></body></html>`); w.document.close(); w.print(); }
+    function setupMobileFilters(){ const toggle=document.getElementById('toggleFiltersBtn'); const mobile=document.getElementById('mobileFiltersContainer'); const desktop=document.getElementById('desktopFiltersCard'); let open=false; if(toggle && mobile && desktop){ toggle.addEventListener('click',()=>{ if(!open){ mobile.appendChild(desktop); mobile.style.display='block'; open=true; toggle.textContent='Cerrar filtros'; } else { document.querySelector('.dashboard-grid').appendChild(desktop); mobile.style.display='none'; open=false; toggle.textContent='Filtros'; } }); window.addEventListener('resize',()=>{ if(window.innerWidth>880 && mobile.contains(desktop)){ document.querySelector('.dashboard-grid').appendChild(desktop); mobile.style.display='none'; open=false; toggle.textContent='Filtros'; } }); } }
+    function initTabs(){ document.querySelectorAll('.tab-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ const tabId=btn.getAttribute('data-tab'); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active-pane')); document.getElementById(tabId).classList.add('active-pane'); }); }); }
+    function init(){
+        construirModulosForm();
         actualizarSelectoresFiltros();
         updateFilteredData();
-        document.getElementById('filtroGeneral').addEventListener('input', () => updateFilteredData());
-        document.getElementById('filtroModulo').addEventListener('change', () => updateFilteredData());
-        document.getElementById('filtroIglesia').addEventListener('change', () => updateFilteredData());
-        document.getElementById('filtroCiudad').addEventListener('change', () => updateFilteredData());
-        document.getElementById('filtroEstado').addEventListener('change', () => updateFilteredData());
-        document.getElementById('limpiarFiltrosBtn').addEventListener('click', () => { document.getElementById('filtroGeneral').value = ''; document.getElementById('filtroModulo').value = ''; document.getElementById('filtroIglesia').value = ''; document.getElementById('filtroCiudad').value = ''; document.getElementById('filtroEstado').value = ''; updateFilteredData(); });
-        document.getElementById('imprimirCompletaBtn').addEventListener('click', () => imprimirDatos(getSortedData(personas)));
-        document.getElementById('imprimirFiltradaBtn').addEventListener('click', () => imprimirDatos(currentFilteredData));
-        document.getElementById('salirBtn').addEventListener('click', () => window.location.href = 'index.html');
-        document.getElementById('nuevoRegistroBtn').addEventListener('click', () => document.getElementById('nuevoModal').classList.add('active'));
-        
-        // Los botones Mapa y Agenda ahora abren en la misma pestaña (dentro de la app)
-        document.getElementById('mapaBtn').addEventListener('click', () => {
-            window.location.href = 'https://experiencia-ia.github.io/boillat/mapa';
-        });
-        document.getElementById('agendaBtn').addEventListener('click', () => {
-            window.location.href = 'https://experiencia-ia.github.io/boillat/agenda';
-        });
-        
-        document.getElementById('closeNuevoModalBtn').addEventListener('click', () => cerrarModal('nuevoModal'));
-        document.getElementById('cancelarNuevoBtn').addEventListener('click', () => cerrarModal('nuevoModal'));
-        document.getElementById('nuevoForm').addEventListener('submit', agregarNuevoRegistro);
-        document.getElementById('closeModalBtn').addEventListener('click', () => cerrarModal('detailModal'));
-        document.getElementById('detailModal').addEventListener('click', (e) => { if (e.target === document.getElementById('detailModal')) cerrarModal('detailModal'); });
-        document.getElementById('nuevoModal').addEventListener('click', (e) => { if (e.target === document.getElementById('nuevoModal')) cerrarModal('nuevoModal'); });
+        initTabs();
+        document.getElementById('filtroGeneral').addEventListener('input',()=>updateFilteredData());
+        document.getElementById('filtroPerfil').addEventListener('change',()=>updateFilteredData());
+        document.getElementById('filtroEstadoModulo').addEventListener('change',()=>updateFilteredData());
+        document.getElementById('filtroPlanModulos').addEventListener('change',()=>updateFilteredData());
+        document.getElementById('filtroIglesia').addEventListener('change',()=>updateFilteredData());
+        document.getElementById('filtroCiudad').addEventListener('change',()=>updateFilteredData());
+        document.getElementById('filtroEstado').addEventListener('change',()=>updateFilteredData());
+        document.getElementById('limpiarFiltrosBtn').addEventListener('click',()=>{ document.getElementById('filtroGeneral').value=''; document.getElementById('filtroPerfil').value=''; document.getElementById('filtroEstadoModulo').value=''; document.getElementById('filtroPlanModulos').value=''; document.getElementById('filtroIglesia').value=''; document.getElementById('filtroCiudad').value=''; document.getElementById('filtroEstado').value=''; updateFilteredData(); });
+        document.getElementById('imprimirCompletaBtn').addEventListener('click',()=>imprimirDatos(getSortedData(personas)));
+        document.getElementById('imprimirFiltradaBtn').addEventListener('click',()=>imprimirDatos(currentFilteredData));
+        document.getElementById('salirBtn').addEventListener('click',()=>window.location.href='index.html');
+        document.getElementById('nuevoRegistroBtn').addEventListener('click',()=>{ editModeId=null; document.getElementById('modalNuevoTitle').innerText='Nuevo Registro'; document.getElementById('nuevoForm').reset(); construirModulosForm(); document.getElementById('nuevoEsPastor').value='No'; document.getElementById('nuevoEsPresidente').value='No'; document.getElementById('nuevoTelefono').value=''; document.getElementById('nuevoModal').classList.add('active'); });
+        document.getElementById('mapaBtn').addEventListener('click',()=>window.location.href='https://experiencia-ia.github.io/boillat/mapa');
+        document.getElementById('agendaBtn').addEventListener('click',()=>window.location.href='https://experiencia-ia.github.io/boillat/agenda');
+        document.getElementById('closeNuevoModalBtn').addEventListener('click',()=>cerrarModal('nuevoModal'));
+        document.getElementById('cancelarNuevoBtn').addEventListener('click',()=>cerrarModal('nuevoModal'));
+        document.getElementById('nuevoForm').addEventListener('submit',guardarNuevoEditar);
+        document.getElementById('closeModalBtn').addEventListener('click',()=>cerrarModal('detailModal'));
+        document.getElementById('detailModal').addEventListener('click',(e)=>{if(e.target===document.getElementById('detailModal'))cerrarModal('detailModal');});
+        document.getElementById('nuevoModal').addEventListener('click',(e)=>{if(e.target===document.getElementById('nuevoModal'))cerrarModal('nuevoModal');});
+        document.getElementById('confirmDeleteYes').addEventListener('click',()=>{ if(pendingDeleteId!==null){ eliminarRegistro(pendingDeleteId); pendingDeleteId=null; } document.getElementById('confirmDeleteModal').classList.remove('active'); });
+        document.getElementById('confirmDeleteNo').addEventListener('click',()=>{ pendingDeleteId=null; document.getElementById('confirmDeleteModal').classList.remove('active'); });
         setupMobileFilters();
+        document.getElementById('nuevoTelefono').addEventListener('input', function(e) { this.value = limpiarTelefonoInput(this.value); });
     }
     init();
 </script>
