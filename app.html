@@ -41,6 +41,7 @@
             margin-bottom: 28px;
             padding-bottom: 14px;
             border-bottom: 1px solid #e2e8f0;
+            position: relative;
         }
         .title-section h1 {
             font-size: 1.75rem;
@@ -98,6 +99,31 @@
         }
         .btn-logout:hover {
             background: #b91c1c;
+        }
+
+        /* Botón salir móvil (ícono X) - solo visible en móvil */
+        .btn-logout-mobile {
+            display: none;
+            background: #dc2626;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+        .btn-logout-mobile:hover {
+            background: #b91c1c;
+            transform: scale(1.02);
         }
 
         .dashboard-grid {
@@ -736,12 +762,13 @@
             padding-top: 12px;
         }
 
-        /* Evitar desbordes horizontales en móvil */
+        /* ========== ESTILOS MÓVIL (menor o igual a 880px) ========== */
         @media (max-width: 880px) {
             .app-wrapper {
                 padding: 1rem;
             }
             .dashboard-grid {
+                grid-template-columns: 1fr;
                 gap: 20px;
             }
             .filters-card {
@@ -750,13 +777,76 @@
             .embed-iframe {
                 height: 55vh;
             }
+            /* Ocultar filtros del grid en móvil por defecto (se gestiona con JS + display) */
+            .dashboard-grid .filters-card {
+                display: none;
+            }
+            
+            /* Reorganización móvil */
+            .header-bar {
+                position: relative;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .title-section {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .title-section h1 {
+                font-size: 1.4rem;
+            }
+            /* Ocultar mensaje de bienvenida en móvil */
+            .welcome-highlight {
+                display: none;
+            }
+            /* Botón salir original (texto) lo ocultamos */
+            #salirBtn {
+                display: none;
+            }
+            /* Botón salir móvil (ícono X) se muestra */
+            .btn-logout-mobile {
+                display: flex;
+                position: static;
+            }
+            .action-group {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            .action-buttons {
+                width: 100%;
+                flex-wrap: nowrap;
+                gap: 8px;
+                justify-content: space-between;
+            }
+            .action-buttons .btn-primary-action {
+                flex: 1;
+                text-align: center;
+                padding: 10px 0;
+                font-size: 0.8rem;
+                white-space: nowrap;
+            }
+            .filters-toggle {
+                margin-top: 8px;
+                margin-bottom: 12px;
+            }
+            .btn-filters {
+                background: #166534;
+                font-size: 0.9rem;
+                padding: 12px;
+            }
         }
     </style>
 </head>
 <body>
 <div class="app-wrapper">
     <div class="header-bar">
-        <div class="title-section"><h1 id="mainTitle">Tabla de Registro</h1></div>
+        <div class="title-section">
+            <h1 id="mainTitle">Tabla de Registro</h1>
+            <button class="btn-logout-mobile" id="salirMobileBtn" title="Cerrar sesión">✕</button>
+        </div>
         <div class="action-group">
             <div class="welcome-highlight">Hola, bienvenido a la Red de Multiplicación.</div>
             <div class="action-buttons">
@@ -771,7 +861,7 @@
     <div id="mobileFiltersContainer" class="mobile-filters-container"></div>
     <div class="dashboard-grid" id="dashboardGrid">
         <div class="table-container" id="tableContainer">
-            <div class="table-wrapper"><table class="data-table"><thead><tr><th>Número</th><th>Apellido</th><th>Nombre</th><th>Edad</th><th>Iglesia</th><th>Domicilio</th><th>Ciudad</th><th>Perfil</th><th>Observaciones</th><th>Teléfono</th></thead><tbody id="tablaBody"><tr><td colspan="10">Cargando...</td></tr></tbody></table></div>
+            <div class="table-wrapper"><table class="data-table"><thead><tr><th>Número</th><th>Apellido</th><th>Nombre</th><th>Edad</th><th>Iglesia</th><th>Domicilio</th><th>Ciudad</th><th>Perfil</th><th>Observaciones</th><th>Teléfono</th></tr></thead><tbody id="tablaBody"><tr><td colspan="10">Cargando...</td></tr></tbody></table></div>
             <div class="pagination-container"><div class="page-info" id="pageInfo"></div><div class="pagination-controls" id="paginationControls"></div></div>
             <div class="stats-badge" id="contadorRegistros">Total registros: 0</div>
         </div>
@@ -800,16 +890,11 @@
     </div>
 </div>
 
-<!-- Modal Nuevo/Editar -->
+<!-- Modales y resto del código igual... (se mantiene todo el JS y demás modales) -->
 <div id="nuevoModal" class="modal-overlay"><div class="modal-container"><div class="modal-header"><h3 id="modalNuevoTitle">Nuevo Registro</h3><button class="close-modal" id="closeNuevoModalBtn">&times;</button></div><div class="modal-body"><div class="tabs-container"><ul class="tabs-list"><li><button type="button" class="tab-btn active" data-tab="tab1">Datos Personales</button></li><li><button type="button" class="tab-btn" data-tab="tab2">Datos Iglesia</button></li><li><button type="button" class="tab-btn" data-tab="tab3">Escuela/Etapas</button></li><li><button type="button" class="tab-btn" data-tab="tab4">Módulos</button></li><li><button type="button" class="tab-btn" data-tab="tab5">Observaciones</button></li></ul></div><form id="nuevoForm"><div id="tab1" class="tab-pane active-pane"><div class="form-group"><label>Apellido *</label><input type="text" id="nuevoApellido" required></div><div class="form-group"><label>Nombre *</label><input type="text" id="nuevoNombre" required></div><div class="form-group"><label>Edad *</label><input type="number" id="nuevoEdad" required></div><div class="form-group"><label>Teléfono (Argentina +54)</label><div class="phone-prefix"><span>+54</span><input type="tel" id="nuevoTelefono" placeholder="Ej: 9 11 1234 5678" maxlength="15"></div><small style="color:#5b6e8c">Solo números, máx 15 dígitos.</small></div><div class="form-group"><label>Domicilio</label><input type="text" id="nuevoDomicilio"></div><div class="form-group"><label>Ciudad *</label><input type="text" id="nuevoCiudad" required></div><div class="form-group"><label>Perfil</label><select id="nuevoPerfil"><option value="">Seleccione</option><option>Posible Plantador</option><option>Plantador</option><option>Lider emergente</option><option>Mentor</option><option>Multiplicador</option></select></div><div class="form-group"><label>Redes</label><select id="nuevoRedes"><option value="">Seleccione</option><option>Posible Plantador</option><option>Introduccion</option><option>Retiro</option><option>Presentacion de Modulo</option></select></div></div><div id="tab2" class="tab-pane"><div class="form-group"><label>Iglesia *</label><input type="text" id="nuevoIglesia" required></div><div class="form-group"><label>Es Pastor</label><select id="nuevoEsPastor"><option>No</option><option>Si</option></select></div><div class="form-group"><label>Presidente Consejo</label><select id="nuevoEsPresidente"><option>No</option><option>Si</option></select></div><div class="form-group"><label>Denominación</label><input type="text" id="nuevoDenominacion"></div></div><div id="tab3" class="tab-pane"><div class="form-group"><label>Escuelas o Etapas</label><select id="nuevoEscuelasEtapas"><option value="">Seleccione</option><option>Sensibilizacion</option><option>Acompañar</option><option>Celebrar</option></select></div></div><div id="tab4" class="tab-pane"><div class="form-group"><label>Módulos cumplidos (texto libre)</label><input type="text" id="nuevoModulos" placeholder="Ej: Discipulado, Evangelismo"></div><div class="modulo-subsection"><h4>📘 Plan Bernabé-Mentoreo (5 módulos)</h4><div class="modulo-grid" id="modulosBernabeGrid"></div></div><div class="modulo-subsection"><h4>⛪ Iglesia de Impacto (7 módulos)</h4><div class="modulo-grid" id="modulosImpactoGrid"></div></div><div class="modulo-subsection"><h4>🌱 Plantación de Iglesias (15 módulos)</h4><div class="modulo-grid" id="modulosPlantacionGrid"></div></div></div><div id="tab5" class="tab-pane"><div class="form-group"><label>Observaciones</label><textarea id="nuevoObservaciones" rows="3"></textarea></div><div class="form-group"><label>Estado actual</label><select id="nuevoEstado"><option>Pendiente</option><option>En proceso</option><option>Cumplido</option></select></div></div><div class="form-actions"><button type="button" class="btn-primary-outline" id="cancelarNuevoBtn">Cancelar</button><button type="submit" class="btn-primary" id="guardarNuevoBtn">Guardar</button></div></form></div></div></div>
 
-<!-- Modal Detalle -->
 <div id="detailModal" class="modal-overlay"><div class="modal-container"><div class="modal-header"><h3>Detalle del Registro</h3><button class="close-modal" id="closeModalBtn">&times;</button></div><div class="modal-body" id="modalBodyContent"></div></div></div>
-
-<!-- Modal Confirmación Eliminación -->
 <div id="confirmDeleteModal" class="confirm-modal-overlay"><div class="confirm-modal"><div class="confirm-header">⚠️ Confirmar eliminación</div><div class="confirm-body">¿Estás seguro de eliminar este registro? Esta acción no se puede deshacer.</div><div class="confirm-buttons"><button id="confirmDeleteYes" class="confirm-btn-yes">Eliminar</button><button id="confirmDeleteNo" class="confirm-btn-no">Cancelar</button></div></div></div>
-
-<!-- Modal Confirmación Salida -->
 <div id="confirmLogoutModal" class="confirm-modal-overlay"><div class="confirm-modal"><div class="confirm-header">🚪 Cerrar sesión</div><div class="confirm-body">¿Estás seguro de que deseas salir de la aplicación?</div><div class="confirm-buttons"><button id="confirmLogoutYes" class="confirm-btn-yes">Salir</button><button id="confirmLogoutNo" class="confirm-btn-no">Cancelar</button></div></div></div>
 
 <script>
@@ -1028,9 +1113,118 @@
     
     function imprimirDatos(datos){ if(!datos.length){alert("Sin registros");return;} const w=window.open('','_blank'); w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Registros</title><style>body{font-family:Inter;margin:30px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:8px}th{background:#334155;color:white}</style></head><body><h2>Red de Multiplicación - Listado de Registros</h2><p>${new Date().toLocaleString()}</p><table><thead><tr><th>Núm</th><th>Apellido</th><th>Nombre</th><th>Edad</th><th>Iglesia</th><th>Domicilio</th><th>Ciudad</th><th>Perfil</th><th>Observaciones</th><th>Teléfono</th></tr></thead><tbody>${datos.map(p=>`<tr><td>${p.numero}</td><td>${escapeHtml(p.apellido)}</td><td>${escapeHtml(p.nombre)}</td><td>${p.edad}</td><td>${escapeHtml(p.iglesia)}</td><td>${escapeHtml(p.domicilio)}</td><td>${escapeHtml(p.ciudad)}</td><td>${escapeHtml(p.perfil)}</td><td>${escapeHtml(p.observaciones)}</td><td>+54 ${escapeHtml(p.telefono||'')}</td></tr>`).join('')}</tbody></table><p>Total: ${datos.length}</p></body></html>`); w.document.close(); w.print(); }
     
-    function setupMobileFilters(){ const toggle=document.getElementById('toggleFiltersBtn'); const mobile=document.getElementById('mobileFiltersContainer'); const desktop=document.getElementById('desktopFiltersCard'); let open=false; if(toggle && mobile && desktop){ toggle.addEventListener('click',()=>{ if(!open){ mobile.appendChild(desktop); mobile.style.display='block'; open=true; toggle.textContent='Cerrar filtros'; } else { document.querySelector('.dashboard-grid').appendChild(desktop); mobile.style.display='none'; open=false; toggle.textContent='Filtros'; } }); window.addEventListener('resize',()=>{ if(window.innerWidth>880 && mobile.contains(desktop)){ document.querySelector('.dashboard-grid').appendChild(desktop); mobile.style.display='none'; open=false; toggle.textContent='Filtros'; } }); } }
-
-    // --- Gestión de visibilidad de filtros y cambio de layout para embed ---
+    function setupMobileFilters(){
+        const toggleBtn = document.getElementById('toggleFiltersBtn');
+        const mobileContainer = document.getElementById('mobileFiltersContainer');
+        const desktopCard = document.getElementById('desktopFiltersCard');
+        if(!toggleBtn || !mobileContainer || !desktopCard) return;
+        
+        const isMobile = () => window.innerWidth <= 880;
+        
+        function adjustForScreen(){
+            if(isMobile()){
+                if(desktopCard.parentNode !== mobileContainer){
+                    if(desktopCard.parentNode) desktopCard.remove();
+                    mobileContainer.appendChild(desktopCard);
+                    mobileContainer.style.display = 'none';
+                    toggleBtn.style.display = 'block';
+                }
+            } else {
+                if(desktopCard.parentNode !== document.getElementById('dashboardGrid')){
+                    if(desktopCard.parentNode) desktopCard.remove();
+                    document.getElementById('dashboardGrid').appendChild(desktopCard);
+                }
+                desktopCard.style.display = 'block';
+                mobileContainer.style.display = 'none';
+                toggleBtn.style.display = 'none';
+            }
+        }
+        
+        toggleBtn.addEventListener('click', () => {
+            if(!isMobile()) return;
+            if(mobileContainer.style.display === 'none' || mobileContainer.style.display === ''){
+                mobileContainer.style.display = 'block';
+                toggleBtn.textContent = 'Cerrar filtros';
+            } else {
+                mobileContainer.style.display = 'none';
+                toggleBtn.textContent = 'Filtros';
+            }
+        });
+        
+        window.addEventListener('resize', () => {
+            adjustForScreen();
+            if(!isMobile()){
+                toggleBtn.textContent = 'Filtros';
+            }
+        });
+        adjustForScreen();
+    }
+    
+    function initTabs(){ document.querySelectorAll('.tab-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ const tabId=btn.getAttribute('data-tab'); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active-pane')); document.getElementById(tabId).classList.add('active-pane'); }); }); }
+    
+    function cargarDatosEjemplo() {
+        if(personas.length === 0){
+            personas = [
+                { id:1, numero:1, apellido:"Pérez", nombre:"Juan", edad:34, iglesia:"Jesús Vive", domicilio:"Av. siempre viva 123", ciudad:"Córdoba", perfil:"Plantador", observaciones:"Líder activo", telefono:"3511234567", modulosCumplidos:"Módulo 1,2", estadoActual:"En proceso", escuelasEtapas:"Sensibilizacion", redes:"Plantador", esPastor:"Si", esPresidente:"No", denominacion:"Evangélica", modulosDetalle:{ bernabe:[{modulo:"Plan Bernabé-Mentoreo - Módulo 1", fecha:"2025-01-10", estado:"Cumplido"}], impacto:[], plantacion:[] } },
+                { id:2, numero:2, apellido:"González", nombre:"María", edad:28, iglesia:"Fe y Esperanza", domicilio:"San Martín 456", ciudad:"Buenos Aires", perfil:"Multiplicador", observaciones:"", telefono:"1159876543", modulosCumplidos:"", estadoActual:"Pendiente", escuelasEtapas:"Acompañar", redes:"Introduccion", esPastor:"No", esPresidente:"No", denominacion:"Bautista", modulosDetalle:{ bernabe:[], impacto:[], plantacion:[] } }
+            ];
+            actualizarSelectoresFiltros();
+            updateFilteredData();
+        }
+    }
+    
+    function init(){
+        cargarDatosEjemplo();
+        actualizarSelectoresFiltros();
+        updateFilteredData();
+        initTabs();
+        document.getElementById('filtroGeneral').addEventListener('input',()=>updateFilteredData());
+        document.getElementById('filtroPerfil').addEventListener('change',()=>updateFilteredData());
+        document.getElementById('filtroEstadoModulo').addEventListener('change',()=>updateFilteredData());
+        document.getElementById('filtroPlanModulos').addEventListener('change',()=>updateFilteredData());
+        document.getElementById('filtroIglesia').addEventListener('change',()=>updateFilteredData());
+        document.getElementById('filtroCiudad').addEventListener('change',()=>updateFilteredData());
+        document.getElementById('filtroEstado').addEventListener('change',()=>updateFilteredData());
+        document.getElementById('limpiarFiltrosBtn').addEventListener('click',()=>{ document.getElementById('filtroGeneral').value=''; document.getElementById('filtroPerfil').value=''; document.getElementById('filtroEstadoModulo').value=''; document.getElementById('filtroPlanModulos').value=''; document.getElementById('filtroIglesia').value=''; document.getElementById('filtroCiudad').value=''; document.getElementById('filtroEstado').value=''; updateFilteredData(); });
+        document.getElementById('imprimirCompletaBtn').addEventListener('click',()=>imprimirDatos(getSortedData(personas)));
+        document.getElementById('imprimirFiltradaBtn').addEventListener('click',()=>imprimirDatos(currentFilteredData));
+        
+        // Evento salir con modal (para ambos botones, original y móvil)
+        const confirmLogoutModal = document.getElementById('confirmLogoutModal');
+        const confirmLogoutYes = document.getElementById('confirmLogoutYes');
+        const confirmLogoutNo = document.getElementById('confirmLogoutNo');
+        const salirBtn = document.getElementById('salirBtn');
+        const salirMobileBtn = document.getElementById('salirMobileBtn');
+        
+        const showLogoutModal = () => { if(confirmLogoutModal) confirmLogoutModal.classList.add('active'); };
+        if(salirBtn) salirBtn.addEventListener('click', showLogoutModal);
+        if(salirMobileBtn) salirMobileBtn.addEventListener('click', showLogoutModal);
+        
+        if(confirmLogoutYes) confirmLogoutYes.addEventListener('click', () => { window.location.href = 'index.html'; });
+        if(confirmLogoutNo) confirmLogoutNo.addEventListener('click', () => { if(confirmLogoutModal) confirmLogoutModal.classList.remove('active'); });
+        if(confirmLogoutModal) confirmLogoutModal.addEventListener('click', (e) => { if(e.target === confirmLogoutModal) confirmLogoutModal.classList.remove('active'); });
+        
+        document.getElementById('nuevoRegistroBtn').addEventListener('click',()=>{ editModeId=null; document.getElementById('modalNuevoTitle').innerText='Nuevo Registro'; document.getElementById('nuevoForm').reset(); construirModulosForm(); document.getElementById('nuevoEsPastor').value='No'; document.getElementById('nuevoEsPresidente').value='No'; document.getElementById('nuevoTelefono').value=''; document.getElementById('nuevoModal').classList.add('active'); });
+        
+        const mapaBtn = document.getElementById('mapaBtn');
+        const agendaBtn = document.getElementById('agendaBtn');
+        const backBtn = document.getElementById('backToTableBtn');
+        if(mapaBtn) mapaBtn.addEventListener('click', () => mostrarEmbed('https://experiencia-ia.github.io/boillat/mapa', 'Mapa'));
+        if(agendaBtn) agendaBtn.addEventListener('click', () => mostrarEmbed('https://experiencia-ia.github.io/boillat/agenda', 'Agenda'));
+        if(backBtn) backBtn.addEventListener('click', () => ocultarEmbedYMostrarTabla());
+        
+        document.getElementById('closeNuevoModalBtn').addEventListener('click',()=>cerrarModal('nuevoModal'));
+        document.getElementById('cancelarNuevoBtn').addEventListener('click',()=>cerrarModal('nuevoModal'));
+        document.getElementById('nuevoForm').addEventListener('submit',guardarNuevoEditar);
+        document.getElementById('closeModalBtn').addEventListener('click',()=>cerrarModal('detailModal'));
+        document.getElementById('detailModal').addEventListener('click',(e)=>{if(e.target===document.getElementById('detailModal'))cerrarModal('detailModal');});
+        document.getElementById('nuevoModal').addEventListener('click',(e)=>{if(e.target===document.getElementById('nuevoModal'))cerrarModal('nuevoModal');});
+        document.getElementById('confirmDeleteYes').addEventListener('click',()=>{ if(pendingDeleteId!==null){ eliminarRegistro(pendingDeleteId); pendingDeleteId=null; } document.getElementById('confirmDeleteModal').classList.remove('active'); });
+        document.getElementById('confirmDeleteNo').addEventListener('click',()=>{ pendingDeleteId=null; document.getElementById('confirmDeleteModal').classList.remove('active'); });
+        setupMobileFilters();
+        document.getElementById('nuevoTelefono').addEventListener('input', function(e) { this.value = limpiarTelefonoInput(this.value); });
+    }
+    
     function mostrarEmbed(url, titulo) {
         const tablaContainer = document.getElementById('tableContainer');
         const embedContainer = document.getElementById('embedContainer');
@@ -1066,86 +1260,19 @@
             embedContainer.style.display = 'none';
             tablaContainer.style.display = 'block';
             embedIframe.src = 'about:blank';
-            if (filtersCard) filtersCard.style.display = 'block';
+            if (filtersCard && !(window.innerWidth <= 880)) filtersCard.style.display = 'block';
             if (filtersToggle) filtersToggle.style.display = '';
             if (mainTitle) mainTitle.innerText = 'Tabla de Registro';
             if (dashboardGrid) dashboardGrid.classList.remove('embed-fullwidth');
             const mobileContainer = document.getElementById('mobileFiltersContainer');
-            const desktopCard = document.getElementById('desktopFiltersCard');
-            if (mobileContainer && desktopCard && mobileContainer.contains(desktopCard)) {
-                document.querySelector('.dashboard-grid').appendChild(desktopCard);
+            if (mobileContainer && window.innerWidth <= 880) {
                 mobileContainer.style.display = 'none';
                 const toggleBtn = document.getElementById('toggleFiltersBtn');
                 if (toggleBtn) toggleBtn.textContent = 'Filtros';
             }
         }
     }
-
-    function initTabs(){ document.querySelectorAll('.tab-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ const tabId=btn.getAttribute('data-tab'); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active-pane')); document.getElementById(tabId).classList.add('active-pane'); }); }); }
     
-    function init(){
-        actualizarSelectoresFiltros();
-        updateFilteredData();
-        initTabs();
-        document.getElementById('filtroGeneral').addEventListener('input',()=>updateFilteredData());
-        document.getElementById('filtroPerfil').addEventListener('change',()=>updateFilteredData());
-        document.getElementById('filtroEstadoModulo').addEventListener('change',()=>updateFilteredData());
-        document.getElementById('filtroPlanModulos').addEventListener('change',()=>updateFilteredData());
-        document.getElementById('filtroIglesia').addEventListener('change',()=>updateFilteredData());
-        document.getElementById('filtroCiudad').addEventListener('change',()=>updateFilteredData());
-        document.getElementById('filtroEstado').addEventListener('change',()=>updateFilteredData());
-        document.getElementById('limpiarFiltrosBtn').addEventListener('click',()=>{ document.getElementById('filtroGeneral').value=''; document.getElementById('filtroPerfil').value=''; document.getElementById('filtroEstadoModulo').value=''; document.getElementById('filtroPlanModulos').value=''; document.getElementById('filtroIglesia').value=''; document.getElementById('filtroCiudad').value=''; document.getElementById('filtroEstado').value=''; updateFilteredData(); });
-        document.getElementById('imprimirCompletaBtn').addEventListener('click',()=>imprimirDatos(getSortedData(personas)));
-        document.getElementById('imprimirFiltradaBtn').addEventListener('click',()=>imprimirDatos(currentFilteredData));
-        
-        // --- Botón Salir con modal personalizado ---
-        const salirBtn = document.getElementById('salirBtn');
-        const confirmLogoutModal = document.getElementById('confirmLogoutModal');
-        const confirmLogoutYes = document.getElementById('confirmLogoutYes');
-        const confirmLogoutNo = document.getElementById('confirmLogoutNo');
-        
-        if(salirBtn) {
-            salirBtn.addEventListener('click', () => {
-                if(confirmLogoutModal) confirmLogoutModal.classList.add('active');
-            });
-        }
-        if(confirmLogoutYes) {
-            confirmLogoutYes.addEventListener('click', () => {
-                window.location.href = 'index.html';
-            });
-        }
-        if(confirmLogoutNo) {
-            confirmLogoutNo.addEventListener('click', () => {
-                if(confirmLogoutModal) confirmLogoutModal.classList.remove('active');
-            });
-        }
-        // Cerrar modal si se hace clic fuera del contenido
-        if(confirmLogoutModal) {
-            confirmLogoutModal.addEventListener('click', (e) => {
-                if(e.target === confirmLogoutModal) confirmLogoutModal.classList.remove('active');
-            });
-        }
-        
-        document.getElementById('nuevoRegistroBtn').addEventListener('click',()=>{ editModeId=null; document.getElementById('modalNuevoTitle').innerText='Nuevo Registro'; document.getElementById('nuevoForm').reset(); construirModulosForm(); document.getElementById('nuevoEsPastor').value='No'; document.getElementById('nuevoEsPresidente').value='No'; document.getElementById('nuevoTelefono').value=''; document.getElementById('nuevoModal').classList.add('active'); });
-        
-        const mapaBtn = document.getElementById('mapaBtn');
-        const agendaBtn = document.getElementById('agendaBtn');
-        const backBtn = document.getElementById('backToTableBtn');
-        if(mapaBtn) mapaBtn.addEventListener('click', () => mostrarEmbed('https://experiencia-ia.github.io/boillat/mapa', 'Mapa'));
-        if(agendaBtn) agendaBtn.addEventListener('click', () => mostrarEmbed('https://experiencia-ia.github.io/boillat/agenda', 'Agenda'));
-        if(backBtn) backBtn.addEventListener('click', () => ocultarEmbedYMostrarTabla());
-        
-        document.getElementById('closeNuevoModalBtn').addEventListener('click',()=>cerrarModal('nuevoModal'));
-        document.getElementById('cancelarNuevoBtn').addEventListener('click',()=>cerrarModal('nuevoModal'));
-        document.getElementById('nuevoForm').addEventListener('submit',guardarNuevoEditar);
-        document.getElementById('closeModalBtn').addEventListener('click',()=>cerrarModal('detailModal'));
-        document.getElementById('detailModal').addEventListener('click',(e)=>{if(e.target===document.getElementById('detailModal'))cerrarModal('detailModal');});
-        document.getElementById('nuevoModal').addEventListener('click',(e)=>{if(e.target===document.getElementById('nuevoModal'))cerrarModal('nuevoModal');});
-        document.getElementById('confirmDeleteYes').addEventListener('click',()=>{ if(pendingDeleteId!==null){ eliminarRegistro(pendingDeleteId); pendingDeleteId=null; } document.getElementById('confirmDeleteModal').classList.remove('active'); });
-        document.getElementById('confirmDeleteNo').addEventListener('click',()=>{ pendingDeleteId=null; document.getElementById('confirmDeleteModal').classList.remove('active'); });
-        setupMobileFilters();
-        document.getElementById('nuevoTelefono').addEventListener('input', function(e) { this.value = limpiarTelefonoInput(this.value); });
-    }
     init();
 </script>
 </body>
