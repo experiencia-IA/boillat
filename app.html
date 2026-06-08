@@ -979,7 +979,7 @@
     }
     
     function updateFilteredData(){ currentFilteredData = filtrarRegistros(); currentPage = 1; renderizarTabla(); renderizarPaginacion(); }
-    function renderizarTabla(){ const start=(currentPage-1)*itemsPerPage; const paginated=currentFilteredData.slice(start,start+itemsPerPage); const tbody=document.getElementById('tablaBody'); if(!paginated.length){ tbody.innerHTML='<tr><td colspan="10">No hay registros</td></tr>'; document.getElementById('contadorRegistros').innerText=`Total: ${currentFilteredData.length}`; return; } let html=''; paginated.forEach(p=>{ html+=`<tr data-id="${p.id}"><td>${p.numero}</td><td>${escapeHtml(p.apellido)}</td><td>${escapeHtml(p.nombre)}</td><td>${p.edad}</td><td>${escapeHtml(p.iglesia)}</td><td>${escapeHtml(p.domicilio)}</td><td>${escapeHtml(p.ciudad)}</td><td>${escapeHtml(p.perfil)}</td><td>${escapeHtml(p.observaciones?.substring(0,55)||'')}</td><td>${p.telefono?`<a href="tel:+54${p.telefono.replace(/\s/g,'')}" class="phone-link" onclick="event.stopPropagation()">+54 ${escapeHtml(p.telefono)}</a>`:''}</td></tr>`; }); tbody.innerHTML=html; document.getElementById('contadorRegistros').innerText=`Total registros: ${currentFilteredData.length}`; document.querySelectorAll('#tablaBody tr[data-id]').forEach(row=>{ row.addEventListener('click',(e)=>{ if(e.target.tagName==='A') return; const id=parseInt(row.dataset.id); const p=personas.find(x=>x.id===id); if(p) abrirModalDetalle(p); }); }); }
+    function renderizarTabla(){ const start=(currentPage-1)*itemsPerPage; const paginated=currentFilteredData.slice(start,start+itemsPerPage); const tbody=document.getElementById('tablaBody'); if(!paginated.length){ tbody.innerHTML='<tr><td colspan="10">No hay registros</td></tr>'; document.getElementById('contadorRegistros').innerText=`Total: ${currentFilteredData.length}`; return; } let html=''; paginated.forEach(p=>{ html+=`<tr data-id="${p.id}"> <td>${p.numero}</td> <td>${escapeHtml(p.apellido)}</td> <td>${escapeHtml(p.nombre)}</td> <td>${p.edad}</td> <td>${escapeHtml(p.iglesia)}</td> <td>${escapeHtml(p.domicilio)}</td> <td>${escapeHtml(p.ciudad)}</td> <td>${escapeHtml(p.perfil)}</td> <td>${escapeHtml(p.observaciones?.substring(0,55)||'')}</td> <td>${p.telefono?`<a href="tel:+54${p.telefono.replace(/\s/g,'')}" class="phone-link" onclick="event.stopPropagation()">+54 ${escapeHtml(p.telefono)}</a>`:''}</td> </tr>`; }); tbody.innerHTML=html; document.getElementById('contadorRegistros').innerText=`Total registros: ${currentFilteredData.length}`; document.querySelectorAll('#tablaBody tr[data-id]').forEach(row=>{ row.addEventListener('click',(e)=>{ if(e.target.tagName==='A') return; const id=parseInt(row.dataset.id); const p=personas.find(x=>x.id===id); if(p) abrirModalDetalle(p); }); }); }
     function renderizarPaginacion(){ const totalPages=Math.ceil(currentFilteredData.length/itemsPerPage); const container=document.getElementById('paginationControls'); const pageInfo=document.getElementById('pageInfo'); const startItem=(currentPage-1)*itemsPerPage+1; const endItem=Math.min(currentPage*itemsPerPage, currentFilteredData.length); pageInfo.innerText=`Mostrando ${startItem}-${endItem} de ${currentFilteredData.length}`; if(totalPages<=1){ container.innerHTML=''; return; } let btns=`<button class="pagination-btn" id="prevPageBtn" ${currentPage===1?'disabled':''}>Anterior</button>`; for(let i=1;i<=totalPages;i++) btns+=`<button class="pagination-btn ${i===currentPage?'active':''}" data-page="${i}">${i}</button>`; btns+=`<button class="pagination-btn" id="nextPageBtn" ${currentPage===totalPages?'disabled':''}>Siguiente</button>`; container.innerHTML=btns; document.querySelectorAll('[data-page]').forEach(btn=>btn.addEventListener('click',()=>{ currentPage=parseInt(btn.dataset.page); renderizarTabla(); renderizarPaginacion(); })); document.getElementById('prevPageBtn')?.addEventListener('click',()=>{ if(currentPage>1){currentPage--;renderizarTabla();renderizarPaginacion();}}); document.getElementById('nextPageBtn')?.addEventListener('click',()=>{ if(currentPage<totalPages){currentPage++;renderizarTabla();renderizarPaginacion();}}); }
     function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>]/g, m=> m==='&'?'&amp;': m==='<'?'&lt;':'&gt;'); }
 
@@ -1230,6 +1230,7 @@
         }
     }
     
+    // CORRECCIÓN APLICADA: al volver se restaura completamente la vista de filtros
     function ocultarEmbedYMostrarTabla() {
         const tablaContainer = document.getElementById('tableContainer');
         const embedContainer = document.getElementById('embedContainer');
@@ -1243,16 +1244,14 @@
             embedContainer.style.display = 'none';
             tablaContainer.style.display = 'block';
             embedIframe.src = 'about:blank';
-            if (filtersCard && !(window.innerWidth <= 880)) filtersCard.style.display = 'block';
+            // Restaurar visibilidad del contenedor del botón de filtros
             if (filtersToggle) filtersToggle.style.display = '';
+            // Restaurar display del card para que el resize pueda controlarlo
+            if (filtersCard) filtersCard.style.display = '';
             if (mainTitle) mainTitle.innerText = 'Tabla de Registro';
             if (dashboardGrid) dashboardGrid.classList.remove('embed-fullwidth');
-            const mobileContainer = document.getElementById('mobileFiltersContainer');
-            if (mobileContainer && window.innerWidth <= 880) {
-                mobileContainer.style.display = 'none';
-                const toggleBtn = document.getElementById('toggleFiltersBtn');
-                if (toggleBtn) toggleBtn.textContent = 'Filtros';
-            }
+            // Forzar re-evaluación de la disposición de filtros (móvil/escritorio)
+            window.dispatchEvent(new Event('resize'));
         }
     }
     
