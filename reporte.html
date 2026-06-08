@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Reportes y Estadisticas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f1f5f9;
+            min-height: 100vh;
+            padding: 24px 20px;
+            color: #0f172a;
+        }
+
+        .app-wrapper {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            padding: 1.75rem 2rem 2rem 2rem;
+            transition: all 0.2s ease;
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-bottom: 28px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .title-section h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: -0.3px;
+        }
+        .welcome-highlight {
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: #eff6ff;
+            color: #2563eb;
+            padding: 6px 16px;
+            border-radius: 40px;
+        }
+        .charts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+        .kpi-header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 12px;
+        }
+        .print-all-kpis-btn {
+            background: #0f3b2c;
+            border: none;
+            border-radius: 40px;
+            padding: 10px 24px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .print-all-kpis-btn:hover {
+            background: #064e3b;
+            transform: translateY(-2px);
+        }
+        .chart-card {
+            background: #ffffff;
+            border-radius: 18px;
+            border: 1px solid #eef2f6;
+            padding: 1.2rem 1.2rem 1.5rem 1.2rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            position: relative;
+            overflow-x: auto;
+        }
+        .chart-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .print-btn {
+            background: #059669;
+            border: none;
+            border-radius: 40px;
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            letter-spacing: 0.3px;
+        }
+        .print-btn:hover {
+            background: #047857;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .print-btn:active {
+            transform: translateY(0);
+        }
+        .two-columns-charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .select-person {
+            margin-top: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+        }
+        .select-person label {
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .select-person select {
+            flex: 2;
+            padding: 8px 12px;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-family: 'Inter', sans-serif;
+        }
+        canvas { 
+            max-height: 280px; 
+            width: 100%; 
+            height: auto;
+        }
+        .kpi-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+        .kpi-card {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 12px 18px;
+            flex: 1 1 180px;
+            border-left: 4px solid #2563eb;
+            position: relative;
+        }
+        .kpi-number {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+        .kpi-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #475569;
+        }
+        .small-note {
+            font-size: 0.7rem;
+            color: #5b6e8c;
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        /* Responsive movil */
+        @media (max-width: 880px) {
+            body {
+                padding: 12px;
+            }
+            .app-wrapper {
+                padding: 1rem;
+                border-radius: 16px;
+            }
+            .header-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .title-section h1 {
+                font-size: 1.4rem;
+            }
+            .welcome-highlight {
+                font-size: 0.8rem;
+                padding: 4px 12px;
+            }
+            .two-columns-charts {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .chart-card {
+                padding: 1rem;
+                overflow-x: visible;
+            }
+            .chart-card h3 {
+                font-size: 1rem;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .print-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 12px 16px;
+                font-size: 0.9rem;
+                margin-top: 6px;
+            }
+            .kpi-card {
+                flex: 1 1 100%;
+                min-width: 140px;
+            }
+            .kpi-number {
+                font-size: 1.6rem;
+            }
+            .select-person {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .select-person select {
+                width: 100%;
+            }
+            canvas {
+                max-height: 240px;
+            }
+            .print-all-kpis-btn {
+                width: 100%;
+                justify-content: center;
+                margin-bottom: 8px;
+            }
+            .kpi-header {
+                justify-content: stretch;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-wrapper {
+                padding: 0.75rem;
+            }
+            .chart-card {
+                padding: 0.9rem;
+            }
+            .print-btn {
+                padding: 10px 14px;
+                font-size: 0.85rem;
+            }
+            .kpi-card {
+                padding: 10px 14px;
+            }
+        }
+
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .app-wrapper { padding: 0; box-shadow: none; }
+            .print-btn, .kpi-print, .select-person, .header-bar .welcome-highlight, .print-all-kpis-btn { display: none; }
+            .chart-card { break-inside: avoid; page-break-inside: avoid; border: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-wrapper">
+    <div class="header-bar">
+        <div class="title-section">
+            <h1>Reporte Estadistico y Evolucion</h1>
+        </div>
+        <div class="welcome-highlight">Red de Multiplicacion · Analisis preciso de discipulado</div>
+    </div>
+
+    <div class="charts-container">
+        <!-- KPIs con boton imprimir todos -->
+        <div>
+            <div class="kpi-header">
+                <button class="print-all-kpis-btn" id="printAllKpisBtn">Imprimir todos los KPIs</button>
+            </div>
+            <div class="kpi-row" id="kpiContainer"></div>
+        </div>
+
+        <!-- Graficos dobles: perfiles y redes -->
+        <div class="two-columns-charts">
+            <div class="chart-card">
+                <h3>Distribucion por Perfil <button class="print-btn" id="printPerfilBtn">Imprimir grafico</button></h3>
+                <canvas id="perfilChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Redes / Etapas <button class="print-btn" id="printRedesBtn">Imprimir grafico</button></h3>
+                <canvas id="redesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Graficos: ciudades e iglesias -->
+        <div class="two-columns-charts">
+            <div class="chart-card">
+                <h3>Registros por Ciudad <button class="print-btn" id="printCiudadBtn">Imprimir grafico</button></h3>
+                <canvas id="ciudadChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Registros por Iglesia <button class="print-btn" id="printIglesiaBtn">Imprimir grafico</button></h3>
+                <canvas id="iglesiaChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Evolucion global -->
+        <div class="chart-card">
+            <h3>Evolucion global del cumplimiento de modulos (acumulado mensual) <button class="print-btn" id="printEvolGlobalBtn">Imprimir grafico</button></h3>
+            <canvas id="evolucionGlobalChart"></canvas>
+            <div class="small-note">Modulos marcados como "Cumplido" con fecha, acumulados en el tiempo (fechas en DD/MM/AAAA)</div>
+        </div>
+
+        <!-- Evolucion individual -->
+        <div class="chart-card">
+            <h3>Evolucion individual de persona (progreso de modulos cumplidos) <button class="print-btn" id="printEvolPersonaBtn">Imprimir grafico</button></h3>
+            <div class="select-person">
+                <label>Seleccionar persona:</label>
+                <select id="personaSelect"></select>
+            </div>
+            <canvas id="evolucionPersonaChart"></canvas>
+            <div class="small-note"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Datos de ejemplo
+    let personas = [];
+
+    function randomDate(start, end) {
+        return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+    }
+    function formatYMD(date) {
+        let y = date.getFullYear();
+        let m = String(date.getMonth() + 1).padStart(2, '0');
+        let d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+    function formatDMY(dateStr) {
+        if (!dateStr) return '';
+        const parts = dateStr.split('-');
+        if (parts.length !== 3) return dateStr;
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+
+    const planesModulos = {
+        bernabe: Array.from({length:5}, (_,i) => `Plan Bernabe-Mentoreo - Modulo ${i+1}`),
+        impacto: Array.from({length:7}, (_,i) => `Iglesia de Impacto - Modulo ${i+1}`),
+        plantacion: Array.from({length:15}, (_,i) => `Plantacion de Iglesias - Modulo ${i+1}`)
+    };
+
+    function generarModulosConFechas(cantidadMax, fechaInicio, fechaFin) {
+        const modulos = [];
+        const tipos = ['bernabe', 'impacto', 'plantacion'];
+        let contador = 0;
+        for (let t of tipos) {
+            for (let modName of planesModulos[t]) {
+                if (contador >= cantidadMax) break;
+                const estado = Math.random() > 0.4 ? 'Cumplido' : 'Pendiente';
+                let fecha = '';
+                if (estado === 'Cumplido') {
+                    const fechaRand = randomDate(fechaInicio, fechaFin);
+                    fecha = formatYMD(fechaRand);
+                }
+                modulos.push({ modulo: modName, fecha, estado });
+                contador++;
+            }
+            if (contador >= cantidadMax) break;
+        }
+        return modulos;
+    }
+
+    function construirDatosEjemplo() {
+        const perfilesList = ["Posible Plantador", "Plantador", "Lider emergente", "Mentor", "Multiplicador"];
+        const redesList = ["Posible Plantador", "Introduccion", "Retiro", "Presentacion de Modulo"];
+        const ciudades = ["Cordoba", "Buenos Aires", "Rosario", "Mendoza", "San Miguel de Tucuman", "Salta"];
+        const iglesiasList = ["Jesus Vive", "Fe y Esperanza", "Centro Familiar", "Cristo Rey", "Nuevo Nacer", "Rey de Reyes"];
+        const nombres = ["Juan", "Maria", "Carlos", "Laura", "David", "Ana", "Lucas", "Valentina", "Matias", "Camila", "Sofia", "Diego"];
+        const apellidos = ["Perez", "Gonzalez", "Rodriguez", "Fernandez", "Lopez", "Martinez", "Sanchez", "Ramirez", "Torres", "Flores"];
+
+        const startDate = new Date(2024, 0, 1);
+        const endDate = new Date(2025, 3, 30);
+
+        for (let i = 1; i <= 18; i++) {
+            const perfil = perfilesList[Math.floor(Math.random() * perfilesList.length)];
+            const red = redesList[Math.floor(Math.random() * redesList.length)];
+            const ciudad = ciudades[Math.floor(Math.random() * ciudades.length)];
+            const iglesia = iglesiasList[Math.floor(Math.random() * iglesiasList.length)];
+            const nombre = nombres[Math.floor(Math.random() * nombres.length)];
+            const apellido = apellidos[Math.floor(Math.random() * apellidos.length)];
+            const edad = 20 + Math.floor(Math.random() * 45);
+            let totalModulosReales = 5 + Math.floor(Math.random() * 12);
+            let modulosDetalleRaw = generarModulosConFechas(totalModulosReales, startDate, endDate);
+            let bernabeArr = [], impactoArr = [], plantacionArr = [];
+            modulosDetalleRaw.forEach(m => {
+                if (m.modulo.includes("Bernabe")) bernabeArr.push(m);
+                else if (m.modulo.includes("Impacto")) impactoArr.push(m);
+                else if (m.modulo.includes("Plantacion")) plantacionArr.push(m);
+            });
+            const modulosDetalle = { bernabe: bernabeArr, impacto: impactoArr, plantacion: plantacionArr };
+            let allMods = [...bernabeArr, ...impactoArr, ...plantacionArr];
+            let cumplidos = allMods.filter(m => m.estado === "Cumplido").length;
+            let estadoActual = "Pendiente";
+            if (cumplidos > 3) estadoActual = "En proceso";
+            if (cumplidos > 8) estadoActual = "Cumplido";
+            
+            const telefono = "9" + Math.floor(100000000 + Math.random() * 900000000).toString().slice(0,9);
+            personas.push({
+                id: i, numero: i, apellido, nombre, edad, iglesia, domicilio: "Dir. " + Math.floor(Math.random()*1000),
+                ciudad, perfil, observaciones: "Miembro activo", telefono, redes: red,
+                esPastor: Math.random() > 0.7 ? "Si" : "No", esPresidente: Math.random() > 0.8 ? "Si" : "No",
+                denominacion: "Evangelica", escuelasEtapas: red === "Introduccion" ? "Acompanar" : (red === "Retiro" ? "Celebrar" : "Sensibilizacion"),
+                estadoActual, modulosCumplidos: `Modulos completados: ${cumplidos}`, modulosDetalle
+            });
+        }
+        personas.push({
+            id: 19, numero:19, apellido:"Lider", nombre:"Elena", edad:32, iglesia:"Jesus Vive", domicilio:"Av. siempre 123", ciudad:"Cordoba",
+            perfil:"Multiplicador", observaciones:"Avance rapido", telefono:"3518765432", redes:"Presentacion de Modulo",
+            esPastor:"Si", esPresidente:"No", denominacion:"Bautista", escuelasEtapas:"Celebrar", estadoActual:"Cumplido",
+            modulosCumplidos:"Modulos multiples",
+            modulosDetalle: {
+                bernabe: planesModulos.bernabe.map((mod, idx) => ({ modulo: mod, fecha: idx<4 ? `2024-0${idx+1}-15` : '', estado: idx<4 ? "Cumplido" : "Pendiente" })),
+                impacto: planesModulos.impacto.map((mod, idx) => ({ modulo: mod, fecha: idx<5 ? `2024-${6+idx}-10` : '', estado: idx<5 ? "Cumplido" : "Pendiente" })),
+                plantacion: planesModulos.plantacion.map((mod, idx) => ({ modulo: mod, fecha: idx<3 ? `2025-0${idx+1}-20` : '', estado: idx<3 ? "Cumplido" : "Pendiente" }))
+            }
+        });
+    }
+    construirDatosEjemplo();
+
+    let perfilChart, redesChart, ciudadChart, iglesiaChart, evolucionGlobalChart, evolucionPersonaChart;
+
+    function obtenerEventosCumplimiento(persona) {
+        const eventos = [];
+        const modulos = persona.modulosDetalle || { bernabe:[], impacto:[], plantacion:[] };
+        [...modulos.bernabe, ...modulos.impacto, ...modulos.plantacion].forEach(m => {
+            if (m.estado === "Cumplido" && m.fecha && m.fecha.trim() !== "") {
+                eventos.push({ fecha: new Date(m.fecha), modulo: m.modulo });
+            }
+        });
+        eventos.sort((a,b) => a.fecha - b.fecha);
+        return eventos;
+    }
+    
+    function calcularEvolucionGlobal(peopleList) {
+        let allEvents = [];
+        peopleList.forEach(p => {
+            const eventos = obtenerEventosCumplimiento(p);
+            eventos.forEach(ev => allEvents.push(ev.fecha));
+        });
+        if (allEvents.length === 0) return { labels: [], data: [] };
+        allEvents.sort((a,b) => a - b);
+        const mesesMap = new Map();
+        allEvents.forEach(fecha => {
+            const key = `${fecha.getFullYear()}-${String(fecha.getMonth()+1).padStart(2,'0')}`;
+            mesesMap.set(key, (mesesMap.get(key) || 0) + 1);
+        });
+        const sortedKeys = Array.from(mesesMap.keys()).sort();
+        let acumulado = 0;
+        const acumulados = [];
+        const labels = [];
+        for (let key of sortedKeys) {
+            acumulado += mesesMap.get(key);
+            acumulados.push(acumulado);
+            const [year, month] = key.split('-');
+            labels.push(`${month}/${year}`);
+        }
+        return { labels, data: acumulados };
+    }
+    
+    function obtenerEvolucionIndividual(persona) {
+        const eventos = obtenerEventosCumplimiento(persona);
+        if (eventos.length === 0) return { labels: [], data: [] };
+        let acum = 0;
+        const points = [];
+        const fechasUnicas = [];
+        for (let ev of eventos) {
+            acum++;
+            const fechaObj = ev.fecha;
+            const fechaStr = `${fechaObj.getDate().toString().padStart(2,'0')}/${(fechaObj.getMonth()+1).toString().padStart(2,'0')}/${fechaObj.getFullYear()}`;
+            fechasUnicas.push(fechaStr);
+            points.push(acum);
+        }
+        return { labels: fechasUnicas, data: points };
+    }
+    
+    function getCountByKey(key) {
+        const map = new Map();
+        personas.forEach(p => {
+            let val = p[key];
+            if (!val) val = "Sin dato";
+            map.set(val, (map.get(val) || 0) + 1);
+        });
+        return { labels: Array.from(map.keys()), data: Array.from(map.values()) };
+    }
+    
+    function getKPIValues() {
+        const total = personas.length;
+        const totalModulos = personas.reduce((acc, p) => acc + obtenerEventosCumplimiento(p).length, 0);
+        const promedio = total ? (totalModulos / total).toFixed(1) : 0;
+        const cumplidas = personas.filter(p => p.estadoActual === "Cumplido").length;
+        return { total, totalModulos, promedio, cumplidas };
+    }
+    
+    function renderizarKPIs() {
+        const { total, totalModulos, promedio, cumplidas } = getKPIValues();
+        const container = document.getElementById('kpiContainer');
+        container.innerHTML = `
+            <div class="kpi-card"><div class="kpi-number">${total}</div><div class="kpi-label">Personas activas</div></div>
+            <div class="kpi-card"><div class="kpi-number">${totalModulos}</div><div class="kpi-label">Modulos cumplidos</div></div>
+            <div class="kpi-card"><div class="kpi-number">${promedio}</div><div class="kpi-label">Promedio modulos/persona</div></div>
+            <div class="kpi-card"><div class="kpi-number">${cumplidas}</div><div class="kpi-label">Estado "Cumplido"</div></div>
+        `;
+    }
+    
+    function imprimirTodosKPIs() {
+        const { total, totalModulos, promedio, cumplidas } = getKPIValues();
+        const ventana = window.open('', '_blank');
+        ventana.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head><meta charset="UTF-8"><title>Red de Multiplicacion - Reporte y Evolucion</title>
+            <style>
+                body { font-family: 'Inter', sans-serif; margin: 30px; }
+                h2 { color: #1e293b; border-bottom: 2px solid #2563eb; padding-bottom: 8px; }
+                .kpi-grid { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 30px; }
+                .kpi-item { background: #f8fafc; border-radius: 24px; padding: 20px; flex: 1 1 200px; text-align: center; border-left: 5px solid #2563eb; }
+                .kpi-number { font-size: 2.5rem; font-weight: 800; color: #0f172a; }
+                .kpi-label { font-size: 0.85rem; text-transform: uppercase; color: #475569; margin-top: 6px; }
+                .footer { margin-top: 40px; font-size: 0.7rem; color: #64748b; text-align: center; }
+            </style>
+            </head>
+            <body>
+            <h2>Red de Multiplicacion - Reporte y Evolucion</h2>
+            <h3>Resumen de Indicadores Clave (KPIs)</h3>
+            <div class="kpi-grid">
+                <div class="kpi-item"><div class="kpi-number">${total}</div><div class="kpi-label">Personas activas</div></div>
+                <div class="kpi-item"><div class="kpi-number">${totalModulos}</div><div class="kpi-label">Modulos cumplidos</div></div>
+                <div class="kpi-item"><div class="kpi-number">${promedio}</div><div class="kpi-label">Promedio modulos/persona</div></div>
+                <div class="kpi-item"><div class="kpi-number">${cumplidas}</div><div class="kpi-label">Estado "Cumplido"</div></div>
+            </div>
+            <div class="footer">Generado el ${new Date().toLocaleString()}</div>
+            </body>
+            </html>
+        `);
+        ventana.document.close();
+        ventana.print();
+    }
+    
+    function renderizarTodosLosGraficos() {
+        const perfilData = getCountByKey('perfil');
+        if (perfilChart) perfilChart.destroy();
+        perfilChart = new Chart(document.getElementById('perfilChart'), {
+            type: 'pie', data: { labels: perfilData.labels, datasets: [{ data: perfilData.data, backgroundColor: ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec489a'] }] },
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } } }
+        });
+        
+        const redesData = getCountByKey('redes');
+        if (redesChart) redesChart.destroy();
+        redesChart = new Chart(document.getElementById('redesChart'), {
+            type: 'doughnut', data: { labels: redesData.labels, datasets: [{ data: redesData.data, backgroundColor: '#2563eb', borderColor: '#fff' }] }
+        });
+        
+        const ciudadData = getCountByKey('ciudad');
+        if (ciudadChart) ciudadChart.destroy();
+        ciudadChart = new Chart(document.getElementById('ciudadChart'), {
+            type: 'bar', data: { labels: ciudadData.labels, datasets: [{ label: 'Cantidad', data: ciudadData.data, backgroundColor: '#3b82f6', borderRadius: 8 }] },
+            options: { responsive: true, plugins: { legend: { position: 'top' } } }
+        });
+        
+        let iglesiaRaw = getCountByKey('iglesia');
+        if (iglesiaRaw.labels.length > 7) {
+            iglesiaRaw = { labels: iglesiaRaw.labels.slice(0,6), data: iglesiaRaw.data.slice(0,6) };
+        }
+        if (iglesiaChart) iglesiaChart.destroy();
+        iglesiaChart = new Chart(document.getElementById('iglesiaChart'), {
+            type: 'bar', data: { labels: iglesiaRaw.labels, datasets: [{ label: 'Miembros', data: iglesiaRaw.data, backgroundColor: '#10b981' }] }
+        });
+        
+        const evolGlobal = calcularEvolucionGlobal(personas);
+        if (evolucionGlobalChart) evolucionGlobalChart.destroy();
+        evolucionGlobalChart = new Chart(document.getElementById('evolucionGlobalChart'), {
+            type: 'line', data: { labels: evolGlobal.labels, datasets: [{ label: 'Modulos cumplidos (acumulado)', data: evolGlobal.data, borderColor: '#2563eb', tension: 0.2, fill: false, pointBackgroundColor: '#1e40af' }] },
+            options: { responsive: true }
+        });
+        
+        actualizarSelectPersona();
+    }
+    
+    function actualizarSelectPersona() {
+        const select = document.getElementById('personaSelect');
+        if (!select) return;
+        select.innerHTML = '<option value="">-- Seleccione una persona --</option>';
+        personas.forEach(p => {
+            select.innerHTML += `<option value="${p.id}">${p.nombre} ${p.apellido} (${p.iglesia})</option>`;
+        });
+        if (personas.length > 0) select.value = personas[0]?.id || '';
+        actualizarGraficoIndividual();
+    }
+    
+    function actualizarGraficoIndividual() {
+        const select = document.getElementById('personaSelect');
+        const selectedId = select.value ? parseInt(select.value) : null;
+        let persona = null;
+        if (selectedId) persona = personas.find(p => p.id === selectedId);
+        if (!persona) {
+            if (evolucionPersonaChart) evolucionPersonaChart.destroy();
+            const ctx = document.getElementById('evolucionPersonaChart').getContext('2d');
+            evolucionPersonaChart = new Chart(ctx, { type: 'line', data: { labels: [], datasets: [] }, options: { responsive: true } });
+            return;
+        }
+        const evolIndiv = obtenerEvolucionIndividual(persona);
+        if (evolucionPersonaChart) evolucionPersonaChart.destroy();
+        const ctx = document.getElementById('evolucionPersonaChart').getContext('2d');
+        evolucionPersonaChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: evolIndiv.labels, datasets: [{ label: `Modulos cumplidos (${persona.nombre} ${persona.apellido})`, data: evolIndiv.data, borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,0.1)', fill: true, tension: 0.3, pointRadius: 4 }] },
+            options: { scales: { y: { title: { display: true, text: 'Modulos acumulados' }, beginAtZero: true }, x: { title: { display: true, text: 'Fechas de cumplimiento (DD/MM/AAAA)' } } } }
+        });
+    }
+    
+    function imprimirGraficoConDatos(tituloSeccion, chartInstance, datosTabla) {
+        const ventana = window.open('', '_blank');
+        const canvas = chartInstance.canvas;
+        const imagenURL = canvas.toDataURL('image/png');
+        let tablaHTML = '';
+        if (datosTabla && datosTabla.labels && datosTabla.data) {
+            tablaHTML = `<h3>Tabla de datos</h3><table border="1" cellpadding="6" style="border-collapse:collapse; width:100%"><thead><tr><th>Categoria</th><th>Valor</th></tr></thead><tbody>`;
+            for (let i = 0; i < datosTabla.labels.length; i++) {
+                tablaHTML += `<tr><td>${datosTabla.labels[i]}</td><td>${datosTabla.data[i]}</td></tr>`;
+            }
+            tablaHTML += `</tbody></table>`;
+        }
+        ventana.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head><meta charset="UTF-8"><title>Red de Multiplicacion - Reporte y Evolucion</title>
+            <style>
+                body { font-family: 'Inter', sans-serif; margin: 30px; }
+                h2 { color: #1e293b; }
+                img { max-width: 100%; height: auto; margin: 20px 0; border: 1px solid #ddd; border-radius: 12px; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
+                th { background: #f1f5f9; }
+                .footer { margin-top: 30px; font-size: 0.7rem; color: #475569; text-align: center; }
+            </style>
+            </head>
+            <body>
+            <h2>Red de Multiplicacion - Reporte y Evolucion</h2>
+            <h3>${tituloSeccion}</h3>
+            <img src="${imagenURL}" alt="Grafico" />
+            ${tablaHTML}
+            <div class="footer">Generado el ${new Date().toLocaleString()}</div>
+            </body>
+            </html>
+        `);
+        ventana.document.close();
+        ventana.print();
+    }
+    
+    function bindPrintEvents() {
+        document.getElementById('printPerfilBtn')?.addEventListener('click', () => {
+            const data = getCountByKey('perfil');
+            imprimirGraficoConDatos('Distribucion por Perfil', perfilChart, data);
+        });
+        document.getElementById('printRedesBtn')?.addEventListener('click', () => {
+            const data = getCountByKey('redes');
+            imprimirGraficoConDatos('Redes / Etapas', redesChart, data);
+        });
+        document.getElementById('printCiudadBtn')?.addEventListener('click', () => {
+            const data = getCountByKey('ciudad');
+            imprimirGraficoConDatos('Registros por Ciudad', ciudadChart, data);
+        });
+        document.getElementById('printIglesiaBtn')?.addEventListener('click', () => {
+            let data = getCountByKey('iglesia');
+            if (data.labels.length > 7) data = { labels: data.labels.slice(0,6), data: data.data.slice(0,6) };
+            imprimirGraficoConDatos('Registros por Iglesia', iglesiaChart, data);
+        });
+        document.getElementById('printEvolGlobalBtn')?.addEventListener('click', () => {
+            const evol = calcularEvolucionGlobal(personas);
+            const tablaData = { labels: evol.labels, data: evol.data };
+            imprimirGraficoConDatos('Evolucion Global de Modulos (Acumulado)', evolucionGlobalChart, tablaData);
+        });
+        document.getElementById('printEvolPersonaBtn')?.addEventListener('click', () => {
+            const select = document.getElementById('personaSelect');
+            const selectedId = select.value ? parseInt(select.value) : null;
+            let persona = null;
+            if (selectedId) persona = personas.find(p => p.id === selectedId);
+            if (!persona) { alert('Seleccione una persona primero'); return; }
+            const evolIndiv = obtenerEvolucionIndividual(persona);
+            const tablaData = { labels: evolIndiv.labels, data: evolIndiv.data };
+            imprimirGraficoConDatos(`Evolucion individual: ${persona.nombre} ${persona.apellido}`, evolucionPersonaChart, tablaData);
+        });
+        document.getElementById('printAllKpisBtn')?.addEventListener('click', () => imprimirTodosKPIs());
+    }
+    
+    function init() {
+        renderizarKPIs();
+        renderizarTodosLosGraficos();
+        document.getElementById('personaSelect')?.addEventListener('change', () => actualizarGraficoIndividual());
+        bindPrintEvents();
+    }
+    
+    init();
+</script>
+</body>
+</html>
