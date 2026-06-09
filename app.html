@@ -131,7 +131,7 @@
             display: inline-flex;
         }
 
-        /* contenedor para botones extra en móvil (Reporte + Biblia) */
+        /* contenedor para botones extra en móvil (Reporte + Biblia + ABC) */
         .mobile-buttons-container {
             display: none;
             width: 100%;
@@ -780,6 +780,23 @@
             padding-top: 12px;
         }
 
+        /* Checkbox personalizado para plantador */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+        }
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
         /* ========== ESTILOS MÓVIL (menor o igual a 880px) ========== */
         @media (max-width: 880px) {
             .app-wrapper {
@@ -846,11 +863,11 @@
                 font-size: 0.8rem;
                 white-space: nowrap;
             }
-            /* Ocultamos los botones Reporte/Biblia de escritorio dentro del action-buttons en móvil */
+            /* Ocultamos los botones Reporte/Biblia/ABC de escritorio dentro del action-buttons en móvil */
             .desktop-only {
                 display: none !important;
             }
-            /* Mostramos el contenedor específico para móvil con Reporte + Biblia */
+            /* Mostramos el contenedor específico para móvil con Reporte + Biblia + ABC */
             .mobile-buttons-container {
                 display: flex !important;
             }
@@ -877,17 +894,17 @@
             <div class="welcome-highlight">Hola, bienvenido a la Red de Multiplicación.</div>
             <div class="action-buttons">
                 <button class="btn-primary-action" id="nuevoRegistroBtn">Nuevo Registro</button>
+                <button class="btn-primary-action" id="abcBtnDesktop">ABC</button>
                 <button class="btn-primary-action" id="mapaBtn">Mapa</button>
                 <button class="btn-primary-action" id="agendaBtn">Agenda</button>
-                <!-- NUEVOS BOTONES: Reporte y Biblia (solo visibles en escritorio, en móvil se ocultan) -->
                 <button class="btn-primary-action desktop-only" id="reporteBtnDesktop">Reporte</button>
                 <button class="btn-primary-action desktop-only" id="bibliaBtnDesktop">Biblia</button>
                 <button class="btn-logout" id="salirBtn">Salir</button>
             </div>
-            <!-- Contenedor para móvil: Reporte y Biblia aparecen en una fila adicional debajo -->
             <div class="mobile-buttons-container" id="mobileExtraButtons">
                 <button class="btn-primary-action" id="reporteBtnMobile">Reporte</button>
                 <button class="btn-primary-action" id="bibliaBtnMobile">Biblia</button>
+                <button class="btn-primary-action" id="abcBtnMobile">ABC</button>
             </div>
         </div>
     </div>
@@ -925,7 +942,12 @@
 </div>
 
 <!-- Modales -->
-<div id="nuevoModal" class="modal-overlay"><div class="modal-container"><div class="modal-header"><h3 id="modalNuevoTitle">Nuevo Registro</h3><button class="close-modal" id="closeNuevoModalBtn">&times;</button></div><div class="modal-body"><div class="tabs-container"><ul class="tabs-list"><li><button type="button" class="tab-btn active" data-tab="tab1">Datos Personales</button></li><li><button type="button" class="tab-btn" data-tab="tab2">Datos Iglesia</button></li><li><button type="button" class="tab-btn" data-tab="tab3">Escuela/Etapas</button></li><li><button type="button" class="tab-btn" data-tab="tab4">Módulos</button></li><li><button type="button" class="tab-btn" data-tab="tab5">Observaciones</button></li></ul></div><form id="nuevoForm"><div id="tab1" class="tab-pane active-pane"><div class="form-group"><label>Apellido *</label><input type="text" id="nuevoApellido" required></div><div class="form-group"><label>Nombre *</label><input type="text" id="nuevoNombre" required></div><div class="form-group"><label>Edad *</label><input type="number" id="nuevoEdad" required></div><div class="form-group"><label>Teléfono (Argentina +54)</label><div class="phone-prefix"><span>+54</span><input type="tel" id="nuevoTelefono" placeholder="Ej: 9 11 1234 5678" maxlength="15"></div><small style="color:#5b6e8c">Solo números, máx 15 dígitos.</small></div><div class="form-group"><label>Domicilio</label><input type="text" id="nuevoDomicilio"></div><div class="form-group"><label>Ciudad *</label><input type="text" id="nuevoCiudad" required></div><div class="form-group"><label>Perfil</label><select id="nuevoPerfil"><option value="">Seleccione</option><option>Posible Plantador</option><option>Plantador</option><option>Lider emergente</option><option>Mentor</option><option>Multiplicador</option></select></div><div class="form-group"><label>Redes</label><select id="nuevoRedes"><option value="">Seleccione</option><option>Posible Plantador</option><option>Introduccion</option><option>Retiro</option><option>Presentacion de Modulo</option></select></div></div><div id="tab2" class="tab-pane"><div class="form-group"><label>Iglesia *</label><input type="text" id="nuevoIglesia" required></div><div class="form-group"><label>Es Pastor</label><select id="nuevoEsPastor"><option>No</option><option>Si</option></select></div><div class="form-group"><label>Presidente Consejo</label><select id="nuevoEsPresidente"><option>No</option><option>Si</option></select></div><div class="form-group"><label>Denominación</label><input type="text" id="nuevoDenominacion"></div></div><div id="tab3" class="tab-pane"><div class="form-group"><label>Escuelas o Etapas</label><select id="nuevoEscuelasEtapas"><option value="">Seleccione</option><option>Sensibilizacion</option><option>Acompañar</option><option>Celebrar</option></select></div></div><div id="tab4" class="tab-pane"><div class="form-group"><label>Módulos cumplidos (texto libre)</label><input type="text" id="nuevoModulos" placeholder="Ej: Discipulado, Evangelismo"></div><div class="modulo-subsection"><h4>📘 Plan Bernabé-Mentoreo (5 módulos)</h4><div class="modulo-grid" id="modulosBernabeGrid"></div></div><div class="modulo-subsection"><h4>⛪ Iglesia de Impacto (7 módulos)</h4><div class="modulo-grid" id="modulosImpactoGrid"></div></div><div class="modulo-subsection"><h4>🌱 Plantación de Iglesias (15 módulos)</h4><div class="modulo-grid" id="modulosPlantacionGrid"></div></div></div><div id="tab5" class="tab-pane"><div class="form-group"><label>Observaciones</label><textarea id="nuevoObservaciones" rows="3"></textarea></div><div class="form-group"><label>Estado actual</label><select id="nuevoEstado"><option>Pendiente</option><option>En proceso</option><option>Cumplido</option></select></div></div><div class="form-actions"><button type="button" class="btn-primary-outline" id="cancelarNuevoBtn">Cancelar</button><button type="submit" class="btn-primary" id="guardarNuevoBtn">Guardar</button></div></form></div></div></div>
+<div id="nuevoModal" class="modal-overlay"><div class="modal-container"><div class="modal-header"><h3 id="modalNuevoTitle">Nuevo Registro</h3><button class="close-modal" id="closeNuevoModalBtn">&times;</button></div><div class="modal-body"><div class="tabs-container"><ul class="tabs-list"><li><button type="button" class="tab-btn active" data-tab="tab1">Datos Personales</button></li><li><button type="button" class="tab-btn" data-tab="tab2">Datos Iglesia</button></li><li><button type="button" class="tab-btn" data-tab="tab3">Escuela/Etapas</button></li><li><button type="button" class="tab-btn" data-tab="tab4">Módulos</button></li><li><button type="button" class="tab-btn" data-tab="tab5">Observaciones</button></li></ul></div><form id="nuevoForm"><div id="tab1" class="tab-pane active-pane"><div class="form-group"><label>Apellido *</label><input type="text" id="nuevoApellido" required></div><div class="form-group"><label>Nombre *</label><input type="text" id="nuevoNombre" required></div><div class="form-group"><label>Edad *</label><input type="number" id="nuevoEdad" required></div><div class="form-group"><label>Teléfono (Argentina +54)</label><div class="phone-prefix"><span>+54</span><input type="tel" id="nuevoTelefono" placeholder="Ej: 9 11 1234 5678" maxlength="15"></div><small style="color:#5b6e8c">Solo números, máx 15 dígitos.</small></div><div class="form-group"><label>Domicilio</label><input type="text" id="nuevoDomicilio"></div><div class="form-group"><label>Ciudad *</label><input type="text" id="nuevoCiudad" required></div><div class="form-group"><label>Perfil</label><select id="nuevoPerfil"><option value="">Seleccione</option><option>Posible Plantador</option><option>Plantador</option><option>Lider emergente</option><option>Mentor</option><option>Multiplicador</option></select></div><div class="form-group"><label>Redes</label><select id="nuevoRedes"><option value="">Seleccione</option><option>Posible Plantador</option><option>Introduccion</option><option>Retiro</option><option>Presentacion de Modulo</option></select></div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="nuevoEsPlantador">
+                        <label for="nuevoEsPlantador">✅ Marcar como Plantador (aparecerá en Reporte ABC)</label>
+                    </div>
+                </div><div id="tab2" class="tab-pane"><div class="form-group"><label>Iglesia *</label><input type="text" id="nuevoIglesia" required></div><div class="form-group"><label>Es Pastor</label><select id="nuevoEsPastor"><option>No</option><option>Si</option></select></div><div class="form-group"><label>Presidente Consejo</label><select id="nuevoEsPresidente"><option>No</option><option>Si</option></select></div><div class="form-group"><label>Denominación</label><input type="text" id="nuevoDenominacion"></div></div><div id="tab3" class="tab-pane"><div class="form-group"><label>Escuelas o Etapas</label><select id="nuevoEscuelasEtapas"><option value="">Seleccione</option><option>Sensibilizacion</option><option>Acompañar</option><option>Celebrar</option></select></div></div><div id="tab4" class="tab-pane"><div class="form-group"><label>Módulos cumplidos (texto libre)</label><input type="text" id="nuevoModulos" placeholder="Ej: Discipulado, Evangelismo"></div><div class="modulo-subsection"><h4>📘 Plan Bernabé-Mentoreo (5 módulos)</h4><div class="modulo-grid" id="modulosBernabeGrid"></div></div><div class="modulo-subsection"><h4>⛪ Iglesia de Impacto (7 módulos)</h4><div class="modulo-grid" id="modulosImpactoGrid"></div></div><div class="modulo-subsection"><h4>🌱 Plantación de Iglesias (15 módulos)</h4><div class="modulo-grid" id="modulosPlantacionGrid"></div></div></div><div id="tab5" class="tab-pane"><div class="form-group"><label>Observaciones</label><textarea id="nuevoObservaciones" rows="3"></textarea></div><div class="form-group"><label>Estado actual</label><select id="nuevoEstado"><option>Pendiente</option><option>En proceso</option><option>Cumplido</option></select></div></div><div class="form-actions"><button type="button" class="btn-primary-outline" id="cancelarNuevoBtn">Cancelar</button><button type="submit" class="btn-primary" id="guardarNuevoBtn">Guardar</button></div></form></div></div></div>
 
 <div id="detailModal" class="modal-overlay"><div class="modal-container"><div class="modal-header"><h3>Detalle del Registro</h3><button class="close-modal" id="closeModalBtn">&times;</button></div><div class="modal-body" id="modalBodyContent"></div></div></div>
 <div id="confirmDeleteModal" class="confirm-modal-overlay"><div class="confirm-modal"><div class="confirm-header">⚠️ Confirmar eliminación</div><div class="confirm-body">¿Estás seguro de eliminar este registro? Esta acción no se puede deshacer.</div><div class="confirm-buttons"><button id="confirmDeleteYes" class="confirm-btn-yes">Eliminar</button><button id="confirmDeleteNo" class="confirm-btn-no">Cancelar</button></div></div></div>
@@ -937,6 +959,22 @@
     const itemsPerPage = 10;
     let currentFilteredData = [];
     let pendingDeleteId = null;
+
+    // Función para obtener parámetros de la URL
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    // Función para guardar personas en localStorage
+    function guardarPersonas() {
+        localStorage.setItem('appPersonas', JSON.stringify(personas));
+    }
 
     function formatearFecha(fechaISO) {
         if(!fechaISO) return '';
@@ -1032,6 +1070,7 @@
         document.getElementById('nuevoObservaciones').value = persona.observaciones || '';
         document.getElementById('nuevoModulos').value = persona.modulosCumplidos || '';
         document.getElementById('nuevoEstado').value = persona.estadoActual;
+        document.getElementById('nuevoEsPlantador').checked = persona.esPlantador === true;
         cargarModulosEnFormulario(persona.modulosDetalle || { bernabe:[], impacto:[], plantacion:[] });
         document.getElementById('nuevoModal').classList.add('active');
     }
@@ -1057,7 +1096,8 @@
             esPastor: document.getElementById('nuevoEsPastor').value,
             esPresidente: document.getElementById('nuevoEsPresidente').value,
             denominacion: document.getElementById('nuevoDenominacion').value.trim(),
-            modulosDetalle: modulosDetalle
+            modulosDetalle: modulosDetalle,
+            esPlantador: document.getElementById('nuevoEsPlantador').checked
         };
         if(!nuevaData.apellido||!nuevaData.nombre||!nuevaData.iglesia||!nuevaData.ciudad||isNaN(nuevaData.edad)){ alert("Complete campos obligatorios."); return; }
         if(editModeId){
@@ -1069,6 +1109,7 @@
             const nuevoNumero = personas.length? Math.max(...personas.map(p=>p.numero))+1 : 1;
             personas.push({ id:nuevoId, numero:nuevoNumero, ...nuevaData });
         }
+        guardarPersonas();
         actualizarSelectoresFiltros();
         updateFilteredData();
         cerrarModal('nuevoModal');
@@ -1112,6 +1153,7 @@
                 <div class="detail-field"><div class="label">Módulos cumplidos</div><div class="value">${escapeHtml(p.modulosCumplidos)||'—'}</div></div>
                 <div class="detail-field"><div class="label">Estado</div><div class="value"><span class="badge-status ${estadoClase}">${p.estadoActual}</span></div></div>
                 <div class="detail-field"><div class="label">Observaciones</div><div class="value">${escapeHtml(p.observaciones)||'—'}</div></div>
+                <div class="detail-field"><div class="label">¿Es plantador?</div><div class="value">${p.esPlantador ? '✅ Sí' : '❌ No'}</div></div>
             </div>
             ${modulosHtml}
         `;
@@ -1123,10 +1165,15 @@
     function imprimirRegistroIndividual(p){
         const ventana = window.open('','_blank'); let modulosPrint=''; const todas=[...(p.modulosDetalle?.bernabe||[]),...(p.modulosDetalle?.impacto||[]),...(p.modulosDetalle?.plantacion||[])];
         todas.forEach(m=>{ modulosPrint+=`<div><strong>${escapeHtml(m.modulo)}</strong> - Fecha: ${m.fecha?formatearFecha(m.fecha):'—'} - Estado: ${m.estado||'Pendiente'}</div>`; });
-        ventana.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Detalle Registro</title><style>body{font-family:Inter;margin:30px}.row{display:flex;margin-bottom:8px}.label{font-weight:700;width:180px}</style></head><body><h2>Red de Multiplicación - Sistema de Gestión y Seguimiento</h2><h3>Detalle de Registro</h3><div class="row"><div class="label">Número:</div><div>${p.numero}</div></div><div class="row"><div class="label">Nombre:</div><div>${escapeHtml(p.nombre)} ${escapeHtml(p.apellido)}</div></div><div class="row"><div class="label">Iglesia:</div><div>${escapeHtml(p.iglesia)}</div></div><div class="row"><div class="label">Ciudad:</div><div>${escapeHtml(p.ciudad)}</div></div><div class="row"><div class="label">Perfil:</div><div>${escapeHtml(p.perfil)}</div></div><div class="row"><div class="label">Teléfono:</div><div>+54 ${escapeHtml(p.telefono||'')}</div></div><h3>Seguimiento de Módulos</h3>${modulosPrint||'<p>Sin módulos registrados.</p>'}<p>Generado: ${new Date().toLocaleString()}</p></body></html>`);
+        ventana.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Detalle Registro</title><style>body{font-family:Inter;margin:30px}.row{display:flex;margin-bottom:8px}.label{font-weight:700;width:180px}</style></head><body><h2>Red de Multiplicación - Sistema de Gestión y Seguimiento</h2><h3>Detalle de Registro</h3><div class="row"><div class="label">Número:</div><div>${p.numero}</div></div><div class="row"><div class="label">Nombre:</div><div>${escapeHtml(p.nombre)} ${escapeHtml(p.apellido)}</div></div><div class="row"><div class="label">Iglesia:</div><div>${escapeHtml(p.iglesia)}</div></div><div class="row"><div class="label">Ciudad:</div><div>${escapeHtml(p.ciudad)}</div></div><div class="row"><div class="label">Perfil:</div><div>${escapeHtml(p.perfil)}</div></div><div class="row"><div class="label">Teléfono:</div><div>+54 ${escapeHtml(p.telefono||'')}</div></div><div class="row"><div class="label">¿Es plantador?:</div><div>${p.esPlantador ? 'Sí' : 'No'}</div></div><h3>Seguimiento de Módulos</h3>${modulosPrint||'<p>Sin módulos registrados.</p>'}<p>Generado: ${new Date().toLocaleString()}</p></body></html>`);
         ventana.document.close(); ventana.print();
     }
-    function eliminarRegistro(id) { personas = personas.filter(p=>p.id!==id); actualizarSelectoresFiltros(); updateFilteredData(); }
+    function eliminarRegistro(id) { 
+        personas = personas.filter(p=>p.id!==id); 
+        guardarPersonas();
+        actualizarSelectoresFiltros(); 
+        updateFilteredData(); 
+    }
     function cerrarModal(id){ const m=document.getElementById(id); if(m) m.classList.remove('active'); }
     
     function actualizarSelectoresFiltros() {
@@ -1145,7 +1192,7 @@
         if(filtroCiudad){ let v=filtroCiudad.value; filtroCiudad.innerHTML='<option value="">Todas las ciudades</option>'+ciudades.map(c=>`<option value="${c}">${c}</option>`).join(''); filtroCiudad.value=v; }
     }
     
-    function imprimirDatos(datos){ if(!datos.length){alert("Sin registros");return;} const w=window.open('','_blank'); w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Registros</title><style>body{font-family:Inter;margin:30px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:8px}th{background:#334155;color:white}</style></head><body><h2>Red de Multiplicación - Listado de Registros</h2><p>${new Date().toLocaleString()}</p><table><thead><tr><th>Núm</th><th>Apellido</th><th>Nombre</th><th>Edad</th><th>Iglesia</th><th>Domicilio</th><th>Ciudad</th><th>Perfil</th><th>Observaciones</th><th>Teléfono</th></tr></thead><tbody>${datos.map(p=>`<tr><td>${p.numero}</td><td>${escapeHtml(p.apellido)}</td><td>${escapeHtml(p.nombre)}</td><td>${p.edad}</td><td>${escapeHtml(p.iglesia)}</td><td>${escapeHtml(p.domicilio)}</td><td>${escapeHtml(p.ciudad)}</td><td>${escapeHtml(p.perfil)}</td><td>${escapeHtml(p.observaciones)}</td><td>+54 ${escapeHtml(p.telefono||'')}</td></tr>`).join('')}</tbody></table><p>Total: ${datos.length}</p></body></html>`); w.document.close(); w.print(); }
+    function imprimirDatos(datos){ if(!datos.length){alert("Sin registros");return;} const w=window.open('','_blank'); w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Registros</title><style>body{font-family:Inter;margin:30px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:8px}th{background:#334155;color:white}</style></head><body><h2>Red de Multiplicación - Listado de Registros</h2><p>${new Date().toLocaleString()}</p><table><thead><tr><th>Núm</th><th>Apellido</th><th>Nombre</th><th>Edad</th><th>Iglesia</th><th>Domicilio</th><th>Ciudad</th><th>Perfil</th><th>Observaciones</th><th>Teléfono</th><th>Plantador</th></tr></thead><tbody>${datos.map(p=>`<tr><td>${p.numero}</td><td>${escapeHtml(p.apellido)}</td><td>${escapeHtml(p.nombre)}</td><td>${p.edad}</td><td>${escapeHtml(p.iglesia)}</td><td>${escapeHtml(p.domicilio)}</td><td>${escapeHtml(p.ciudad)}</td><td>${escapeHtml(p.perfil)}</td><td>${escapeHtml(p.observaciones)}</td><td>+54 ${escapeHtml(p.telefono||'')}</td><td>${p.esPlantador ? 'Sí' : 'No'}</td></tr>`).join('')}</tbody>}</table><p>Total: ${datos.length}</p></body></html>`); w.document.close(); w.print(); }
     
     function setupMobileFilters(){
         const toggleBtn = document.getElementById('toggleFiltersBtn');
@@ -1197,17 +1244,21 @@
     function initTabs(){ document.querySelectorAll('.tab-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ const tabId=btn.getAttribute('data-tab'); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active-pane')); document.getElementById(tabId).classList.add('active-pane'); }); }); }
     
     function cargarDatosEjemplo() {
-        if(personas.length === 0){
+        const stored = localStorage.getItem('appPersonas');
+        if(stored) {
+            personas = JSON.parse(stored);
+        } else {
             personas = [
-                { id:1, numero:1, apellido:"Pérez", nombre:"Juan", edad:34, iglesia:"Jesús Vive", domicilio:"Av. siempre viva 123", ciudad:"Córdoba", perfil:"Plantador", observaciones:"Líder activo", telefono:"3511234567", modulosCumplidos:"Módulo 1,2", estadoActual:"En proceso", escuelasEtapas:"Sensibilizacion", redes:"Plantador", esPastor:"Si", esPresidente:"No", denominacion:"Evangélica", modulosDetalle:{ bernabe:[{modulo:"Plan Bernabé-Mentoreo - Módulo 1", fecha:"2025-01-10", estado:"Cumplido"}], impacto:[], plantacion:[] } },
-                { id:2, numero:2, apellido:"González", nombre:"María", edad:28, iglesia:"Fe y Esperanza", domicilio:"San Martín 456", ciudad:"Buenos Aires", perfil:"Multiplicador", observaciones:"", telefono:"1159876543", modulosCumplidos:"", estadoActual:"Pendiente", escuelasEtapas:"Acompañar", redes:"Introduccion", esPastor:"No", esPresidente:"No", denominacion:"Bautista", modulosDetalle:{ bernabe:[], impacto:[], plantacion:[] } }
+                { id:1, numero:1, apellido:"Pérez", nombre:"Juan", edad:34, iglesia:"Jesús Vive", domicilio:"Av. siempre viva 123", ciudad:"Córdoba", perfil:"Plantador", observaciones:"Líder activo", telefono:"3511234567", modulosCumplidos:"Módulo 1,2", estadoActual:"En proceso", escuelasEtapas:"Sensibilizacion", redes:"Plantador", esPastor:"Si", esPresidente:"No", denominacion:"Evangélica", esPlantador: true, modulosDetalle:{ bernabe:[{modulo:"Plan Bernabé-Mentoreo - Módulo 1", fecha:"2025-01-10", estado:"Cumplido"}], impacto:[], plantacion:[] } },
+                { id:2, numero:2, apellido:"González", nombre:"María", edad:28, iglesia:"Fe y Esperanza", domicilio:"San Martín 456", ciudad:"Buenos Aires", perfil:"Multiplicador", observaciones:"", telefono:"1159876543", modulosCumplidos:"", estadoActual:"Pendiente", escuelasEtapas:"Acompañar", redes:"Introduccion", esPastor:"No", esPresidente:"No", denominacion:"Bautista", esPlantador: false, modulosDetalle:{ bernabe:[], impacto:[], plantacion:[] } }
             ];
-            actualizarSelectoresFiltros();
-            updateFilteredData();
+            guardarPersonas();
         }
+        actualizarSelectoresFiltros();
+        updateFilteredData();
     }
 
-    // Función unificada para mostrar contenido embebido (mapa, agenda, reporte, biblia)
+    // Función unificada para mostrar contenido embebido
     function mostrarEmbed(url, titulo) {
         const tablaContainer = document.getElementById('tableContainer');
         const embedContainer = document.getElementById('embedContainer');
@@ -1230,7 +1281,6 @@
         }
     }
     
-    // CORRECCIÓN APLICADA: al volver se restaura completamente la vista de filtros
     function ocultarEmbedYMostrarTabla() {
         const tablaContainer = document.getElementById('tableContainer');
         const embedContainer = document.getElementById('embedContainer');
@@ -1244,21 +1294,25 @@
             embedContainer.style.display = 'none';
             tablaContainer.style.display = 'block';
             embedIframe.src = 'about:blank';
-            // Restaurar visibilidad del contenedor del botón de filtros
             if (filtersToggle) filtersToggle.style.display = '';
-            // Restaurar display del card para que el resize pueda controlarlo
             if (filtersCard) filtersCard.style.display = '';
             if (mainTitle) mainTitle.innerText = 'Tabla de Registro';
             if (dashboardGrid) dashboardGrid.classList.remove('embed-fullwidth');
-            // Forzar re-evaluación de la disposición de filtros (móvil/escritorio)
             window.dispatchEvent(new Event('resize'));
         }
     }
     
+    function abrirDetallePorId(id) {
+        const persona = personas.find(p => p.id == id);
+        if (persona) {
+            setTimeout(() => {
+                abrirModalDetalle(persona);
+            }, 100);
+        }
+    }
+
     function init(){
         cargarDatosEjemplo();
-        actualizarSelectoresFiltros();
-        updateFilteredData();
         initTabs();
         document.getElementById('filtroGeneral').addEventListener('input',()=>updateFilteredData());
         document.getElementById('filtroPerfil').addEventListener('change',()=>updateFilteredData());
@@ -1284,25 +1338,30 @@
         if(confirmLogoutNo) confirmLogoutNo.addEventListener('click', () => { if(confirmLogoutModal) confirmLogoutModal.classList.remove('active'); });
         if(confirmLogoutModal) confirmLogoutModal.addEventListener('click', (e) => { if(e.target === confirmLogoutModal) confirmLogoutModal.classList.remove('active'); });
         
-        document.getElementById('nuevoRegistroBtn').addEventListener('click',()=>{ editModeId=null; document.getElementById('modalNuevoTitle').innerText='Nuevo Registro'; document.getElementById('nuevoForm').reset(); construirModulosForm(); document.getElementById('nuevoEsPastor').value='No'; document.getElementById('nuevoEsPresidente').value='No'; document.getElementById('nuevoTelefono').value=''; document.getElementById('nuevoModal').classList.add('active'); });
+        document.getElementById('nuevoRegistroBtn').addEventListener('click',()=>{ editModeId=null; document.getElementById('modalNuevoTitle').innerText='Nuevo Registro'; document.getElementById('nuevoForm').reset(); construirModulosForm(); document.getElementById('nuevoEsPastor').value='No'; document.getElementById('nuevoEsPresidente').value='No'; document.getElementById('nuevoTelefono').value=''; document.getElementById('nuevoEsPlantador').checked = false; document.getElementById('nuevoModal').classList.add('active'); });
         
-        // Botones Mapa y Agenda (existentes)
+        // Botones Mapa y Agenda
         const mapaBtn = document.getElementById('mapaBtn');
         const agendaBtn = document.getElementById('agendaBtn');
         const backBtn = document.getElementById('backToTableBtn');
         if(mapaBtn) mapaBtn.addEventListener('click', () => mostrarEmbed('https://experiencia-ia.github.io/boillat/mapa', 'Mapa'));
         if(agendaBtn) agendaBtn.addEventListener('click', () => mostrarEmbed('https://experiencia-ia.github.io/boillat/agenda', 'Agenda'));
         
-        // NUEVOS BOTONES: Reporte y Biblia (escritorio y móvil)
+        // Botones Reporte, Biblia y ABC (escritorio y móvil)
         const reporteDesktop = document.getElementById('reporteBtnDesktop');
         const bibliaDesktop = document.getElementById('bibliaBtnDesktop');
         const reporteMobile = document.getElementById('reporteBtnMobile');
         const bibliaMobile = document.getElementById('bibliaBtnMobile');
+        const abcDesktop = document.getElementById('abcBtnDesktop');
+        const abcMobile = document.getElementById('abcBtnMobile');
         
         if(reporteDesktop) reporteDesktop.addEventListener('click', () => mostrarEmbed('https://experiencia-ia.github.io/boillat/reporte.html', 'Reporte'));
         if(bibliaDesktop) bibliaDesktop.addEventListener('click', () => mostrarEmbed('https://experiencia-ia.github.io/versiones-biblia/bibliaRV60.html', 'Biblia'));
         if(reporteMobile) reporteMobile.addEventListener('click', () => mostrarEmbed('https://experiencia-ia.github.io/boillat/reporte.html', 'Reporte'));
         if(bibliaMobile) bibliaMobile.addEventListener('click', () => mostrarEmbed('https://experiencia-ia.github.io/versiones-biblia/bibliaRV60.html', 'Biblia'));
+        // ABC ahora usa mostrarEmbed
+        if(abcDesktop) abcDesktop.addEventListener('click', () => mostrarEmbed('abc.html', 'ABC'));
+        if(abcMobile) abcMobile.addEventListener('click', () => mostrarEmbed('abc.html', 'ABC'));
         
         if(backBtn) backBtn.addEventListener('click', () => ocultarEmbedYMostrarTabla());
         
@@ -1316,6 +1375,27 @@
         document.getElementById('confirmDeleteNo').addEventListener('click',()=>{ pendingDeleteId=null; document.getElementById('confirmDeleteModal').classList.remove('active'); });
         setupMobileFilters();
         document.getElementById('nuevoTelefono').addEventListener('input', function(e) { this.value = limpiarTelefonoInput(this.value); });
+        
+        // 🔥 NUEVO: Escuchar mensajes desde el iframe (ej: abc.html)
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'mostrarRegistro') {
+                const id = event.data.id;
+                if (id) {
+                    // Asegurar que se muestre la tabla (ocultar el embed si está visible)
+                    ocultarEmbedYMostrarTabla();
+                    // Pequeño retraso para permitir la actualización del DOM
+                    setTimeout(() => {
+                        abrirDetallePorId(id);
+                    }, 100);
+                }
+            }
+        });
+        
+        // Leer parámetro ID de la URL y abrir detalle automáticamente
+        const idParam = getParameterByName('id');
+        if (idParam) {
+            abrirDetallePorId(idParam);
+        }
     }
     
     init();

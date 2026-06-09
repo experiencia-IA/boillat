@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Reporte ABC · Red de Multiplicación</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f1f5f9;
+            min-height: 100vh;
+            padding: 24px 20px;
+            color: #0f172a;
+            font-weight: 400;
+        }
+
+        .app-wrapper {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            padding: 1.75rem 2rem 2rem 2rem;
+            transition: all 0.2s ease;
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-bottom: 28px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .title-section h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: -0.3px;
+        }
+        .btn-primary-action {
+            background: #2563eb;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-primary-action:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 28px;
+            margin-top: 6px;
+        }
+
+        .table-container {
+            background: #ffffff;
+            border-radius: 20px;
+            border: 1px solid #eef2f6;
+            overflow: hidden;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: 62vh;
+            overflow-y: auto;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            min-width: 780px;
+        }
+        .data-table th {
+            background: #1e293b;
+            color: #f8fafc;
+            padding: 14px 12px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .data-table td {
+            padding: 12px 12px;
+            border-bottom: 1px solid #eef2f8;
+            color: #1e293b;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .data-table tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        .mentoreo-si {
+            font-weight: 700;
+            color: #15803d;
+            background: #dcfce7;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+        }
+        .mentoreo-no {
+            font-weight: 700;
+            color: #b91c1c;
+            background: #fee2e2;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+        }
+
+        .filters-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 1.5rem 1.2rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03), 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid #edf2f7;
+            height: fit-content;
+        }
+        .filters-card h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 1rem;
+            border-left: 3px solid #3b82f6;
+            padding-left: 12px;
+        }
+        .filter-group {
+            margin-bottom: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .filter-group label {
+            font-weight: 600;
+            font-size: 0.7rem;
+            color: #334155;
+            text-transform: uppercase;
+        }
+        .filter-group input {
+            padding: 9px 12px;
+            border-radius: 14px;
+            border: 1px solid #cbd5e1;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+        }
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 16px 0 10px;
+        }
+        .btn-secondary {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 7px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            color: #1e293b;
+        }
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+        .stats-box {
+            background: #f8fafc;
+            border-radius: 18px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 1px solid #eef2f8;
+        }
+        .stats-box p {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #e2e8f0;
+            padding-bottom: 5px;
+        }
+        .stats-title {
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: #0f172a;
+        }
+        .btn-print-stats {
+            background: #2563eb;
+            color: white;
+            border: none;
+            width: 100%;
+            margin-top: 12px;
+            padding: 8px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 14px 20px;
+            background: #ffffff;
+            border-top: 1px solid #eef2f8;
+        }
+        .pagination-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .pagination-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .pagination-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+        .page-info {
+            font-size: 0.75rem;
+            color: #475569;
+        }
+
+        /* Modal detalle con acciones */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s ease;
+        }
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-container {
+            background: white;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 28px;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header {
+            background: #1e293b;
+            color: white;
+            padding: 16px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            line-height: 1;
+            cursor: pointer;
+            color: white;
+            opacity: 0.8;
+        }
+        .modal-body {
+            padding: 22px 26px;
+            overflow-y: auto;
+        }
+        .detail-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+            justify-content: flex-end;
+            border-bottom: 1px solid #eef2f8;
+            padding-bottom: 16px;
+        }
+        .btn-detail {
+            background: #f1f5f9;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .btn-edit {
+            background: #2563eb;
+            color: white;
+        }
+        .btn-delete {
+            background: #dc2626;
+            color: white;
+        }
+        .btn-print {
+            background: #475569;
+            color: white;
+        }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .detail-field {
+            border-bottom: 1px solid #eef2f8;
+            padding-bottom: 8px;
+        }
+        .detail-field .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #5b6e8c;
+        }
+        .detail-field .value {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #0f172a;
+            margin-top: 4px;
+            word-break: break-word;
+        }
+        .full-width {
+            grid-column: span 2;
+        }
+        @media (max-width: 700px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+            .full-width {
+                grid-column: span 1;
+            }
+            .app-wrapper {
+                padding: 1rem;
+            }
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+        .badge-num {
+            font-weight: 700;
+            background: #eef2ff;
+            padding: 2px 8px;
+            border-radius: 30px;
+        }
+        .small-note {
+            font-size: 0.7rem;
+            color: #5b6e8c;
+            margin-top: 12px;
+            text-align: center;
+        }
+        .form-section {
+            margin-bottom: 28px;
+            border-bottom: 1px solid #eef2f8;
+            padding-bottom: 18px;
+        }
+        .form-section h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #0f172a;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group label {
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: #334155;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 10px 12px;
+            border-radius: 14px;
+            border: 1px solid #cbd5e1;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .btn-primary {
+            background: #2563eb;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: white;
+            cursor: pointer;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            color: #1e293b;
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .readonly-field {
+            background-color: #f8fafc;
+        }
+    </style>
+</head>
+<body>
+<div class="app-wrapper">
+    <div class="header-bar">
+        <div class="title-section">
+            <h1>Reporte ABC</h1>
+        </div>
+        <button class="btn-primary-action" id="nuevoRegistroBtn">+ Nuevo reporte</button>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="table-container">
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>N°</th><th>Plantador</th><th>Zona de Plantación</th><th>Multiplicador</th><th>Mentoreo</th></tr>
+                    </thead>
+                    <tbody id="tablaBody">
+                        <tr><td colspan="5" style="text-align:center">Cargando registros...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-container">
+                <div class="page-info" id="pageInfo"></div>
+                <div class="pagination-controls" id="paginationControls"></div>
+            </div>
+        </div>
+
+        <div class="filters-card">
+            <h3>Filtros</h3>
+            <div class="filter-group">
+                <label>Busqueda global</label>
+                <input type="text" id="filtroGeneral" placeholder="Nombre, zona, multiplicador, peticion...">
+            </div>
+            <div class="filter-buttons">
+                <button class="btn-secondary" id="limpiarFiltrosBtn">Limpiar filtros</button>
+                <button class="btn-secondary" id="imprimirTablaFiltradaBtn">Imprimir tabla filtrada</button>
+            </div>
+            <div class="stats-box">
+                <div class="stats-title">Estadisticas acumuladas</div>
+                <div id="statsContainer">
+                    <p>Nuevos contactos: <span id="sumContactos">0</span></p>
+                    <p>Nuevas conversiones: <span id="sumConversiones">0</span></p>
+                    <p>Personas bautizadas: <span id="sumBautizados">0</span></p>
+                    <p>Lideres entrenamiento: <span id="sumLideresEntrenamiento">0</span></p>
+                    <p>Nuevos grupos: <span id="sumGrupos">0</span></p>
+                    <p>Personas en grupos: <span id="sumPersonasGrupos">0</span></p>
+                    <p>Lideres en grupos: <span id="sumLideresGrupos">0</span></p>
+                    <p style="border-bottom:none; margin-top:8px;"><strong>Total reportes:</strong> <span id="totalReportes">0</span></p>
+                </div>
+                <button class="btn-print-stats" id="imprimirEstadisticasBtn">Imprimir estadisticas</button>
+            </div>
+            <div class="small-note">Haz clic en cualquier fila para ver detalles y acciones</div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de detalle (con acciones editar, eliminar, imprimir) -->
+<div id="detailModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3 id="detailModalTitle">Detalle del reporte</h3>
+            <button class="close-modal" id="closeDetailModalBtn">&times;</button>
+        </div>
+        <div class="modal-body" id="detailModalBody"></div>
+    </div>
+</div>
+
+<!-- Modal para edicion / nuevo registro -->
+<div id="formModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3 id="formModalTitle">Nuevo Reporte</h3>
+            <button class="close-modal" id="closeFormModalBtn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="reporteForm">
+                <div class="form-section">
+                    <h4>Registro</h4>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Mes de Reporte *</label><select id="mesReporte" required><option value="">Seleccionar</option><option>Enero</option><option>Febrero</option><option>Marzo</option><option>Abril</option><option>Mayo</option><option>Junio</option><option>Julio</option><option>Agosto</option><option>Septiembre</option><option>Octubre</option><option>Noviembre</option><option>Diciembre</option></select></div>
+                        <div class="form-group"><label>Año de Reporte *</label><input type="number" id="anioReporte" min="2020" max="2030" value="2025" required></div>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <h4>Datos</h4>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Plantador (nombre) *</label><select id="plantadorSelect" required><option value="">Seleccione un plantador</option></select></div>
+                        <div class="form-group"><label>Zona de Plantación *</label><input type="text" id="zonaPlantacion" required></div>
+                        <div class="form-group"><label>Multiplicador *</label><input type="text" id="multiplicador" required></div>
+                        <div class="form-group"><label>Cumplió sesión de mentoreo</label><select id="mentoreo"><option value="no">No</option><option value="si">Si</option></select></div>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <h4>Personas (cantidades)</h4>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Nuevos contactos</label><input type="number" id="nuevosContactos" min="0" value="0"></div>
+                        <div class="form-group"><label>Nuevas conversiones</label><input type="number" id="nuevasConversiones" min="0" value="0"></div>
+                        <div class="form-group"><label>Nuevas personas bautizadas</label><input type="number" id="bautizados" min="0" value="0"></div>
+                        <div class="form-group"><label>Nuevos líderes de entrenamiento</label><input type="number" id="lideresEntrenamiento" min="0" value="0"></div>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <h4>Grupos pequeños</h4>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Nuevos grupos</label><input type="number" id="nuevosGrupos" min="0" value="0"></div>
+                        <div class="form-group"><label>Nuevas personas en grupos</label><input type="number" id="personasGrupos" min="0" value="0"></div>
+                        <div class="form-group"><label>Nuevos líderes en grupos</label><input type="number" id="lideresGrupos" min="0" value="0"></div>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <h4>Petición de Oración</h4>
+                    <div class="form-group full-width">
+                        <textarea id="peticionOracion" rows="3" placeholder="Escribe aquí las peticiones de oración..."></textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-outline" id="cancelFormBtn">Cancelar</button>
+                    <button type="submit" class="btn-primary" id="saveFormBtn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal confirmacion eliminar -->
+<div id="confirmDeleteModal" class="modal-overlay" style="z-index: 2100;">
+    <div class="modal-container" style="max-width: 380px;">
+        <div class="modal-header" style="background:#dc2626;"><h3>Eliminar reporte</h3><button class="close-modal" id="closeConfirmModal">&times;</button></div>
+        <div class="modal-body" style="text-align:center">
+            <p>¿Estás seguro de eliminar este reporte? La acción no se puede deshacer.</p>
+            <div class="form-actions" style="justify-content:center; margin-top:20px;">
+                <button id="confirmDeleteYes" class="btn-primary" style="background:#dc2626;">Eliminar</button>
+                <button id="confirmDeleteNo" class="btn-outline">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Helper: formatear fecha DD/MM/AAAA
+    function formatearFechaDDMMAAAA(fecha) {
+        const d = new Date(fecha);
+        const dia = String(d.getDate()).padStart(2, '0');
+        const mes = String(d.getMonth() + 1).padStart(2, '0');
+        const anio = d.getFullYear();
+        return `${dia}/${mes}/${anio}`;
+    }
+
+    let reportes = [];
+    let currentPage = 1;
+    const itemsPerPage = 10;
+    let deleteCandidateId = null;
+    let editMode = false;
+    let editId = null;
+
+    // Obtener lista de personas desde el localStorage de app.html, filtrando solo aquellas con esPlantador === true
+    function obtenerListaPlantadores() {
+        const stored = localStorage.getItem('appPersonas');
+        if (!stored) return [];
+        try {
+            const personas = JSON.parse(stored);
+            return personas.filter(p => p.esPlantador === true).map(p => ({
+                id: p.id,
+                nombreCompleto: `${p.nombre} ${p.apellido}`
+            }));
+        } catch(e) {
+            return [];
+        }
+    }
+
+    // Obtener todas las personas (sin filtrar) para buscar ID por nombre
+    function obtenerTodasPersonas() {
+        const stored = localStorage.getItem('appPersonas');
+        if (!stored) return [];
+        try {
+            return JSON.parse(stored);
+        } catch(e) {
+            return [];
+        }
+    }
+
+    // Función mejorada para buscar ID por nombre completo (normaliza y soporta inversión de nombre/apellido)
+    function buscarIdPorNombreCompleto(nombreCompleto) {
+        const personas = obtenerTodasPersonas();
+        const normalizar = (str) => str.trim().replace(/\s+/g, ' ').toLowerCase();
+        const nombreNormalizado = normalizar(nombreCompleto);
+
+        // Búsqueda directa
+        const encontrada = personas.find(p => {
+            const nombrePersona = normalizar(`${p.nombre} ${p.apellido}`);
+            return nombrePersona === nombreNormalizado;
+        });
+        if (encontrada) return encontrada.id;
+
+        // Segundo intento: intercambiar nombre y apellido (ej: "Pérez Juan" vs "Juan Pérez")
+        const partes = nombreNormalizado.split(' ');
+        if (partes.length >= 2) {
+            const invertido = `${partes[1]} ${partes[0]}`;
+            const encontradaInvertida = personas.find(p => {
+                const nombrePersona = normalizar(`${p.nombre} ${p.apellido}`);
+                return nombrePersona === invertido;
+            });
+            if (encontradaInvertida) return encontradaInvertida.id;
+        }
+        return null;
+    }
+
+    // Cargar opciones en el select de plantador
+    function cargarOpcionesPlantador(valorSeleccionado = null) {
+        const select = document.getElementById('plantadorSelect');
+        if (!select) return;
+        const plantadores = obtenerListaPlantadores();
+        let options = '<option value="">Seleccione un plantador</option>';
+        plantadores.forEach(p => {
+            options += `<option value="${escapeHtml(p.nombreCompleto)}">${escapeHtml(p.nombreCompleto)}</option>`;
+        });
+        select.innerHTML = options;
+        if (valorSeleccionado) {
+            let existe = false;
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === valorSeleccionado) {
+                    existe = true;
+                    break;
+                }
+            }
+            if (existe) {
+                select.value = valorSeleccionado;
+            } else if (valorSeleccionado) {
+                const option = document.createElement('option');
+                option.value = valorSeleccionado;
+                option.textContent = valorSeleccionado + " (antiguo)";
+                select.appendChild(option);
+                select.value = valorSeleccionado;
+            }
+        } else {
+            select.value = '';
+        }
+    }
+
+    function guardarEnLocal() {
+        localStorage.setItem('reportesABC', JSON.stringify(reportes));
+    }
+
+    function cargarDatosIniciales() {
+        const stored = localStorage.getItem('reportesABC');
+        if(stored) {
+            reportes = JSON.parse(stored);
+            if(reportes.length === 0) agregarEjemplo();
+        } else {
+            agregarEjemplo();
+        }
+        reportes.sort((a,b) => b.numero - a.numero);
+        guardarEnLocal();
+    }
+
+    function agregarEjemplo() {
+        if(reportes.length > 0) return;
+        reportes = [
+            { id: 1, numero: 1, mes: "Enero", anio: 2025, plantador: "Juan Pérez", zona: "Norte", multiplicador: "Carlos López", mentoreo: "si", contactos: 5, conversiones: 2, bautizados: 1, lideresEntrenamiento: 1, nuevosGrupos: 1, personasGrupos: 8, lideresGrupos: 1, peticion: "Por la unidad de la zona norte." },
+            { id: 2, numero: 2, mes: "Febrero", anio: 2025, plantador: "María González", zona: "Sur", multiplicador: "Ana Torres", mentoreo: "no", contactos: 3, conversiones: 1, bautizados: 0, lideresEntrenamiento: 0, nuevosGrupos: 0, personasGrupos: 4, lideresGrupos: 0, peticion: "Por los nuevos contactos." },
+            { id: 3, numero: 3, mes: "Marzo", anio: 2025, plantador: "Juan Pérez", zona: "Centro", multiplicador: "Luis Mendoza", mentoreo: "si", contactos: 8, conversiones: 4, bautizados: 2, lideresEntrenamiento: 2, nuevosGrupos: 2, personasGrupos: 15, lideresGrupos: 2, peticion: "Crecimiento espiritual." }
+        ];
+        reportes.forEach(r => { if(!r.peticion) r.peticion = ''; });
+    }
+
+    function obtenerSiguienteNumero() {
+        if(reportes.length === 0) return 1;
+        const maxNum = Math.max(...reportes.map(r => r.numero));
+        return maxNum + 1;
+    }
+
+    function agregarReporte(data) {
+        const nuevoId = reportes.length ? Math.max(...reportes.map(r=>r.id)) + 1 : 1;
+        const nuevoNum = obtenerSiguienteNumero();
+        const nuevo = { id: nuevoId, numero: nuevoNum, ...data };
+        reportes.push(nuevo);
+        reportes.sort((a,b) => b.numero - a.numero);
+        guardarEnLocal();
+        aplicarFiltrosYRefrescar();
+    }
+
+    function actualizarReporte(id, data) {
+        const index = reportes.findIndex(r => r.id === id);
+        if(index !== -1) {
+            reportes[index] = { ...reportes[index], ...data, id: reportes[index].id, numero: reportes[index].numero };
+            reportes.sort((a,b) => b.numero - a.numero);
+            guardarEnLocal();
+            aplicarFiltrosYRefrescar();
+        }
+    }
+
+    function eliminarReporte(id) {
+        reportes = reportes.filter(r => r.id !== id);
+        reportes.sort((a,b) => b.numero - a.numero);
+        guardarEnLocal();
+        aplicarFiltrosYRefrescar();
+    }
+
+    function filtrarReportes() {
+        const texto = document.getElementById('filtroGeneral').value.trim().toLowerCase();
+        if(!texto) return [...reportes];
+        return reportes.filter(r => 
+            r.plantador?.toLowerCase().includes(texto) ||
+            r.zona?.toLowerCase().includes(texto) ||
+            r.multiplicador?.toLowerCase().includes(texto) ||
+            r.peticion?.toLowerCase().includes(texto) ||
+            r.mes?.toLowerCase().includes(texto) ||
+            (r.anio?.toString().includes(texto))
+        );
+    }
+
+    function actualizarEstadisticas(dataFiltrada) {
+        document.getElementById('sumContactos').innerText = dataFiltrada.reduce((acc,r)=> acc + (r.contactos||0),0);
+        document.getElementById('sumConversiones').innerText = dataFiltrada.reduce((acc,r)=> acc + (r.conversiones||0),0);
+        document.getElementById('sumBautizados').innerText = dataFiltrada.reduce((acc,r)=> acc + (r.bautizados||0),0);
+        document.getElementById('sumLideresEntrenamiento').innerText = dataFiltrada.reduce((acc,r)=> acc + (r.lideresEntrenamiento||0),0);
+        document.getElementById('sumGrupos').innerText = dataFiltrada.reduce((acc,r)=> acc + (r.nuevosGrupos||0),0);
+        document.getElementById('sumPersonasGrupos').innerText = dataFiltrada.reduce((acc,r)=> acc + (r.personasGrupos||0),0);
+        document.getElementById('sumLideresGrupos').innerText = dataFiltrada.reduce((acc,r)=> acc + (r.lideresGrupos||0),0);
+        document.getElementById('totalReportes').innerText = dataFiltrada.length;
+    }
+
+    function renderizarTabla(filtrados) {
+        const totalRegistros = filtrados.length;
+        const totalPages = Math.ceil(totalRegistros / itemsPerPage);
+        if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+        const start = (currentPage-1)*itemsPerPage;
+        const paginados = filtrados.slice(start, start+itemsPerPage);
+        const tbody = document.getElementById('tablaBody');
+        if(paginados.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5">No hay reportes registrados. Crea uno nuevo.</td></tr>';
+            document.getElementById('pageInfo').innerHTML = `Total: 0 registros | Página 0 de 0`;
+            document.getElementById('paginationControls').innerHTML = '';
+            return;
+        }
+        let html = '';
+        paginados.forEach(r => {
+            const mentoreoClass = r.mentoreo === 'si' ? 'mentoreo-si' : 'mentoreo-no';
+            const mentoreoText = r.mentoreo === 'si' ? 'SI' : 'NO';
+            html += `<tr data-id="${r.id}">
+                        <td><span class="badge-num">${r.numero}</span></td>
+                        <td>${escapeHtml(r.plantador)}</td>
+                        <td>${escapeHtml(r.zona)}</td>
+                        <td>${escapeHtml(r.multiplicador)}</td>
+                        <td><span class="${mentoreoClass}">${mentoreoText}</span></td>
+                       </tr>`;
+        });
+        tbody.innerHTML = html;
+        document.querySelectorAll('#tablaBody tr[data-id]').forEach(row => {
+            row.addEventListener('click', (e) => {
+                const id = parseInt(row.dataset.id);
+                const reporte = reportes.find(r => r.id === id);
+                if(reporte) abrirModalDetalle(reporte);
+            });
+        });
+        document.getElementById('pageInfo').innerHTML = `Total: ${totalRegistros} registros | Página ${currentPage} de ${totalPages}`;
+        const pagContainer = document.getElementById('paginationControls');
+        if(totalPages <= 1) { pagContainer.innerHTML = ''; return; }
+        let btns = `<button class="pagination-btn" id="prevPage" ${currentPage===1?'disabled':''}>Anterior</button>`;
+        for(let i=1; i<=totalPages; i++) btns += `<button class="pagination-btn ${i===currentPage?'active':''}" data-page="${i}">${i}</button>`;
+        btns += `<button class="pagination-btn" id="nextPage" ${currentPage===totalPages?'disabled':''}>Siguiente</button>`;
+        pagContainer.innerHTML = btns;
+        document.querySelectorAll('[data-page]').forEach(btn => btn.addEventListener('click', (e) => { currentPage = parseInt(btn.dataset.page); renderizarTabla(filtrarReportes()); }));
+        const prevBtn = document.getElementById('prevPage'); if(prevBtn) prevBtn.addEventListener('click', () => { if(currentPage>1){currentPage--; renderizarTabla(filtrarReportes());} });
+        const nextBtn = document.getElementById('nextPage'); if(nextBtn) nextBtn.addEventListener('click', () => { if(currentPage<totalPages){currentPage++; renderizarTabla(filtrarReportes());} });
+    }
+
+    function aplicarFiltrosYRefrescar() {
+        const filtrados = filtrarReportes();
+        currentPage = 1;
+        renderizarTabla(filtrados);
+        actualizarEstadisticas(filtrados);
+    }
+
+    // Impresiones con titulo "Reporte ABC" y fecha DD/MM/AAAA
+    function imprimirRegistroIndividual(r) {
+        const ventana = window.open('','_blank');
+        const fechaActual = formatearFechaDDMMAAAA(new Date());
+        ventana.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reporte ABC - Detalle</title><style>body{font-family:Inter;margin:30px} .row{display:flex;margin-bottom:8px}.label{font-weight:700;width:200px}</style></head><body><h2>Reporte ABC</h2><h3>Detalle de registro</h3><div class="row"><div class="label">Número:</div><div>${r.numero}</div></div><div class="row"><div class="label">Mes/Año:</div><div>${r.mes} ${r.anio}</div></div><div class="row"><div class="label">Plantador:</div><div>${escapeHtml(r.plantador)}</div></div><div class="row"><div class="label">Zona:</div><div>${escapeHtml(r.zona)}</div></div><div class="row"><div class="label">Multiplicador:</div><div>${escapeHtml(r.multiplicador)}</div></div><div class="row"><div class="label">Mentoreo:</div><div>${r.mentoreo === 'si' ? 'SI' : 'NO'}</div></div><h3>Personas</h3><div>Contactos: ${r.contactos}</div><div>Conversiones: ${r.conversiones}</div><div>Bautizados: ${r.bautizados}</div><div>Líderes entrenamiento: ${r.lideresEntrenamiento}</div><h3>Grupos</h3><div>Nuevos grupos: ${r.nuevosGrupos}</div><div>Personas en grupos: ${r.personasGrupos}</div><div>Líderes en grupos: ${r.lideresGrupos}</div><h3>Petición</h3><p>${escapeHtml(r.peticion) || '—'}</p><p>Generado: ${fechaActual}</p></body></html>`);
+        ventana.document.close(); ventana.print();
+    }
+
+    function imprimirTabla(datos, titulo) {
+        const ventana = window.open('','_blank');
+        const fechaActual = formatearFechaDDMMAAAA(new Date());
+        let filas = '';
+        datos.forEach(r => {
+            filas += `<tr><td>${r.numero}</td><td>${escapeHtml(r.plantador)}</td><td>${escapeHtml(r.zona)}</td><td>${escapeHtml(r.multiplicador)}</td><td>${r.mentoreo === 'si' ? 'SI' : 'NO'}</td></tr>`;
+        });
+        ventana.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reporte ABC - Listado</title><style>body{font-family:Inter;margin:30px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:8px}th{background:#334155;color:white}</style></head><body><h2>Reporte ABC</h2><h3>${titulo}</h3><p>Fecha: ${fechaActual}</p><table><thead><tr><th>N°</th><th>Plantador</th><th>Zona</th><th>Multiplicador</th><th>Mentoreo</th></tr></thead><tbody>${filas}</tbody></table><p>Total registros: ${datos.length}</p></body></html>`);
+        ventana.document.close(); ventana.print();
+    }
+
+    function imprimirEstadisticas() {
+        const filtrados = filtrarReportes();
+        const stats = {
+            contactos: filtrados.reduce((a,b)=>a+(b.contactos||0),0),
+            conversiones: filtrados.reduce((a,b)=>a+(b.conversiones||0),0),
+            bautizados: filtrados.reduce((a,b)=>a+(b.bautizados||0),0),
+            lideresEnt: filtrados.reduce((a,b)=>a+(b.lideresEntrenamiento||0),0),
+            grupos: filtrados.reduce((a,b)=>a+(b.nuevosGrupos||0),0),
+            personasGrupos: filtrados.reduce((a,b)=>a+(b.personasGrupos||0),0),
+            lideresGrupos: filtrados.reduce((a,b)=>a+(b.lideresGrupos||0),0)
+        };
+        const fechaActual = formatearFechaDDMMAAAA(new Date());
+        const ventana = window.open('','_blank');
+        ventana.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reporte ABC - Estadisticas</title><style>body{font-family:Inter;margin:30px}</style></head><body><h2>Reporte ABC</h2><h3>Estadisticas acumuladas</h3><p>Generado: ${fechaActual}</p><p>Total reportes filtrados: ${filtrados.length}</p><ul><li>Nuevos contactos: ${stats.contactos}</li><li>Conversiones: ${stats.conversiones}</li><li>Bautizados: ${stats.bautizados}</li><li>Líderes entrenamiento: ${stats.lideresEnt}</li><li>Nuevos grupos: ${stats.grupos}</li><li>Personas en grupos: ${stats.personasGrupos}</li><li>Líderes en grupos: ${stats.lideresGrupos}</li></ul></body></html>`);
+        ventana.document.close(); ventana.print();
+    }
+
+    function abrirModalDetalle(reporte) {
+        const modalBody = document.getElementById('detailModalBody');
+        const mentClass = reporte.mentoreo === 'si' ? 'mentoreo-si' : 'mentoreo-no';
+        const plantadorId = buscarIdPorNombreCompleto(reporte.plantador);
+        let verRegistroBtn = '';
+        if (plantadorId) {
+            verRegistroBtn = `<button class="btn-detail" id="verRegistroCompletoBtn" style="background:#10b981; color:white;">👤 Ver registro completo</button>`;
+        } else {
+            console.warn(`No se encontró ID para el plantador: ${reporte.plantador}`);
+        }
+        modalBody.innerHTML = `
+            <div class="detail-actions">
+                <button class="btn-detail btn-edit" id="detailEditBtn">Editar</button>
+                <button class="btn-detail btn-delete" id="detailDeleteBtn">Eliminar</button>
+                <button class="btn-detail btn-print" id="detailPrintBtn">Imprimir</button>
+                ${verRegistroBtn}
+            </div>
+            <div class="detail-grid">
+                <div class="detail-field"><div class="label">Numero</div><div class="value">${reporte.numero}</div></div>
+                <div class="detail-field"><div class="label">Mes / Año</div><div class="value">${escapeHtml(reporte.mes)} ${reporte.anio}</div></div>
+                <div class="detail-field"><div class="label">Plantador</div><div class="value">${escapeHtml(reporte.plantador)}</div></div>
+                <div class="detail-field"><div class="label">Zona Plantación</div><div class="value">${escapeHtml(reporte.zona)}</div></div>
+                <div class="detail-field"><div class="label">Multiplicador</div><div class="value">${escapeHtml(reporte.multiplicador)}</div></div>
+                <div class="detail-field"><div class="label">Mentoreo</div><div class="value"><span class="${mentClass}">${reporte.mentoreo === 'si' ? 'SI' : 'NO'}</span></div></div>
+                <div class="detail-field"><div class="label">Nuevos contactos</div><div class="value">${reporte.contactos || 0}</div></div>
+                <div class="detail-field"><div class="label">Conversiones</div><div class="value">${reporte.conversiones || 0}</div></div>
+                <div class="detail-field"><div class="label">Bautizados</div><div class="value">${reporte.bautizados || 0}</div></div>
+                <div class="detail-field"><div class="label">Líderes entrenamiento</div><div class="value">${reporte.lideresEntrenamiento || 0}</div></div>
+                <div class="detail-field"><div class="label">Nuevos grupos</div><div class="value">${reporte.nuevosGrupos || 0}</div></div>
+                <div class="detail-field"><div class="label">Personas en grupos</div><div class="value">${reporte.personasGrupos || 0}</div></div>
+                <div class="detail-field"><div class="label">Líderes en grupos</div><div class="value">${reporte.lideresGrupos || 0}</div></div>
+                <div class="detail-field full-width"><div class="label">Petición de Oración</div><div class="value">${escapeHtml(reporte.peticion) || '—'}</div></div>
+            </div>
+        `;
+        document.getElementById('detailModal').classList.add('active');
+        document.getElementById('detailEditBtn').onclick = () => { cerrarModal('detailModal'); abrirModalEditar(reporte.id); };
+        document.getElementById('detailDeleteBtn').onclick = () => { cerrarModal('detailModal'); mostrarConfirmEliminar(reporte.id); };
+        document.getElementById('detailPrintBtn').onclick = () => imprimirRegistroIndividual(reporte);
+        if (plantadorId) {
+            const btn = document.getElementById('verRegistroCompletoBtn');
+            if (btn) {
+                btn.onclick = () => {
+                    // Si estamos dentro de un iframe, enviamos mensaje a la ventana padre
+                    if (window.parent !== window) {
+                        window.parent.postMessage({ type: 'mostrarRegistro', id: plantadorId }, '*');
+                    } else {
+                        // Si estamos en ventana independiente, redirigimos con el parámetro id
+                        window.location.href = `app.html?id=${plantadorId}`;
+                    }
+                };
+            }
+        }
+    }
+
+    function abrirModalNuevo() {
+        editMode = false; editId = null;
+        document.getElementById('formModalTitle').innerText = 'Nuevo Reporte';
+        document.getElementById('reporteForm').reset();
+        document.getElementById('anioReporte').value = 2025;
+        document.getElementById('mentoreo').value = 'no';
+        cargarOpcionesPlantador();
+        document.getElementById('formModal').classList.add('active');
+    }
+
+    function abrirModalEditar(id) {
+        const r = reportes.find(rr => rr.id === id);
+        if(!r) return;
+        editMode = true; editId = id;
+        document.getElementById('formModalTitle').innerText = 'Editar Reporte';
+        document.getElementById('mesReporte').value = r.mes;
+        document.getElementById('anioReporte').value = r.anio;
+        cargarOpcionesPlantador(r.plantador);
+        document.getElementById('zonaPlantacion').value = r.zona;
+        document.getElementById('multiplicador').value = r.multiplicador;
+        document.getElementById('mentoreo').value = r.mentoreo;
+        document.getElementById('nuevosContactos').value = r.contactos ?? 0;
+        document.getElementById('nuevasConversiones').value = r.conversiones ?? 0;
+        document.getElementById('bautizados').value = r.bautizados ?? 0;
+        document.getElementById('lideresEntrenamiento').value = r.lideresEntrenamiento ?? 0;
+        document.getElementById('nuevosGrupos').value = r.nuevosGrupos ?? 0;
+        document.getElementById('personasGrupos').value = r.personasGrupos ?? 0;
+        document.getElementById('lideresGrupos').value = r.lideresGrupos ?? 0;
+        document.getElementById('peticionOracion').value = r.peticion || '';
+        document.getElementById('formModal').classList.add('active');
+    }
+
+    function mostrarConfirmEliminar(id) {
+        deleteCandidateId = id;
+        document.getElementById('confirmDeleteModal').classList.add('active');
+    }
+
+    function guardarReporteHandler(e) {
+        e.preventDefault();
+        const plantador = document.getElementById('plantadorSelect').value;
+        if (!plantador) {
+            alert("Debe seleccionar un plantador de la lista.");
+            return;
+        }
+        const data = {
+            mes: document.getElementById('mesReporte').value,
+            anio: parseInt(document.getElementById('anioReporte').value),
+            plantador: plantador,
+            zona: document.getElementById('zonaPlantacion').value.trim(),
+            multiplicador: document.getElementById('multiplicador').value.trim(),
+            mentoreo: document.getElementById('mentoreo').value,
+            contactos: parseInt(document.getElementById('nuevosContactos').value) || 0,
+            conversiones: parseInt(document.getElementById('nuevasConversiones').value) || 0,
+            bautizados: parseInt(document.getElementById('bautizados').value) || 0,
+            lideresEntrenamiento: parseInt(document.getElementById('lideresEntrenamiento').value) || 0,
+            nuevosGrupos: parseInt(document.getElementById('nuevosGrupos').value) || 0,
+            personasGrupos: parseInt(document.getElementById('personasGrupos').value) || 0,
+            lideresGrupos: parseInt(document.getElementById('lideresGrupos').value) || 0,
+            peticion: document.getElementById('peticionOracion').value.trim()
+        };
+        if(!data.mes || !data.anio || !data.plantador || !data.zona || !data.multiplicador) {
+            alert("Complete los campos obligatorios: Mes, Año, Plantador, Zona y Multiplicador.");
+            return;
+        }
+        if(editMode && editId) actualizarReporte(editId, data);
+        else agregarReporte(data);
+        cerrarModal('formModal');
+    }
+
+    function cerrarModal(modalId) {
+        document.getElementById(modalId).classList.remove('active');
+    }
+
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => m==='&'?'&amp;': m==='<'?'&lt;':'&gt;'); }
+
+    function init() {
+        cargarDatosIniciales();
+        aplicarFiltrosYRefrescar();
+        document.getElementById('nuevoRegistroBtn').addEventListener('click', abrirModalNuevo);
+        document.getElementById('limpiarFiltrosBtn').addEventListener('click', () => { document.getElementById('filtroGeneral').value = ''; aplicarFiltrosYRefrescar(); });
+        document.getElementById('imprimirTablaFiltradaBtn').addEventListener('click', () => { const filtrados = filtrarReportes(); if(filtrados.length) imprimirTabla(filtrados, 'Tabla filtrada'); else alert('No hay registros para imprimir.'); });
+        document.getElementById('imprimirEstadisticasBtn').addEventListener('click', imprimirEstadisticas);
+        document.getElementById('filtroGeneral').addEventListener('input', () => aplicarFiltrosYRefrescar());
+        document.getElementById('closeDetailModalBtn').addEventListener('click', () => cerrarModal('detailModal'));
+        document.getElementById('closeFormModalBtn').addEventListener('click', () => cerrarModal('formModal'));
+        document.getElementById('cancelFormBtn').addEventListener('click', () => cerrarModal('formModal'));
+        document.getElementById('reporteForm').addEventListener('submit', guardarReporteHandler);
+        document.getElementById('confirmDeleteYes').addEventListener('click', () => { if(deleteCandidateId !== null) { eliminarReporte(deleteCandidateId); deleteCandidateId = null; } cerrarModal('confirmDeleteModal'); });
+        document.getElementById('confirmDeleteNo').addEventListener('click', () => cerrarModal('confirmDeleteModal'));
+        document.getElementById('closeConfirmModal').addEventListener('click', () => cerrarModal('confirmDeleteModal'));
+        window.addEventListener('click', (e) => {
+            if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
+        });
+    }
+    init();
+</script>
+</body>
+</html>
